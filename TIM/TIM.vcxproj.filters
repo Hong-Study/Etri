@@ -1,0 +1,205 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{111b4fbe-2cdd-43e2-b20c-d2140136eff5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{69663d1d-6b6e-429c-8fd6-5c2c7916c68b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sessions">
+      <UniqueIdentifier>{484c4dca-02b1-4481-aed1-59b3eba8135d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Thread">
+      <UniqueIdentifier>{bcbaa364-8963-4446-8d45-641517ac9bc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pch">
+      <UniqueIdentifier>{03f80a57-ef31-401d-80c5-e7d4c3dfce76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GUI">
+      <UniqueIdentifier>{1bb39d47-808a-41c2-956b-de7115ea8a16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GUI\Resource">
+      <UniqueIdentifier>{3e555829-be38-4749-aae4-429ce752905e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Buffer">
+      <UniqueIdentifier>{f61c1b7a-083b-4568-aa51-71e51a4f7e2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataFormat">
+      <UniqueIdentifier>{2e9e5225-8c8b-4f8d-b376-8511633f3b7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Python">
+      <UniqueIdentifier>{39f683ce-2b19-458b-acd0-4c44efed8b05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MainLogic">
+      <UniqueIdentifier>{d6a4f5da-ca29-47e3-bf6b-60c2b9b47843}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Session.h">
+      <Filter>Sessions</Filter>
+    </ClInclude>
+    <ClInclude Include="PairSession.h">
+      <Filter>Sessions</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadManager.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Macro.h">
+      <Filter>pch</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>pch</Filter>
+    </ClInclude>
+    <ClInclude Include="Lock.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="WinApi.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>GUI\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="TLS.h">
+      <Filter>pch</Filter>
+    </ClInclude>
+    <ClInclude Include="AcceptServer.h">
+      <Filter>MainLogic</Filter>
+    </ClInclude>
+    <ClInclude Include="TIMServer.h">
+      <Filter>MainLogic</Filter>
+    </ClInclude>
+    <ClInclude Include="SendBuffer.h">
+      <Filter>Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="RecvBuffer.h">
+      <Filter>Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="DialogFunctions.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Enums.h">
+      <Filter>DataFormat</Filter>
+    </ClInclude>
+    <ClInclude Include="Information.h">
+      <Filter>DataFormat</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet.h">
+      <Filter>DataFormat</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonParser.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="DeadLock.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="TirdSession.h">
+      <Filter>Sessions</Filter>
+    </ClInclude>
+    <ClInclude Include="TifdSession.h">
+      <Filter>Sessions</Filter>
+    </ClInclude>
+    <ClInclude Include="Global.h">
+      <Filter>DataFormat</Filter>
+    </ClInclude>
+    <ClInclude Include="Types.h">
+      <Filter>pch</Filter>
+    </ClInclude>
+    <ClInclude Include="PythonMap.h">
+      <Filter>Python</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="TIM.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Session.cpp">
+      <Filter>Sessions</Filter>
+    </ClCompile>
+    <ClCompile Include="PairSession.cpp">
+      <Filter>Sessions</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadManager.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Macro.cpp">
+      <Filter>pch</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>pch</Filter>
+    </ClCompile>
+    <ClCompile Include="Lock.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="WinApi.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="TLS.cpp">
+      <Filter>pch</Filter>
+    </ClCompile>
+    <ClCompile Include="AcceptServer.cpp">
+      <Filter>MainLogic</Filter>
+    </ClCompile>
+    <ClCompile Include="TIMServer.cpp">
+      <Filter>MainLogic</Filter>
+    </ClCompile>
+    <ClCompile Include="RecvBuffer.cpp">
+      <Filter>Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="SendBuffer.cpp">
+      <Filter>Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="DialogFunctions.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Information.cpp">
+      <Filter>DataFormat</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonParser.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="DeadLock.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="TirdSession.cpp">
+      <Filter>Sessions</Filter>
+    </ClCompile>
+    <ClCompile Include="TifdSession.cpp">
+      <Filter>Sessions</Filter>
+    </ClCompile>
+    <ClCompile Include="Global.cpp">
+      <Filter>DataFormat</Filter>
+    </ClCompile>
+    <ClCompile Include="Types.cpp">
+      <Filter>pch</Filter>
+    </ClCompile>
+    <ClCompile Include="PythonMap.cpp">
+      <Filter>Python</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
+    <None Include="..\Binary\Debug\CreateMap.py">
+      <Filter>Python</Filter>
+    </None>
+    <None Include="CreateMap.py">
+      <Filter>Python</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="TIM.rc">
+      <Filter>GUI\Resource</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="config.json">
+      <Filter>DataFormat</Filter>
+    </Xml>
+  </ItemGroup>
+</Project>
