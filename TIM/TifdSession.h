@@ -1,6 +1,8 @@
 #pragma once
 #include "Session.h"
 
+class FileWriter;
+
 class TifdSession : public Session
 {
 	friend class WinApi;
@@ -42,5 +44,6 @@ private:
 	std::atomic<int32>					_possibleListsSize = 0;
 	TirdRef								_pairingTarget;
 	StTifdData*							_myData = nullptr;
+	//std::unique_ptr<FileWriter>			_writer;
 };
 

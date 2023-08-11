@@ -1,7 +1,7 @@
 {
 	"ServerIP": "127.0.0.1",
-	"LogPos": "../Logs/",
-	"CSVPos": "./CSV/",
+	"LogPos": "./TextLogs/",
+	"CSVPos": "./CSVLog/",
 	"ServerPort": 10000,
 	"MaximumDistance": 1000,
 	"LowestSpeed": 20,

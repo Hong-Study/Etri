@@ -20,11 +20,6 @@ void AcceptServer::Init()
 	::InetPtonW(AF_INET, GServerIP.c_str(), &address);
 	_sockAddr.sin_addr = address;
 
-	if (bind(_listenSocket, (SOCKADDR*)&_sockAddr, sizeof(SOCKADDR_IN)) == SOCKET_ERROR)
-		CRASH("Bind Error");
-	if (listen(_listenSocket, SOMAXCONN) == SOCKET_ERROR)
-		CRASH("Listen Error");
-
 	u_long on = 1;
 	int32 retVal = ioctlsocket(_listenSocket, FIONBIO, &on);
 	if (retVal == SOCKET_ERROR)
@@ -39,6 +34,11 @@ void AcceptServer::Update()
 {
 	// 멈추는 조건 설정
 	
+	if (bind(_listenSocket, (SOCKADDR*)&_sockAddr, sizeof(SOCKADDR_IN)) == SOCKET_ERROR)
+		CRASH("Bind Error");
+	if (listen(_listenSocket, SOMAXCONN) == SOCKET_ERROR)
+		CRASH("Listen Error");
+
 	while (GStart)
 	{
 		if (_listenSocket == INVALID_SOCKET)

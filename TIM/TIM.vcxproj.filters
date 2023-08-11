@@ -111,6 +111,9 @@
     <ClInclude Include="PythonMap.h">
       <Filter>Python</Filter>
     </ClInclude>
+    <ClInclude Include="FileUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TIM.cpp">
@@ -182,12 +185,12 @@
     <ClCompile Include="PythonMap.cpp">
       <Filter>Python</Filter>
     </ClCompile>
+    <ClCompile Include="FileUtils.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />
-    <None Include="..\Binary\Debug\CreateMap.py">
-      <Filter>Python</Filter>
-    </None>
     <None Include="CreateMap.py">
       <Filter>Python</Filter>
     </None>

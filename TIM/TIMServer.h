@@ -21,11 +21,6 @@ public:
 	void GetPossiblePairingList(pair<float, float> tifdLocation, vector<PossiblePairingList>& lists);
 	void SendKeepAlive();
 
-public:
-	void SaveTifdCSV(StTifdData* tifd);
-	void SaveTirdCSV(StTirdData* tird);
-	void SavePairingCSV(StTifdData* tifdData, StTirdData* tirdData);
-
 private:
 	bool PushPendingList(TifdRef tifd, std::string deviceId);
 	bool PushPendingList(TirdRef tird, std::string deviceId);
@@ -47,11 +42,6 @@ private:
 
 	// ListId가 Key로 작동
 	std::map<int32, PairSessionRef> _pairingSessions;
-
-private:
-	std::ofstream tifdCSV;
-	std::ofstream tirdCSV;
-	std::ofstream pairingCSV;
 
 private:
 	StLoraInfo _loraInfo;

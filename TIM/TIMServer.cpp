@@ -9,25 +9,7 @@
 using std::string;
 void TIMServer::Init()
 {
-	std::filesystem::path path(GCSVPos + "temp.txt");
-	if (std::filesystem::exists(path.parent_path()) == false)
-	{
-		std::filesystem::create_directories(path.parent_path());
-	}
-	// 시간 Device Lat Long 스피드 위성
-	string pendingSet = ",,lat,long,,\n";
-
-	// 시간 tifd tifd_lat tifd_long tird tird_lat tird_long distanec
-	string pairingSet = ",TIFD,TIFD_Lat,TIFD_Long,TIRD,TIRD_Lat,TIRD_Long,Distance\n";
-
-	// 여기서 설정하면됨.
-	tifdCSV.open(GCSVPos + "tifdLog.csv");
-	tirdCSV.open(GCSVPos + "tirdLog.csv");
-	pairingCSV.open(GCSVPos + "pairing.csv");
-
-	tifdCSV << pendingSet;
-	tirdCSV << pendingSet;
-	pairingCSV << pairingSet;
+	
 }
 
 void TIMServer::Clear()
@@ -55,10 +37,6 @@ void TIMServer::Clear()
 	_pendingTird.clear();
 	_pendingTifd.clear();
 	_pairingSessions.clear();
-
-	tifdCSV.close();
-	tirdCSV.close();
-	pairingCSV.close();
 }
 
 bool TIMServer::PushPendingList(TifdRef tifd, string deviceId)
@@ -305,57 +283,6 @@ void TIMServer::SendKeepAlive()
 			}
 		}
 	});
-}
-
-void TIMServer::SaveTifdCSV(StTifdData* tifd)
-{
-	if (tifd == nullptr)
-		return;
-
-	StTifdData data;
-	memcpy(&data, tifd, sizeof(StTifdData));
-
-	WRITE_LOCK_IDX(TIFD);
-	// 시간 Device Lat Long 스피드 위성
-	string str = std::format("{0}, {1}, {2:0.5f}, {3:0.5f}, {4}, {5}\n",
-		0, data.deviceId, data.lat, data.lon, data.speed, data.sat);
-
-	tifdCSV << str;
-}
-
-void TIMServer::SaveTirdCSV(StTirdData* tird)
-{
-	if (tird == nullptr)
-		return;
-
-	StTirdData data;
-	memcpy(&data, tird, sizeof(StTirdData));
-
-	WRITE_LOCK_IDX(TIRD);
-	// 시간 Device Lat Long 스피드 위성
-	string str = std::format("{0}, {1}, {2:0.5f}, {3:0.5f}, {4}, {5}\n",
-		0, data.deviceId, data.lat, data.lon, data.speed, data.sat);
-
-	tirdCSV << str;
-}
-
-void TIMServer::SavePairingCSV(StTifdData* tifdData, StTirdData* tirdData)
-{
-	if (tifdData == nullptr || tirdData == nullptr)
-		return;
-	WRITE_LOCK_IDX(PAIRING);
-	
-	StTifdData tifd;
-	memcpy(&tifd, tifdData, sizeof(StTifdData));
-
-	StTirdData tird;
-	memcpy(&tird, tirdData, sizeof(StTirdData));
-
-	// 시간 tifd tifd_lat tifd_long tird tird_lat tird_long distanec
-	string str = std::format("{0}, {1}, {2:0.5f}, {3:0.5f}, {4}, {5:0.5f}, {6:0.5f}, {7}\n",
-		0, tifd.deviceId, tifd.lat, tifd.lon, tird.deviceId, tird.lat, tird.lon, tifd.distance);
-
-	pairingCSV << str;
 }
 
 void TIMServer::GetPossiblePairingList(pair<float, float> tifdLocation, vector<PossiblePairingList>& lists)

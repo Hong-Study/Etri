@@ -32,6 +32,7 @@
 #include <set>
 #include <stack>
 #include <Python.h>
+#include <memory>
 
 #include "Types.h"
 #include "Macro.h"

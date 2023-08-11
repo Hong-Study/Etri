@@ -7,7 +7,7 @@ Session::Session(SOCKET sock, SOCKADDR_IN addr, Device device)
 	: _socket(sock), _sockAddr(addr), _recvBuffer(BUFSIZE)
 	, _deviceType(device), _pairState(ePairState::PairState_Unpair)
 {
- 
+	
 }
 
 Session::~Session()

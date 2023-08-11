@@ -73,10 +73,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)Binary\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)Intermediate\$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)Intermediate\TIM\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)Binary\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Intermediate\TIM\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -122,6 +123,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Libraries\libs\</AdditionalLibraryDirectories>
     </Link>
+    <PreBuildEvent>
+      <Command>call ConfigSetup.bat</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -141,9 +145,13 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Libraries\libs\</AdditionalLibraryDirectories>
     </Link>
+    <PreBuildEvent>
+      <Command>call ConfigSetup.bat</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DeadLock.h" />
+    <ClInclude Include="FileUtils.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="JsonParser.h" />
     <ClInclude Include="Packet.h" />
@@ -171,6 +179,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DeadLock.cpp" />
+    <ClCompile Include="FileUtils.cpp" />
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="Information.cpp" />
     <ClCompile Include="JsonParser.cpp" />
@@ -200,7 +209,6 @@
     <ResourceCompile Include="TIM.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Binary\Debug\CreateMap.py" />
     <None Include="cpp.hint" />
     <None Include="CreateMap.py" />
   </ItemGroup>

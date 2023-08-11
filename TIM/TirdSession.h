@@ -6,6 +6,7 @@ class TirdSession : public Session
 	using Super = Session;
 public:
 	TirdSession(SOCKET sock, SOCKADDR_IN addr, const StTirdData* data);
+	virtual ~TirdSession();
 	virtual void		Init() override;
 
 	virtual void		OnRecvPacket(BYTE* buffer, int32 size) override;
@@ -33,5 +34,6 @@ private:
 private:
 	TifdRef				_pairingTarget;
 	StTirdData*			_myData = nullptr;
+	class FileWriter*	_writer = nullptr;
 };
 

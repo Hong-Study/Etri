@@ -3,19 +3,23 @@
 #include "WinApi.h"
 #include "TIMServer.h"
 #include "TifdSession.h"
+#include "FileUtils.h"
 
 TirdSession::TirdSession(SOCKET sock, SOCKADDR_IN addr, const StTirdData* data)
 	: Super(sock, addr, Device::DeviceTIRD)
 {
 	Init();
-
-	_myData = new StTirdData;
 	SetTirdData(data);
 }
 
 void TirdSession::Init()
 {
 	Super::Init();
+
+	_myData = new StTirdData;
+	_writer = new FileWriter();
+
+	//_writer->SetParentPath(GCSVPos + "");
 }
 
 void TirdSession::OnRecvPacket(BYTE* buffer, int32 size)
@@ -48,7 +52,10 @@ void TirdSession::OnDisconnected()
 	wstring str = std::format(L"Disconnected TIRD {0}", GetDeviceIdToWString());
 	WINGUI->AddLogList(str);
 
-	delete _myData;
+	if(_myData != nullptr)
+		delete _myData;
+	if (_writer != nullptr)
+		delete _writer;
 	SetDeviceType(Device::DeviceNone);
 }
 
@@ -57,6 +64,7 @@ void TirdSession::SetTirdData(const StTirdData* data)
 	WRITE_LOCK;
 
 	memcpy(_myData, data, sizeof(StTirdData));
+	_myData->stTime.hour = (_myData->stTime.hour + 9) % 24;
 }
 
 pair<float, float> TirdSession::GetLocation()
@@ -73,7 +81,6 @@ void TirdSession::HandleUpdatePendingInfo(const StTirdData* data)
 	SetTirdData(data);
 
 	WINGUI->UpdateTirdPendingInfo(GetListId(), GetData());
-	TIM->SaveTirdCSV(GetData());
 }
 
 void TirdSession::HandleUpdatePairingInfo(const StTirdData* data)

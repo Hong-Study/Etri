@@ -22,4 +22,3 @@ private:
 public:
 	PyThreadState* mainThreadState = nullptr;
 };
-

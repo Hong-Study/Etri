@@ -10,7 +10,7 @@ def CreatePendingMap(center_lat, center_long, lat, long):
 def CreatePairingMap(center_lat, center_long, tifd_lat, tifd_long, tird_lat, tird_long):
     m = StaticMap(400, 400)
     tifdMarker = CircleMarker((tifd_long, tifd_lat), '#0036FF', 5)
-    tirdMarker = CircleMarker((tird_long, tird_lat), '#0036FF', 5)
+    tirdMarker = CircleMarker((tird_long, tird_lat), '#FF0000', 5)
     m.add_marker(tifdMarker)
     m.add_marker(tirdMarker)
 

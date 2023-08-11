@@ -8,7 +8,6 @@
 void PythonMap::Init()
 {
 	Py_Initialize();
-
 	_pFileName = PyUnicode_FromString("CreateMap");
 	_pModule = PyImport_Import(_pFileName); // 생성한 PyObject pName을 import한다.
 	if (_pModule == NULL) {

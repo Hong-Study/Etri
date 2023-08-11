@@ -3,13 +3,12 @@
 #include "WinApi.h"
 #include "TIMServer.h"
 #include "TirdSession.h"
+#include "FileUtils.h"
 
 TifdSession::TifdSession(SOCKET sock, SOCKADDR_IN addr, const StTifdData* data)
 	: Super(sock, addr, Device::DeviceTIFD)
 { 
 	Init();
-
-	_myData = new StTifdData;
 	SetTifdData(data);
 }
 
@@ -17,6 +16,8 @@ void TifdSession::Init()
 {
 	Super::Init();
 	
+	_myData = new StTifdData;
+	//_writer = std::make_unique<FileWriter>();
 	// TODO
 }
 
@@ -59,6 +60,7 @@ void TifdSession::SetTifdData(const StTifdData* data)
 	WRITE_LOCK;
 
 	memcpy(_myData, data, sizeof(StTifdData));
+	_myData->stTime.hour = (_myData->stTime.hour + 9) % 24;
 }
 
 pair<float, float> TifdSession::GetLocation()
@@ -72,7 +74,7 @@ void TifdSession::HandleUpdatePendingInfo(const StTifdData* data)
 {
 	SetTifdData(data);
 	WINGUI->UpdateTifdPendingInfo(GetListId(), GetTifdSession());
-	TIM->SaveTifdCSV(GetData());
+	//TIM->SaveTifdCSV(GetDatsa());
 
 	if (data->speed >= GLowestSpeed)
 	{
@@ -120,7 +122,7 @@ void TifdSession::HandleUpdatePairingInfo(const StTifdData* data)
 	if (_pairingTarget != nullptr)
 	{
 		WINGUI->UpdateTifdPairingInfo(GetPairingId(), distance, GetData(), _pairingTarget->GetData());
-		TIM->SavePairingCSV(GetData(), _pairingTarget->GetData());
+		//TIM->SavePairingCSV(GetData(), _pairingTarget->GetData());
 	}
 }
 
