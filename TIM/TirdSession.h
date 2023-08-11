@@ -6,7 +6,6 @@ class TirdSession : public Session
 	using Super = Session;
 public:
 	TirdSession(SOCKET sock, SOCKADDR_IN addr, const StTirdData* data);
-	virtual ~TirdSession();
 	virtual void		Init() override;
 
 	virtual void		OnRecvPacket(BYTE* buffer, int32 size) override;
@@ -26,6 +25,7 @@ public:
 	void				SetTarget(const TifdRef ref) { _pairingTarget = ref; }
 	TifdRef				GetTarget() { return _pairingTarget; }
 private:
+
 	// CmdType_Tird_Info:
 	void				HandleUpdatePendingInfo(const StTirdData* data);
 	void				HandleUpdatePairingInfo(const StTirdData* data);

@@ -9,9 +9,10 @@ public:
 	void FileStreamClose();
 
 	bool FileStreamOpenWithCSV(std::string fileName, ePairState state, std::ios_base::openmode mode = std::ios_base::out | std::ios_base::app);
-	bool WritePendingString(const std::string time, const std::string deviceId, const float lat, const float lon, const float speed, const int32 sat);
-	bool WritePairingString(const std::string time, const std::string tifdDeviceId, const float tifdLat, const float tifdLon
-		, const std::string tirdDeviceId, const float tirdLat, const float tirdLon, const int32 distance, const float speed, const int32 sat);
+
+	template<typename T>
+	bool WritePendingString(T* data);
+	bool WritePairingString(StTifdData* tifd, StTirdData& tird);
 
 	bool IsOpen() { return writer.is_open(); }
 private:
@@ -25,3 +26,17 @@ private:
 	// ½Ã°£ tifd tifd_lat tifd_long tird tird_lat tird_long distanec
 	std::string pairingSet = "Time,TIFD,TIFD_Lat,TIFD_Long,TIRD,TIRD_Lat,TIRD_Long,Distance\n";
 };
+
+template<typename T>
+inline bool FileWriter::WritePendingString(T* data)
+{
+	if (!writer.is_open())
+		return false;
+
+	std::string time = std::format("{0}:{1}:{2}", data->stTime.hour, data->stTime.min, data->stTime.sec);
+	std::string format = std::format("{0}, {1}, {2:0.5f}, {3:0.5f}, {4}, {5}\n", time.c_str(), data->deviceId, data->lat, data->lon, data->speed, data->sat);
+
+	writer.write(format.c_str(), format.size());
+
+	return true;
+}

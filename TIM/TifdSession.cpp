@@ -10,6 +10,7 @@ TifdSession::TifdSession(SOCKET sock, SOCKADDR_IN addr, const StTifdData* data)
 { 
 	Init();
 	SetTifdData(data);
+	_nowTime = data->stTime.hour;
 }
 
 void TifdSession::Init()
@@ -17,8 +18,7 @@ void TifdSession::Init()
 	Super::Init();
 	
 	_myData = new StTifdData;
-	//_writer = std::make_unique<FileWriter>();
-	// TODO
+	_writer = new FileWriter();
 }
 
 void TifdSession::OnRecvPacket(BYTE* buffer, int32 size)
@@ -61,6 +61,28 @@ void TifdSession::SetTifdData(const StTifdData* data)
 
 	memcpy(_myData, data, sizeof(StTifdData));
 	_myData->stTime.hour = (_myData->stTime.hour + 9) % 24;
+	if (_nowTime != _myData->stTime.hour)
+	{
+		_nowTime = _myData->stTime.hour;
+		std::string str = std::format("{0}/{1}", _nowTime, _myData->deviceId);
+		_writer->FileStreamOpenWithCSV(str, _pairState);
+	}
+		
+	if (_pairState == ePairState::PairState_Pair)
+	{
+		if (_pairingTarget != nullptr)
+		{
+			StTirdData tird;
+			memcpy(&tird, _pairingTarget->GetData(), sizeof(StTirdData));
+			if (_writer->WritePairingString(_myData, tird) == false)
+				CRASH("WritePairingStringWithTifd");
+		}
+	}
+	else if (_pairState == ePairState::PairState_Unpair)
+	{
+		if (_writer->WritePendingString(_myData) == false)
+			CRASH("WritePendingStringWithTifd");
+	}
 }
 
 pair<float, float> TifdSession::GetLocation()

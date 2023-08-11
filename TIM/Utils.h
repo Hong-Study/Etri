@@ -6,15 +6,14 @@ using std::make_shared;
 
 int32			CalculateDistance(float rat1, float lon1, float rat2, float lon2);
 int32			CalculateDistance(pair<float, float>& tifd, pair<float, float>& tird);
-int32			GetTestDistance(float p1, float p2);
+
 std::wstring	StringToWstring(string str);
 std::string		WstringToString(std::wstring str);
 
-
-SendBufferRef MakeSendBuffer(CommandType type);
-SendBufferRef MakeSendPairingBuffer(char* deviceId, int32 length);
-SendBufferRef MakeSendUnPairingBuffer();
-SendBufferRef MakeSendLoraBuffer(int32 ch);
+SendBufferRef	MakeSendBuffer(CommandType type);
+SendBufferRef	MakeSendPairingBuffer(char* deviceId, int32 length);
+SendBufferRef	MakeSendUnPairingBuffer();
+SendBufferRef	MakeSendLoraBuffer(int32 ch);
 
 
 template<typename T>

@@ -44,6 +44,7 @@ private:
 	std::atomic<int32>					_possibleListsSize = 0;
 	TirdRef								_pairingTarget;
 	StTifdData*							_myData = nullptr;
-	//std::unique_ptr<FileWriter>			_writer;
+	class FileWriter*					_writer;
+	int32								_nowTime = 0;
 };
 

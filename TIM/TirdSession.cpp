@@ -65,6 +65,12 @@ void TirdSession::SetTirdData(const StTirdData* data)
 
 	memcpy(_myData, data, sizeof(StTirdData));
 	_myData->stTime.hour = (_myData->stTime.hour + 9) % 24;
+
+	if (_pairState == ePairState::PairState_Unpair)
+	{
+		if (_writer->WritePendingString(_myData) == false)
+			return;
+	}
 }
 
 pair<float, float> TirdSession::GetLocation()

@@ -33,6 +33,9 @@ bool FileWriter::FileStreamOpenWithCSV(std::string fileName, ePairState state, s
     if (std::filesystem::exists(totalPath.parent_path()) == false)
         std::filesystem::create_directories(totalPath.parent_path());
 
+    if (std::filesystem::exists(totalPath) == true)
+        return false;
+
     writer.open(totalPath.string(), mode);
     if (writer.is_open() == false)
         return false;
@@ -50,25 +53,15 @@ bool FileWriter::FileStreamOpenWithCSV(std::string fileName, ePairState state, s
     return true;
 }
 
-bool FileWriter::WritePendingString(const std::string time, const std::string deviceId, const float lat, const float lon, const float speed, const int32 sat)
+bool FileWriter::WritePairingString(StTifdData* tifd, StTirdData& tird)
 {
     if (!writer.is_open())
         return false;
 
-    std::string format = std::format("{0}, {1}, {2:0.5f}, {3:0.5f}, {4}, {5}\n", time.c_str(), deviceId.c_str(), lat, lon, speed, sat);
-    writer.write(format.c_str(), format.size());
+    std::string time = std::format("{0}:{1}:{2}", tifd->stTime.hour, tifd->stTime.min, tifd->stTime.sec);
 
-    return true;
-}
+    std::string format = std::format("{0}, {1}, {2:0.5f}, {3:0.5f}, {4}, {5:0.5f}, {6:0.5f}, {7}\n", time.c_str(), tifd->deviceId, tifd->lat, tifd->lon, tird.deviceId, tird.lat, tird.lon, tifd->distance, tifd->speed, tifd->sat);
 
-bool FileWriter::WritePairingString(const std::string time, const std::string tifdDeviceId, const float tifdLat, const float tifdLon
-    , const std::string tirdDeviceId, const float tirdLat, const float tirdLon, const int32 distance, const float speed, const int32 sat)
-{
-    if (!writer.is_open())
-        return false;
-
-    std::string format = std::format("{0}, {1}, {2:0.5f}, {3:0.5f}, {4}, {5:0.5f}, {6:0.5f}, {7}\n", time.c_str(), tifdDeviceId.c_str(), tifdLat, tifdLon
-        , tirdDeviceId.c_str(), tirdLat, tirdLon, distance);
     writer.write(format.c_str(), format.size());
 
     return true;

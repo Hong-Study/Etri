@@ -34,14 +34,6 @@ int32 CalculateDistance(pair<float, float>& tifd, pair<float, float>& tird)
     return CalculateDistance(tifd.first, tird.second, tird.first, tird.second);
 }
 
-int32 GetTestDistance(float p1, float p2)
-{
-    float distance = (p1 - p2) * 1000;
-    int normal = static_cast<int32>(distance);
-
-    return abs(normal);
-}
-
 std::wstring StringToWstring(string str)
 {
     return std::wstring(str.begin(), str.end());
