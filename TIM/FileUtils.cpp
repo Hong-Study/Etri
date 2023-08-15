@@ -3,17 +3,12 @@
 
 FileWriter::FileWriter()
 {
-    parentPath = "";
+    
 }
 
 FileWriter::~FileWriter()
 {
     FileStreamClose();
-}
-
-void FileWriter::SetParentPath(std::string path)
-{
-    parentPath = path;
 }
 
 void FileWriter::FileStreamClose()
@@ -22,14 +17,11 @@ void FileWriter::FileStreamClose()
         writer.close();
 }
 
-bool FileWriter::FileStreamOpenWithCSV(std::string fileName, ePairState state, std::ios_base::openmode mode)
+bool FileWriter::FileStreamOpenWithCSV(std::filesystem::path totalPath, ePairState state, std::ios_base::openmode mode)
 {
-    if (parentPath == "")
-        return false;
     if (writer.is_open() == true)
         writer.close();
 
-    std::filesystem::path totalPath = parentPath + fileName;
     if (std::filesystem::exists(totalPath.parent_path()) == false)
         std::filesystem::create_directories(totalPath.parent_path());
 

@@ -16,6 +16,7 @@ public:
 
 	virtual void		OnRecvPacket(BYTE* buffer, int32 size) override;
 	virtual void		OnDisconnected() override;
+	virtual void		UpdateToPairingSuccess() override;
 
 	void				SetTifdData(const StTifdData* data);
 	
@@ -46,5 +47,6 @@ private:
 	StTifdData*							_myData = nullptr;
 	class FileWriter*					_writer;
 	int32								_nowTime = 0;
+	std::string							_fileName;
 };
 

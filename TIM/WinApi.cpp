@@ -41,7 +41,7 @@ void WinApi::Init()
     ShowWindow(pairingList, SW_HIDE);
     ShowWindow(dlgHwnd, SW_MAXIMIZE);
 
-    GetTime();
+    UpdateTime();
 
     startTimeInfo = WstringToString(timeInfo);
 }
@@ -983,7 +983,7 @@ void WinApi::AddLogList(wstring contexts)
     WRITE_LOCK_IDX(LOG_LOCK);
 
     // 현재 시간을 시스템 클록으로부터 구합니다.
-    GetTime();
+    UpdateTime();
 
     LVITEM lvItem{};
     lvItem.mask = LVIF_TEXT;
@@ -999,22 +999,15 @@ void WinApi::AddLogList(wstring contexts)
     logList.push_back(pair{ timeInfo, contexts });
 }
 
-void WinApi::GetTime()
+void WinApi::UpdateTime()
 {
-    auto now = std::chrono::system_clock::now();
-
-    // 현재 시간을 std::time_t 타입으로 변환합니다.
-    std::time_t now_time = std::chrono::system_clock::to_time_t(now);
-
-    // 스레드 안전한 버전인 std::localtime_s 함수를 사용하여 날짜와 시간 정보를 분리합니다.
-    std::tm local_time;
-    localtime_s(&local_time, &now_time);
+    std::tm localTime = GetLocalTime();
 
     timeInfo.clear();
     timeInfo.resize(20);
     swprintf_s(timeInfo.data(), 20, L"%d/%02d/%02d-%02d:%02d:%02d",
-        local_time.tm_year + 1900, local_time.tm_mon + 1, local_time.tm_mday, 
-        local_time.tm_hour, local_time.tm_min, local_time.tm_sec);
+        localTime.tm_year + 1900, localTime.tm_mon + 1, localTime.tm_mday,
+        localTime.tm_hour, localTime.tm_min, localTime.tm_sec);
 }
 
 void WinApi::SaveLogData()

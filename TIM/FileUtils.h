@@ -5,10 +5,9 @@ class FileWriter
 public:
 	FileWriter();
 	~FileWriter();
-	void SetParentPath(std::string path);
 	void FileStreamClose();
 
-	bool FileStreamOpenWithCSV(std::string fileName, ePairState state, std::ios_base::openmode mode = std::ios_base::out | std::ios_base::app);
+	bool FileStreamOpenWithCSV(std::filesystem::path fileName, ePairState state, std::ios_base::openmode mode = std::ios_base::out | std::ios_base::app);
 
 	template<typename T>
 	bool WritePendingString(T* data);
@@ -17,7 +16,6 @@ public:
 	bool IsOpen() { return writer.is_open(); }
 private:
 	std::ofstream writer;
-	std::string parentPath;
 
 private:
 	// 시간 Device Lat Long 스피드 위성

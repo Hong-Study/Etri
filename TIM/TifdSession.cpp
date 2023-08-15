@@ -55,6 +55,12 @@ void TifdSession::OnDisconnected()
 	SetDeviceType(Device::DeviceNone);
 }
 
+void TifdSession::UpdateToPairingSuccess()
+{
+	_possibleLists.clear();
+	_writer->FileStreamOpenWithCSV(_fileName, ePairState::PairState_Pair);
+}
+
 void TifdSession::SetTifdData(const StTifdData* data)
 {
 	WRITE_LOCK;
@@ -64,8 +70,9 @@ void TifdSession::SetTifdData(const StTifdData* data)
 	if (_nowTime != _myData->stTime.hour)
 	{
 		_nowTime = _myData->stTime.hour;
-		std::string str = std::format("{0}/{1}", _nowTime, _myData->deviceId);
-		_writer->FileStreamOpenWithCSV(str, _pairState);
+		std::tm localTime = GetLocalTime();
+		_fileName = std::format("Logs/{0}/{1}/{2}/TIFD/{3}.csv", localTime.tm_year, localTime.tm_mon, _nowTime, _myData->deviceId);
+		_writer->FileStreamOpenWithCSV(_fileName, _pairState);
 	}
 		
 	if (_pairState == ePairState::PairState_Pair)
@@ -102,7 +109,7 @@ void TifdSession::HandleUpdatePendingInfo(const StTifdData* data)
 	{
 		if (CheckingPairingPossibleList())
 		{
-			_possibleLists.clear();
+			UpdateToPairingSuccess();
 			return;
 		}
 

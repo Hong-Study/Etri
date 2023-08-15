@@ -108,7 +108,7 @@ private:
 	void		SetInfoTirdItem(const HWND handle, const TirdListPtr tird, std::wstring pairState);
 
 	// 시간	구하는 함수
-	void 		GetTime();
+	void 		UpdateTime();
 private:
 	// 초기화 타이밍이 매우 매우 매우 아쉽다.
 	HWND dlgHwnd = 0;

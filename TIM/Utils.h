@@ -6,6 +6,7 @@ using std::make_shared;
 
 int32			CalculateDistance(float rat1, float lon1, float rat2, float lon2);
 int32			CalculateDistance(pair<float, float>& tifd, pair<float, float>& tird);
+std::tm			GetLocalTime();
 
 std::wstring	StringToWstring(string str);
 std::string		WstringToString(std::wstring str);

@@ -34,6 +34,20 @@ int32 CalculateDistance(pair<float, float>& tifd, pair<float, float>& tird)
     return CalculateDistance(tifd.first, tird.second, tird.first, tird.second);
 }
 
+std::tm GetLocalTime()
+{
+    auto now = std::chrono::system_clock::now();
+
+    // 현재 시간을 std::time_t 타입으로 변환합니다.
+    std::time_t now_time = std::chrono::system_clock::to_time_t(now);
+
+    // 스레드 안전한 버전인 std::localtime_s 함수를 사용하여 날짜와 시간 정보를 분리합니다.
+    std::tm local_time;
+    localtime_s(&local_time, &now_time);
+
+    return local_time;
+}
+
 std::wstring StringToWstring(string str)
 {
     return std::wstring(str.begin(), str.end());
