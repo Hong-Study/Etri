@@ -10,9 +10,8 @@ public:
 
 	virtual void		OnRecvPacket(BYTE* buffer, int32 size) override;
 	virtual void		OnDisconnected() override;
-
 	void				SetTirdData(const StTirdData* data);
-
+	
 	SessionRef			GetSessoin() { return shared_from_this(); }
 	TirdRef				GetTirdSession() { return static_pointer_cast<TirdSession>(shared_from_this()); }
 
@@ -35,5 +34,6 @@ private:
 	TifdRef				_pairingTarget;
 	StTirdData*			_myData = nullptr;
 	class FileWriter*	_writer = nullptr;
+	int32				_nowTime = 0;
 };
 

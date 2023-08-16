@@ -7,7 +7,7 @@ public:
 	~FileWriter();
 	void FileStreamClose();
 
-	bool FileStreamOpenWithCSV(std::filesystem::path fileName, ePairState state, std::ios_base::openmode mode = std::ios_base::out | std::ios_base::app);
+	bool FileStreamOpenWithCSV(int32 month, int32 day, int32 time, std::string deviceId, Device device, ePairState state, std::ios_base::openmode mode = std::ios_base::out | std::ios_base::app);
 
 	template<typename T>
 	bool WritePendingString(T* data);
@@ -16,6 +16,7 @@ public:
 	bool IsOpen() { return writer.is_open(); }
 private:
 	std::ofstream writer;
+	std::string filePath;
 
 private:
 	// 시간 Device Lat Long 스피드 위성

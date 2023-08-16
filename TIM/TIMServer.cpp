@@ -78,46 +78,51 @@ bool TIMServer::PushPendingList(TirdRef tird, string deviceId)
 	return true;
 }
 
-void TIMServer::PopPendingList(SessionRef session)
+bool TIMServer::PopPendingList(SessionRef session)
 {
 	if (session->GetDeviceType() == Device::DeviceTIFD)
-		PopPendingList(dynamic_pointer_cast<TifdSession>(session));
+		return PopPendingList(dynamic_pointer_cast<TifdSession>(session));
 	else if(session->GetDeviceType() == Device::DeviceTIRD)
-		PopPendingList(dynamic_pointer_cast<TirdSession>(session));
+		return PopPendingList(dynamic_pointer_cast<TirdSession>(session));
+	return false;
 }
 
-void TIMServer::PopPendingList(TifdRef tifd)
+bool TIMServer::PopPendingList(TifdRef tifd)
 {
 	WRITE_LOCK_IDX(TIFD);
 
 	if (tifd == nullptr)
-		return;
+		return false;
 
 	string deviceId = tifd->GetDeviceIdToString();
 
 	auto it = _pendingTifd.find(deviceId);
 	if (it == _pendingTifd.end())
-		return;
+		return false;
 
 	WINGUI->DeleteTifdPendingList(tifd->GetListId());
 	_pendingTifd.erase(it);
+
+	return true;
 }
 
-void TIMServer::PopPendingList(TirdRef tird)
+bool TIMServer::PopPendingList(TirdRef tird)
 {
 	WRITE_LOCK_IDX(TIRD);
 
 	if (tird == nullptr)
-		return;
+		return false;
 
 	string deviceId = tird->GetDeviceIdToString();
 
 	auto it = _pendingTird.find(deviceId);
 	if (it == _pendingTird.end())
-		return;
+		return false;
 
 	WINGUI->DeleteTirdPendingList(tird->GetListId());
 	_pendingTird.erase(it);
+
+	return true;
 }
 
 bool TIMServer::PushPairingList(TifdRef tifd, TirdRef tird, int32 distance)
@@ -182,21 +187,23 @@ bool TIMServer::PushPairingList(TifdRef tifd, TirdRef tird, int32 distance)
 	return true;
 }
 
-void TIMServer::PopPairingList(int32 pairingId, SessionRef session)
+bool TIMServer::PopPairingList(int32 pairingId, SessionRef session)
 {
 	if (session->GetDeviceType() == Device::DeviceTIFD)
-		PopPairingList(pairingId, dynamic_pointer_cast<TifdSession>(session));
+		return PopPairingList(pairingId, dynamic_pointer_cast<TifdSession>(session));
 	else if (session->GetDeviceType() == Device::DeviceTIRD)
-		PopPairingList(pairingId, dynamic_pointer_cast<TirdSession>(session));
+		return PopPairingList(pairingId, dynamic_pointer_cast<TirdSession>(session));
+	return false;
 }
 
-void TIMServer::PopPairingList(int32 pairingId, TifdRef session)
+bool TIMServer::PopPairingList(int32 pairingId, TifdRef session)
 {
 	WRITE_LOCK_IDX(PAIRING);
 
 	auto it = _pairingSessions.find(pairingId);
 	if (it == _pairingSessions.end())
-		PopPendingList(session);
+		return PopPendingList(session);
+	else
 	{
 		PairSessionRef pairRef = it->second;
 		pairRef->Disconnected();
@@ -207,30 +214,36 @@ void TIMServer::PopPairingList(int32 pairingId, TifdRef session)
 			auto tird = pairRef->GetTirdSession();
 			SendBufferRef sendBuf = MakeSendLoraBuffer(LORA_DEFAULT_CH);
 			tird->Send(sendBuf);
-			PushPendingList(tird, tird->GetDeviceIdToString());
+			if (PushPendingList(tird, tird->GetDeviceIdToString()) == false)
+				return false;
 		}
 		wstring str = std::format(L"Pairing Off : tifd Disconnected {0}", session->GetDeviceIdToWString());
 		WINGUI->AddLogList(str);
 		_pairingSessions.erase(pairingId);
+
+		return true;
 	}
 }
 
-void TIMServer::PopPairingList(int32 pairingId, TirdRef session)
+bool TIMServer::PopPairingList(int32 pairingId, TirdRef session)
 {
 	WRITE_LOCK_IDX(PAIRING);
 
 	auto it = _pairingSessions.find(pairingId);
 	if (it == _pairingSessions.end())
-		PopPendingList(session);
+		return PopPendingList(session);
 	else 
 	{
 		PairSessionRef pairRef = it->second;
-		if(pairRef != nullptr)
-			pairRef->Disconnected();
+		if (pairRef == nullptr)
+			return false;
+
+		pairRef->Disconnected();
 
 		WINGUI->DeletePairingList(pairRef->GetPairingId(), session->GetDeviceType());
 
 		{
+			// TODO üũ
 			auto tifd = pairRef->GetTifdSession();
 			PushPendingList(tifd, tifd->GetDeviceIdToString());
 
@@ -243,6 +256,8 @@ void TIMServer::PopPairingList(int32 pairingId, TirdRef session)
 		wstring str = std::format(L"Pairing Off : tird Disconnected {0}", session->GetDeviceIdToWString());
 		WINGUI->AddLogList(str);
 		_pairingSessions.erase(it);
+
+		return true;
 	}
 }
 

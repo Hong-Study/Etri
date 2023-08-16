@@ -13,7 +13,6 @@ int32			GOverCount = 10;
 bool			GStart = false;
 std::wstring	GServerIP = L"";
 std::string		GLogPos = "";
-std::string		GCSVPos = "";
 std::wstring	GCodingRate = L"";
 std::wstring	GSpreadingFactor = L"";
 
@@ -47,8 +46,6 @@ public:
 		if (GParser->GetValue("ServerIP", GServerIP) == false)
 			return;
 		if (GParser->GetValue("LogPos", GLogPos) == false)
-			return;
-		if (GParser->GetValue("CSVPos", GCSVPos) == false)
 			return;
 
 		int32 inputData = 0;

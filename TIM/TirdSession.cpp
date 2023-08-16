@@ -10,6 +10,7 @@ TirdSession::TirdSession(SOCKET sock, SOCKADDR_IN addr, const StTirdData* data)
 {
 	Init();
 	SetTirdData(data);
+	_nowTime = data->stTime.hour;
 }
 
 void TirdSession::Init()
@@ -18,8 +19,6 @@ void TirdSession::Init()
 
 	_myData = new StTirdData;
 	_writer = new FileWriter();
-
-	//_writer->SetParentPath(GCSVPos + "");
 }
 
 void TirdSession::OnRecvPacket(BYTE* buffer, int32 size)
@@ -68,9 +67,18 @@ void TirdSession::SetTirdData(const StTirdData* data)
 
 	if (_pairState == ePairState::PairState_Unpair)
 	{
+		if (_nowTime != _myData->stTime.hour)
+		{
+			_nowTime = _myData->stTime.hour;
+			std::tm localTime = GetLocalTime();
+			_writer->FileStreamOpenWithCSV(localTime.tm_mon, localTime.tm_mday, localTime.tm_hour, _myData->deviceId, _deviceType, ePairState::PairState_Unpair);
+		}
+
 		if (_writer->WritePendingString(_myData) == false)
 			return;
 	}
+	else if (_pairState == ePairState::PairState_Pair && _writer->IsOpen())
+		_writer->FileStreamClose();
 }
 
 pair<float, float> TirdSession::GetLocation()

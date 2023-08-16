@@ -16,10 +16,10 @@ public:
 
 	virtual void		OnRecvPacket(BYTE* buffer, int32 size) override;
 	virtual void		OnDisconnected() override;
-	virtual void		UpdateToPairingSuccess() override;
+	void				UpdateToPairingSuccess();
 
 	void				SetTifdData(const StTifdData* data);
-	
+
 	SessionRef			GetSessoin()     { return shared_from_this(); }
 	TifdRef				GetTifdSession() { return static_pointer_cast<TifdSession>(shared_from_this()); }
 
@@ -46,7 +46,7 @@ private:
 	TirdRef								_pairingTarget;
 	StTifdData*							_myData = nullptr;
 	class FileWriter*					_writer;
-	int32								_nowTime = 0;
+	int32								_nowTime = -1;
 	std::string							_fileName;
 };
 

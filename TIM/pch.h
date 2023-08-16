@@ -33,6 +33,7 @@
 #include <stack>
 #include <Python.h>
 #include <memory>
+#include <variant>
 
 #include "Types.h"
 #include "Macro.h"

@@ -10,7 +10,6 @@ TifdSession::TifdSession(SOCKET sock, SOCKADDR_IN addr, const StTifdData* data)
 { 
 	Init();
 	SetTifdData(data);
-	_nowTime = data->stTime.hour;
 }
 
 void TifdSession::Init()
@@ -51,14 +50,19 @@ void TifdSession::OnDisconnected()
 	wstring str = std::format(L"Disconnected TIFD {0}", GetDeviceIdToWString());
 	WINGUI->AddLogList(str);
 
-	delete _myData;
+	if (_myData != nullptr)
+		delete _myData;
+	if (_writer != nullptr)
+		delete _writer;
+
 	SetDeviceType(Device::DeviceNone);
 }
 
 void TifdSession::UpdateToPairingSuccess()
 {
 	_possibleLists.clear();
-	_writer->FileStreamOpenWithCSV(_fileName, ePairState::PairState_Pair);
+	std::tm localTime = GetLocalTime();
+	_writer->FileStreamOpenWithCSV(localTime.tm_mon, localTime.tm_mday, localTime.tm_hour, _myData->deviceId, _deviceType, ePairState::PairState_Pair);
 }
 
 void TifdSession::SetTifdData(const StTifdData* data)
@@ -67,12 +71,12 @@ void TifdSession::SetTifdData(const StTifdData* data)
 
 	memcpy(_myData, data, sizeof(StTifdData));
 	_myData->stTime.hour = (_myData->stTime.hour + 9) % 24;
+
 	if (_nowTime != _myData->stTime.hour)
 	{
 		_nowTime = _myData->stTime.hour;
 		std::tm localTime = GetLocalTime();
-		_fileName = std::format("Logs/{0}/{1}/{2}/TIFD/{3}.csv", localTime.tm_year, localTime.tm_mon, _nowTime, _myData->deviceId);
-		_writer->FileStreamOpenWithCSV(_fileName, _pairState);
+		_writer->FileStreamOpenWithCSV(localTime.tm_mon, localTime.tm_mday, localTime.tm_hour, _myData->deviceId, _deviceType, _pairState);
 	}
 		
 	if (_pairState == ePairState::PairState_Pair)
@@ -103,7 +107,6 @@ void TifdSession::HandleUpdatePendingInfo(const StTifdData* data)
 {
 	SetTifdData(data);
 	WINGUI->UpdateTifdPendingInfo(GetListId(), GetTifdSession());
-	//TIM->SaveTifdCSV(GetDatsa());
 
 	if (data->speed >= GLowestSpeed)
 	{

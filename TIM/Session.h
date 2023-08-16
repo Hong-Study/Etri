@@ -12,7 +12,7 @@ public:
 	void				UpdateRecv();
 	int32				OnRecv(BYTE* buffer, int32 size);
 	virtual void		OnRecvPacket(BYTE* buffer, int32 size) { }
-	virtual void		UpdateToPairingSuccess() = 0;
+
 	// Disconnect
 	void				Disconnect();
 	virtual void		OnDisconnected() { }

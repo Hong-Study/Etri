@@ -13,7 +13,6 @@ extern std::wstring		GServerIP;
 extern std::wstring		GSpreadingFactor;
 extern std::wstring		GCodingRate;
 extern std::string		GLogPos;
-extern std::string		GCSVPos;
 
 extern std::wstring*	tifdInfoStr;
 extern std::wstring*	tirdInfoStr;

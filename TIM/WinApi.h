@@ -109,6 +109,7 @@ private:
 
 	// 시간	구하는 함수
 	void 		UpdateTime();
+	
 private:
 	// 초기화 타이밍이 매우 매우 매우 아쉽다.
 	HWND dlgHwnd = 0;

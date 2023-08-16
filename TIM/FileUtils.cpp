@@ -3,7 +3,7 @@
 
 FileWriter::FileWriter()
 {
-    
+   
 }
 
 FileWriter::~FileWriter()
@@ -17,18 +17,29 @@ void FileWriter::FileStreamClose()
         writer.close();
 }
 
-bool FileWriter::FileStreamOpenWithCSV(std::filesystem::path totalPath, ePairState state, std::ios_base::openmode mode)
+bool FileWriter::FileStreamOpenWithCSV(int32 month, int32 day, int32 time,std::string deviceId, Device device, ePairState state, std::ios_base::openmode mode)
 {
     if (writer.is_open() == true)
         writer.close();
 
+    if (device == Device::DeviceTIFD)
+    {
+        if (state == ePairState::PairState_Pair)
+            filePath = std::format("PAIRING/{0}/{1}/{2}/{3}.csv", month, day, time, deviceId.c_str());
+        else if (state == ePairState::PairState_Unpair)
+            filePath = std::format("TIFD/{0}/{1}/{2}/{3}.csv", month, day, time, deviceId.c_str());
+    }
+    else if (device == Device::DeviceTIRD)
+        filePath = std::format("TIRD/{0}/{1}/{2}/{3}.csv", month, day, time, deviceId.c_str());
+    else
+        return false;
+
+    std::filesystem::path totalPath = GLogPos + filePath;
+
     if (std::filesystem::exists(totalPath.parent_path()) == false)
         std::filesystem::create_directories(totalPath.parent_path());
 
-    if (std::filesystem::exists(totalPath) == true)
-        return false;
-
-    writer.open(totalPath.string(), mode);
+    writer.open(totalPath.c_str(), mode);
     if (writer.is_open() == false)
         return false;
 

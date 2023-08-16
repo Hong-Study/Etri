@@ -15,8 +15,8 @@ public:
 	bool PushPairingList(TifdRef tifd, TirdRef tird, int32 distance);
 	
 	// Pop ฐüทร
-	void PopPendingList(SessionRef session);
-	void PopPairingList(int32 pairingId, SessionRef session);
+	bool PopPendingList(SessionRef session);
+	bool PopPairingList(int32 pairingId, SessionRef session);
 
 	void GetPossiblePairingList(pair<float, float> tifdLocation, vector<PossiblePairingList>& lists);
 	void SendKeepAlive();
@@ -25,11 +25,11 @@ private:
 	bool PushPendingList(TifdRef tifd, std::string deviceId);
 	bool PushPendingList(TirdRef tird, std::string deviceId);
 
-	void PopPendingList(TifdRef tifd);
-	void PopPendingList(TirdRef tird);
+	bool PopPendingList(TifdRef tifd);
+	bool PopPendingList(TirdRef tird);
 
-	void PopPairingList(int32 pairingId, TifdRef session);
-	void PopPairingList(int32 pairingId, TirdRef session);
+	bool PopPairingList(int32 pairingId, TifdRef session);
+	bool PopPairingList(int32 pairingId, TirdRef session);
 	
 private:
 	enum { TIFD, TIRD, PAIRING, LOCK_SIZE};
