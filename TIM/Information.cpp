@@ -81,7 +81,7 @@ void MapPendingInfo::SetPos(float posLat, float posLong)
 	this->posLat = posLat;
 	this->posLong = posLong;
 
-	if (CalculateDistance(posLat, posLong, centerLat, centerLong) >= 1000)
+	if (CalculateDistance(posLat, posLong, centerLat, centerLong) >= 700)
 	{
 		SetCenter(posLat, posLong);
 	}

@@ -110,6 +110,7 @@ private:
 	// 시간	구하는 함수
 	void 		UpdateTime();
 	
+	friend		LRESULT CALLBACK DialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 private:
 	// 초기화 타이밍이 매우 매우 매우 아쉽다.
 	HWND dlgHwnd = 0;
@@ -138,7 +139,9 @@ private:
 
 private:
 	// 리스트 저장
-	vector<PListPtr> pairingItems;
+	vector<PListPtr>		pairingItems;
+	vector<TifdListPtr>		TifdItem;
+	vector<TifdListPtr>		TirdItem;
 
 	// 리스트를 빠르게 찾기 위한 해쉬맵
 	map<int32, TirdListPtr> tirdHashMap;

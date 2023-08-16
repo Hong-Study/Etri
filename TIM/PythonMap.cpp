@@ -32,12 +32,12 @@ void PythonMap::Clear()
 	Py_Finalize();
 }
 
-bool PythonMap::CreatePendingMapPng(float centerLat, float centerLong, float nowLat, float nowLong, string fileName)
+bool PythonMap::CreatePendingMapPng(float centerLat, float centerLong, float nowLat, float nowLong, int32 zoomLevel)
 {
 	PyThreadState_Swap(NULL);
 	PyThreadState_Swap(LMyThreadState);
 
-	_pArgs = Py_BuildValue("(f, f, f, f, s)", centerLat, centerLong, nowLat, nowLong, fileName.c_str());
+	_pArgs = Py_BuildValue("(f, f, f, f, d)", centerLat, centerLong, nowLat, nowLong, zoomLevel);
 	if (_pArgs == nullptr || _pCreatePendingFunc == nullptr)
 		return false;
 	_pValue = PyObject_CallObject(_pCreatePendingFunc, _pArgs);
@@ -60,12 +60,12 @@ bool PythonMap::CreatePendingMapPng(float centerLat, float centerLong, float now
 	return true;
 }
 
-bool PythonMap::CreatePairingMapPng(float centerLat, float centerLong, float tifdLat, float tifdLong, float tirdLat, float tirdLong, string fileName)
+bool PythonMap::CreatePairingMapPng(float centerLat, float centerLong, float tifdLat, float tifdLong, float tirdLat, float tirdLong, int32 zoomLevel)
 {
 	PyThreadState_Swap(NULL);
 	PyThreadState_Swap(LMyThreadState);
 
-	_pArgs = Py_BuildValue("(f, f, f, f, f, f, s)", centerLat, centerLong, tifdLat, tifdLong, tirdLat, tirdLong, fileName.c_str());
+	_pArgs = Py_BuildValue("(f, f, f, f, f, f, d)", centerLat, centerLong, tifdLat, tifdLong, tirdLat, tirdLong, zoomLevel);
 	if (_pArgs == nullptr || _pCreatePairingFunc == nullptr)
 		return false;
 	_pValue = PyObject_CallObject(_pCreatePairingFunc, _pArgs);

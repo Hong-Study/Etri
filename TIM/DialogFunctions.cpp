@@ -47,28 +47,33 @@ LRESULT CALLBACK DialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         {
             WINGUI->SelectTab();
         }
-        // 더블클릭시 Information 출현
-        pnmhdr = reinterpret_cast<NMHDR*>(lParam);
-        if (pnmhdr->code == NM_DBLCLK)
+        else
         {
-            HWND hListView = pnmhdr->hwndFrom;
-            selectedIndex = ListView_GetNextItem(hListView, -1, LVNI_SELECTED);
-            if (selectedIndex >= 0)
+            // 더블클릭시 Information 출현
+            pnmhdr = reinterpret_cast<NMHDR*>(lParam);
+
+            if (pnmhdr->code == NM_DBLCLK)
             {
-                switch (pnmhdr->idFrom)
+                HWND hListView = pnmhdr->hwndFrom;
+                selectedIndex = ListView_GetNextItem(hListView, -1, LVNI_SELECTED);
+                if (selectedIndex >= 0)
                 {
-                case TIFD_LIST:
-                    WINGUI->ShowTifdInformation(selectedIndex);
-                    break;
-                case TIRD_LIST:
-                    WINGUI->ShowTirdInformation(selectedIndex);
-                    break;
-                case PAIRING_LIST:
-                    WINGUI->ShowPairingInformation(selectedIndex);
-                    break;
+                    switch (pnmhdr->idFrom)
+                    {
+                    case TIFD_LIST:
+                        WINGUI->ShowTifdInformation(selectedIndex);
+                        break;
+                    case TIRD_LIST:
+                        WINGUI->ShowTirdInformation(selectedIndex);
+                        break;
+                    case PAIRING_LIST:
+                        WINGUI->ShowPairingInformation(selectedIndex);
+                        break;
+                    }
                 }
             }
         }
+        
         return TRUE;
     case WM_CLOSE:
         PostQuitMessage(0);

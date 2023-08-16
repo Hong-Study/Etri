@@ -6,9 +6,9 @@ class PythonMap
 public:
 	void Init();
 	void Clear();
-	bool CreatePendingMapPng(float centerLat, float centerLong, float nowLat, float nowLong, string fileName);
+	bool CreatePendingMapPng(float centerLat, float centerLong, float nowLat, float nowLong, int32 zoomLevel);
 	bool CreatePendingMapPng(float centerLat, float centerLong, float nowLat, float nowLong);
-	bool CreatePairingMapPng(float centerLat, float centerLong, float tifdLat, float tifdLong, float tirdLat, float tirdLong, string fileName);
+	bool CreatePairingMapPng(float centerLat, float centerLong, float tifdLat, float tifdLong, float tirdLat, float tirdLong, int32 zoomLevel);
 	bool CreatePairingMapPng(float centerLat, float centerLong, float tifdLat, float tifdLong, float tirdLat, float tirdLong);
 
 private:

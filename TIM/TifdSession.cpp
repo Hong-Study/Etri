@@ -124,13 +124,10 @@ void TifdSession::HandleUpdatePairingInfo(const StTifdData* data)
 {
 	SetTifdData(data);
 
-	auto tirdLocation = _pairingTarget->GetLocation();
-	auto tifdLocation = GetLocation();
-	int32 distance = CalculateDistance(tifdLocation, tirdLocation);
-
 	// 알람이 울렸으니 새로운 페어링을 찾아보는건가?
 	if (_myData->trainStatus == TrainStatus_OpenAlarmRequest)
 	{
+		bool newTird = true;
 #ifdef TEST
 		// 새로운 리스트 목록 가져오기
 		FindNearPossibleTird();
@@ -138,14 +135,30 @@ void TifdSession::HandleUpdatePairingInfo(const StTifdData* data)
 		// 만약 목록이 비어있다면
 		if (_possibleLists.empty())
 		{
-			SendBufferRef buf = MakeSendBuffer(CommandType::CmdType_Alarm);
-			Send(buf);
+			newTird = false;
 		}
 		else
 		{
-			CheckingPairingPossibleList();
+			if (CheckingPairingPossibleList() == false)
+			{
+				newTird = false;
+			}
 		}
+
+		if (newTird == false)
+		{
+			SendBufferRef buf = MakeSendBuffer(CommandType::CmdType_Alarm);
+			Send(buf);
+		}
+
 #endif // TEST
+		auto tirdLocation = _pairingTarget->GetLocation();
+		auto tifdLocation = GetLocation();
+		int32 distance = CalculateDistance(tifdLocation, tirdLocation);
+
+		// TODO (거리 체크)
+		//if(distance >)
+
 		wstring str = std::format(L"Train({0}) is OpenAlramRequest", _myData->trainNo);
 		WINGUI->AddLogList(str);
 		WINGUI->ShowTrainAlramStatus(GetPairingId(), L"Open Alram Request");
@@ -153,7 +166,7 @@ void TifdSession::HandleUpdatePairingInfo(const StTifdData* data)
 
 	if (_pairingTarget != nullptr)
 	{
-		WINGUI->UpdateTifdPairingInfo(GetPairingId(), distance, GetData(), _pairingTarget->GetData());
+		WINGUI->UpdateTifdPairingInfo(GetPairingId(), data->distance, GetData(), _pairingTarget->GetData());
 		//TIM->SavePairingCSV(GetData(), _pairingTarget->GetData());
 	}
 }

@@ -127,8 +127,8 @@ void Network::HandleRegister()
 	data.trainNo = 203;
 	data.trainLength = 1234;
 	data.trainStatus = 0;
-	data.lat = 0.4f;
-	data.lon = 0.f;
+	data.lat = 0.0f;
+	data.lon = 0.0f;
 	data.distance = 0;
 	data.speed = 21;
 
@@ -146,8 +146,8 @@ void Network::HandleConfirm()
 	cout << "Confirm" << endl;
 
 	thread = new std::thread([=]() {
-		float latitude = 0.f;
-		float longitude = 0.f;
+		float latitude = 36.5f;
+		float longitude = 127.3617f;
 		uint64 tick = GetTickCount64();
 		while (true)
 		{
@@ -186,8 +186,8 @@ void Network::HandleConfirm()
 				BYTE* buf = MakeSendBuffer(data, CmdType_Tifd_Info, 0, Device::DeviceTIFD);
 				Send(buf, HEAD_SIZE + sizeof(StTifdData));
 				tick = now;
-				latitude += 0.0001f;
-				longitude += 0.0001f;
+				latitude += 0.001f;
+				//longitude += 0.001f;
 			}
 		}
 		});
