@@ -1025,7 +1025,7 @@ void WinApi::SaveLogData()
             startTimeInfo.replace(it, 1, "-");
         }
 
-        string createPath = GLogPos + startTimeInfo;
+        string createPath = GLogPos + "GUI_Log/" + startTimeInfo;
         std::filesystem::path path(createPath);
 
         if (std::filesystem::exists(path.parent_path()) == false)
@@ -1100,8 +1100,9 @@ void WinApi::SetPendingListInfo(TifdListPtr item)
 {
     LVITEM lvItem{};
     lvItem.mask = LVIF_TEXT;
-    lvItem.pszText = (LPWSTR)(item->id.c_str());
     lvItem.iItem = item->pos;
+
+    lvItem.pszText = (LPWSTR)(item->id.c_str());
     lvItem.iSubItem = (int)PendingTifdListViewCategory::TableTifd_No;
     ListView_SetItem(pendingTifdList, &lvItem);
    
@@ -1113,7 +1114,6 @@ void WinApi::SetPendingListInfo(TifdListPtr item)
     lvItem.iSubItem = (int)PendingTifdListViewCategory::TableTifd_DeviceID;
     ListView_SetItem(pendingTifdList, &lvItem);
     
-    // 여기서 Information이 눌러지면 터지는 듯 하다.
     lvItem.pszText = (LPWSTR)(item->latitude.c_str());
     lvItem.iSubItem = (int)PendingTifdListViewCategory::TableTifd_Lat;
     ListView_SetItem(pendingTifdList, &lvItem);

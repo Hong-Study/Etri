@@ -7,6 +7,10 @@
 
 void PythonMap::Init()
 {
+	std::filesystem::path savePath = "./SaveMap";
+	if (std::filesystem::exists(savePath) == false)
+		std::filesystem::create_directory(savePath);
+
 	Py_Initialize();
 	_pFileName = PyUnicode_FromString("CreateMap");
 	_pModule = PyImport_Import(_pFileName); // 생성한 PyObject pName을 import한다.
