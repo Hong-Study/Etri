@@ -140,8 +140,6 @@ private:
 private:
 	// 리스트 저장
 	vector<PListPtr>		pairingItems;
-	vector<TifdListPtr>		TifdItem;
-	vector<TifdListPtr>		TirdItem;
 
 	// 리스트를 빠르게 찾기 위한 해쉬맵
 	map<int32, TirdListPtr> tirdHashMap;

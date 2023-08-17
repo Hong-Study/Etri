@@ -167,7 +167,6 @@ void TifdSession::HandleUpdatePairingInfo(const StTifdData* data)
 	if (_pairingTarget != nullptr)
 	{
 		WINGUI->UpdateTifdPairingInfo(GetPairingId(), data->distance, GetData(), _pairingTarget->GetData());
-		//TIM->SavePairingCSV(GetData(), _pairingTarget->GetData());
 	}
 }
 
