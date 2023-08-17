@@ -358,7 +358,6 @@ bool WinApi::CreateTifdInformation(HWND parent)
 
 bool WinApi::CreatePairingInformation(HWND parent)
 {
-
     RECT rect{};
     if (GetWindowRect(parent, &rect) == false)
     {
@@ -1240,6 +1239,9 @@ void WinApi::UpdateTifdPairingInfo(int32 id, int32 distance, StTifdData* tifd, S
     if (IsInfo.compare_exchange_weak(isId, isId + 1))
     {
         SetInfoTifdItem(infoHandle->tifdInfo, ptr->tifd, L"Paired", ptr->tird->device);
+        SetInfoTirdItem(infoHandle->tirdInfo, ptr->tird, L"Paired");
+
+        // 고쳐야할 부분
         SetInfoMapCreate(tifd->lat, tifd->lon, tird->lat, tird->lon);
         IsInfo.store(isId);
     }
@@ -1248,28 +1250,16 @@ void WinApi::UpdateTifdPairingInfo(int32 id, int32 distance, StTifdData* tifd, S
 void WinApi::UpdateTirdPairingInfo(int32 id, StTirdData* data)
 {
     PListPtr ptr = nullptr;
-    {
-        WRITE_LOCK_IDX(PAIRING_LOCK);
+    WRITE_LOCK_IDX(PAIRING_LOCK);
 
-        auto it = pairingHashMap.find(id);
-        if (it == pairingHashMap.end())
-            return;
-
-        ptr = it->second;
-        ptr->tird->SetInfo(data);
-
-        SetTirdPairingList(ptr);
-    }
-
-    if (ptr == nullptr)
+    auto it = pairingHashMap.find(id);
+    if (it == pairingHashMap.end())
         return;
-    
-    int32 isId = ptr->tifd->idNum << 4;
-    if (IsInfo.compare_exchange_weak(isId, isId + 1))
-    {
-        SetInfoTirdItem(infoHandle->tirdInfo, ptr->tird, L"Paired");
-        IsInfo.store(isId);
-    }
+
+    ptr = it->second;
+    ptr->tird->SetInfo(data);
+
+    SetTirdPairingList(ptr);
 }
 
 int32 WinApi::NewPairingList(int32 tifdId, int32 tirdId, int32 distance)

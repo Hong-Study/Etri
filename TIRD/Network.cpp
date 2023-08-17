@@ -120,8 +120,8 @@ void Network::HandleConfirm()
 	cout << "Confirm" << endl;
 
 	thread = new std::thread([=]() {
-		float latitude = 0.f;
-		float longitude = 0.f;
+		float latitude = 36.5f;
+		float longitude = 127.3617f;
 		float battery = 100.0f;
 		uint64 tick = GetTickCount64();
 		while (true)
@@ -144,8 +144,7 @@ void Network::HandleConfirm()
 				data.lon = longitude;
 				data.battery = battery--;
 
-				latitude += 0.0001f;
-				longitude += 0.0001f;
+				latitude += 0.001f;
 				data.speed = 21;
 				BYTE* buf = MakeSendBuffer(data, CmdType_Tird_Info, 0, Device::DeviceTIRD);
 				Send(buf, HEAD_SIZE + sizeof(StTirdData));

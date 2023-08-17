@@ -108,6 +108,6 @@ void MapPairingInfo::SetPos(float tifdLat, float tifdLong, float tirdLat, float 
 
 void MapInfo::SetCenter(float centLat, float centLong)
 {
-	centerLat = centLat;
-	centerLong = centLong;
+	this->centerLat = centLat;
+	this->centerLong = centLong;
 }

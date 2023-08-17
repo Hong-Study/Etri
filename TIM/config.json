@@ -5,7 +5,7 @@
 	"MaximumDistance": 1000,
 	"LowestSpeed": 20,
 	"DistanceAccuarcy": 100,
-	"SuccessCount": 5,
+	"SuccessCount": 1,
 	"OverCount": 10,
 	"SpreadingFactor": 10,
 	"CodingRate": 1

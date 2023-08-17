@@ -137,6 +137,7 @@ struct MapInfo
 	float centerLat = 0;
 	float centerLong = 0;
 };
+
 struct MapPendingInfo : public MapInfo
 {
 	void SetPos(pair<float, float> pos);
@@ -151,8 +152,6 @@ struct MapPairingInfo : public MapInfo
 	void SetPos(pair<float, float> tifd, pair<float, float> tird);
 	void SetPos(float tifdLat, float tifdLong, float tirdLat, float tirdLong);
 
-	float centerLat = 0;
-	float centerLong = 0;
 	float tifdLat;
 	float tifdLong;
 	float tirdLat;
