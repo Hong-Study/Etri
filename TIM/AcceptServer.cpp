@@ -13,7 +13,6 @@ void AcceptServer::Init()
 	if (_listenSocket == INVALID_SOCKET)
 		CRASH("Create Socket");
 
-	_sockAddr.sin_port = htons(GServerPort);
 	_sockAddr.sin_family = AF_INET;
 
 	IN_ADDR address;
@@ -33,7 +32,8 @@ void AcceptServer::Init()
 void AcceptServer::Update()
 {
 	// 멈추는 조건 설정
-	
+	_sockAddr.sin_port = htons(GServerPort);
+
 	if (bind(_listenSocket, (SOCKADDR*)&_sockAddr, sizeof(SOCKADDR_IN)) == SOCKET_ERROR)
 		CRASH("Bind Error");
 	if (listen(_listenSocket, SOMAXCONN) == SOCKET_ERROR)

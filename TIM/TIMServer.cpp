@@ -5,6 +5,7 @@
 #include "WinApi.h"
 #include "TifdSession.h"
 #include "TirdSession.h"
+#include "AcceptServer.h"
 
 using std::string;
 void TIMServer::Init()
@@ -332,4 +333,11 @@ void TIMServer::GetPossiblePairingList(pair<float, float> tifdLocation, vector<P
 			}
 		}
 	}
+}
+
+void TIMServer::Start()
+{
+	THREAD->Push([=]() {
+		SERVER->Update();
+		});
 }

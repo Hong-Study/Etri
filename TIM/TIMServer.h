@@ -7,6 +7,7 @@ class TIMServer
 public:
 	void Init();
 	void Clear();
+	void Start();
 
 	template<typename T>
 	bool PushNewSession(T session);

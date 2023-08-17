@@ -11,7 +11,6 @@ public:
 
 	void		SetInstacne(HINSTANCE instance) { hInstance = instance; }
 	HINSTANCE	GetHInstance() { return hInstance; }
-	void		Start();
 	void		SelectTab();
 	void		SaveLogData();
 

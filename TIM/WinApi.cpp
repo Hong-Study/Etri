@@ -3,7 +3,6 @@
 #include "resource.h"
 #include "ThreadManager.h"
 #include "TIMServer.h"
-#include "AcceptServer.h"
 #include "DialogFunctions.h"
 #include "TifdSession.h"
 #include "TirdSession.h"
@@ -63,13 +62,6 @@ void WinApi::Clear()
     tifdHashMap.clear();
     pairingHashMap.clear();
     pairingItems.clear();
-}
-
-void WinApi::Start()
-{
-    THREAD->Push([=]() {
-        SERVER->Update();
-        });
 }
 
 void WinApi::SelectTab()

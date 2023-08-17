@@ -28,7 +28,7 @@ LRESULT CALLBACK DialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             if (!GStart)
             {
                 GStart = true;
-                WINGUI->Start();
+                TIM->Start();
                 TIM->SendKeepAlive();
                 MessageBox(hwnd, _T("서버가 정상적으로 실행되었습니다."), _T("알림"), MB_OK | MB_ICONINFORMATION);
             }
