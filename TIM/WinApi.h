@@ -22,7 +22,10 @@ public:
 	void		UpdateTifdPairingInfo(int32 id, int32 distance, StTifdData* tifd, StTirdData* tird);
 	void		UpdateTirdPairingInfo(int32 id, StTirdData* data);
 
-	void		UpdateInformation(HWND& handle, NMLVDISPINFO* plvdi);
+	void		UpdateTifdInfo(NMLVDISPINFO* plvdi);
+	void		UpdateTirdInfo(NMLVDISPINFO* plvdi);
+	void		UpdateCandidateInfo(NMLVDISPINFO* plvdi);
+	
 	// Session 종료시 삭제
 	void		DeleteTirdPendingList(int32 id);
 	void		DeleteTifdPendingList(int32 id);
@@ -142,7 +145,7 @@ private:
 private:
 	// 리스트 저장
 	vector<PListPtr>		pairingItems;
-
+	
 	// 리스트를 빠르게 찾기 위한 해쉬맵
 	map<int32, TirdListPtr> tirdHashMap;
 	map<int32, TifdListPtr> tifdHashMap;

@@ -337,7 +337,7 @@ bool WinApi::CreateTifdInformation(HWND parent)
     CreateCandidateColum(CandidateInfo, width / 2);
 
     mapInfo = make_shared<MapPendingInfo>();
-    infoHandle = make_shared<InfoHandle>(parent, tifdInfo, CandidateInfo);
+    infoHandle = make_shared<InfoHandle>(parent, tifdInfo, nullptr, CandidateInfo);
 
     ShowWindow(parent, SW_SHOW);
     return true;
@@ -1250,9 +1250,102 @@ void WinApi::UpdateTirdPairingInfo(int32 id, StTirdData* data)
     SetTirdPairingList(ptr);
 }
 
-void WinApi::UpdateInformation(HWND& handle, NMLVDISPINFO* plvdi)
+void WinApi::UpdateTifdInfo(NMLVDISPINFO* plvdi)
 {
-    
+    auto item = plvdi->item;
+    if (item.iSubItem == 0)
+    {
+        item.pszText = (LPWSTR)(tifdInfoStr[item.iItem].c_str());
+    }
+    else {
+        int32 id = IsInfo.load() >> 4;
+
+        switch (item.iItem)
+        {
+        case (int)TifdInfoCategory::Version:
+            item.pszText = (LPWSTR)tifdHashMap[id]->version.c_str();
+            break;
+        case (int)TifdInfoCategory::Device:
+            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
+            break;
+        case (int)TifdInfoCategory::PairingStatus:
+            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
+            break;
+        case (int)TifdInfoCategory::Network_Information:
+            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
+            break;
+        case (int)TifdInfoCategory::IpAddress:
+            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
+            break;
+        case (int)TifdInfoCategory::Port:
+            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
+            break;
+        case (int)TifdInfoCategory::GPS_Information:
+            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
+            break;
+        case (int)TifdInfoCategory::Time:
+            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
+            break;
+        case (int)TifdInfoCategory::Latitude:
+            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
+            break;
+        case (int)TifdInfoCategory::Longitude:
+            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
+            break;
+        case (int)TifdInfoCategory::Altitude:
+            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
+            break;
+        case (int)TifdInfoCategory::Speed:
+            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
+            break;
+        case (int)TifdInfoCategory::Satellite:
+            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
+            break;
+        case (int)TifdInfoCategory::Distance:
+            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
+            break;
+        case (int)TifdInfoCategory::LORA_Information:
+            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
+            break;
+        case (int)TifdInfoCategory::LoRaVersion:
+            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
+            break;
+        case (int)TifdInfoCategory::Channel:
+            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
+            break;
+        case (int)TifdInfoCategory::Power:
+            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
+            break;
+        case (int)TifdInfoCategory::Bandwidth:
+            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
+            break;
+        case (int)TifdInfoCategory::SpreadingFactor:
+            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
+            break;
+        case (int)TifdInfoCategory::CodingRate:
+            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
+            break;
+        case (int)TifdInfoCategory::LoRa_Receive_Information:
+            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
+            break;
+        case (int)TifdInfoCategory::TIRD_Device:
+            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
+            break;
+        case (int)TifdInfoCategory::RSSI:
+            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
+            break;
+        }
+    }
+}
+
+void WinApi::UpdateTirdInfo(NMLVDISPINFO* plvdi)
+{
+
+}
+
+void WinApi::UpdateCandidateInfo(NMLVDISPINFO* plvdi)
+{
+
 }
 
 int32 WinApi::NewPairingList(int32 tifdId, int32 tirdId, int32 distance)
