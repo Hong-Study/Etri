@@ -1241,8 +1241,8 @@ void WinApi::UpdateTifdPairingInfo(int32 id, int32 distance, StTifdData* tifd, S
 
 void WinApi::UpdateTirdPairingInfo(int32 id, StTirdData* data)
 {
-    PListPtr ptr = nullptr;
     WRITE_LOCK_IDX(PAIRING_LOCK);
+    PListPtr ptr = nullptr;
 
     auto it = pairingHashMap.find(id);
     if (it == pairingHashMap.end())

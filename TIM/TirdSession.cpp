@@ -32,7 +32,11 @@ void TirdSession::OnRecvPacket(BYTE* buffer, int32 size)
 			if (_pairState == ePairState::PairState_Unpair)
 				HandleUpdatePendingInfo(reinterpret_cast<StTirdData*>(&head[1]));
 			else if (_pairState == ePairState::PairState_Pair)
+			{
 				HandleUpdatePairingInfo(reinterpret_cast<StTirdData*>(&head[1]));
+				SendInputDataToTarget(buffer, size);
+			}
+				
 		}
 		else
 			Disconnect();
