@@ -309,7 +309,8 @@ bool WinApi::CreateTifdInformation(HWND parent)
     int32 width = (rect.right - rect.left) / 4;
     int32 height = rect.bottom - rect.top - 100;
 
-    HWND tifdInfo = CreateWindow(WC_LISTVIEW, L"Logs", WS_CHILD | WS_VISIBLE | LVS_REPORT
+    HWND tifdInfo = CreateWindow(WC_LISTVIEW, L"Logs"
+        , WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_OWNERDATA
         , 20, 20, width, height
         , parent, nullptr
         , hInstance, nullptr);
@@ -323,7 +324,8 @@ bool WinApi::CreateTifdInformation(HWND parent)
     CreateTifdInfoColum(tifdInfo, width / 2);
 
     // 후보자로 변경해줘야 된다.
-    HWND CandidateInfo = CreateWindow(WC_LISTVIEW, L"Logs", WS_CHILD | WS_VISIBLE | LVS_REPORT
+    HWND CandidateInfo = CreateWindow(WC_LISTVIEW, L"Logs"
+        , WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_OWNERDATA
         , width + 30, 20, width, height
         , parent, nullptr
         , hInstance, nullptr);
@@ -338,6 +340,9 @@ bool WinApi::CreateTifdInformation(HWND parent)
 
     mapInfo = make_shared<MapPendingInfo>();
     infoHandle = make_shared<InfoHandle>(parent, tifdInfo, nullptr, CandidateInfo);
+
+    ListView_SetItemCount(tifdInfo, (int)TifdInfoCategory::SIZE);
+    ListView_SetItemCount(CandidateInfo, 5);
 
     ShowWindow(parent, SW_SHOW);
     return true;
@@ -1168,8 +1173,9 @@ void WinApi::UpdateTifdPendingInfo(int32 id, TifdRef tifd)
     int32 isInfo = id << 4;
     if (IsInfo.compare_exchange_weak(isInfo, isInfo + 1))
     {
-        SetInfoTifdItem(infoHandle->tifdInfo, ptr, L"UnPair", tifd->GetDeviceIdToWString());
-        SetInfoCandidateItem(tifd->_possibleLists);
+        ListView_Update(infoHandle->tifdInfo, 0);
+        //SetInfoTifdItem(infoHandle->tifdInfo, ptr, L"UnPair", tifd->GetDeviceIdToWString());
+        //SetInfoCandidateItem(tifd->_possibleLists);
         SetInfoMapCreate(tifd->GetLocation());
         IsInfo.store(isInfo);
     }
@@ -1340,7 +1346,82 @@ void WinApi::UpdateTifdInfo(NMLVDISPINFO* plvdi)
 
 void WinApi::UpdateTirdInfo(NMLVDISPINFO* plvdi)
 {
+    auto item = plvdi->item;
+    if (item.iSubItem == 0)
+    {
+        item.pszText = (LPWSTR)(tirdInfoStr[item.iItem].c_str());
+    }
+    else {
+        int32 id = IsInfo.load() >> 4;
 
+        switch (item.iItem)
+        {
+        case (int)TirdInfoCategory::Version:
+            item.pszText = (LPWSTR)tirdHashMap[id]->version.c_str();
+            break;
+        case (int)TirdInfoCategory::Device:
+            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
+            break;
+        case (int)TirdInfoCategory::PairingStatus:
+            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
+            break;
+        case (int)TirdInfoCategory::Network_Information:
+            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
+            break;
+        case (int)TirdInfoCategory::IpAddress:
+            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
+            break;
+        case (int)TirdInfoCategory::Port:
+            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
+            break;
+        case (int)TirdInfoCategory::GPS_Information:
+            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
+            break;
+        case (int)TirdInfoCategory::Time:
+            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
+            break;
+        case (int)TirdInfoCategory::Latitude:
+            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
+            break;
+        case (int)TirdInfoCategory::Longitude:
+            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
+            break;
+        case (int)TirdInfoCategory::Altitude:
+            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
+            break;
+        case (int)TirdInfoCategory::Speed:
+            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
+            break;
+        case (int)TirdInfoCategory::Satellite:
+            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
+            break;
+
+        case (int)TirdInfoCategory::LORA_Information:
+            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
+            break;
+        case (int)TirdInfoCategory::Channel:
+            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
+            break;
+        case (int)TirdInfoCategory::Power:
+            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
+            break;
+        case (int)TirdInfoCategory::Bandwidth:
+            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
+            break;
+        case (int)TirdInfoCategory::SpreadingFactor:
+            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
+            break;
+        case (int)TirdInfoCategory::CodingRate:
+            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
+            break;
+        case (int)TirdInfoCategory::Battery_Information:
+            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
+            break;
+        case (int)TirdInfoCategory::Battery_Voltage:
+            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
+            break;
+        }
+    }
 }
 
 void WinApi::UpdateCandidateInfo(NMLVDISPINFO* plvdi)

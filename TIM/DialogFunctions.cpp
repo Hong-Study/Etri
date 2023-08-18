@@ -211,20 +211,19 @@ LRESULT InformationProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         if (pnmhdr->code == LVM_GETGROUPINFO)
         {
             NMLVDISPINFO* plvdi = reinterpret_cast<NMLVDISPINFO*>(pnmhdr);
-            if (pnmhdr->code == LVN_GETDISPINFO)
+            if (WINGUI->infoHandle == nullptr)
+                return TRUE;
+            if (pnmhdr->hwndFrom == WINGUI->infoHandle->tifdInfo)
             {
-                if (pnmhdr->hwndFrom == WINGUI->infoHandle->tifdInfo)
-                {
-                    WINGUI->UpdateTifdInfo(plvdi);
-                }
-                else if (pnmhdr->hwndFrom == WINGUI->infoHandle->tirdInfo)
-                {
-                    WINGUI->UpdateTirdInfo(plvdi);
-                }
-                else if (pnmhdr->hwndFrom == WINGUI->infoHandle->chandidateInfo)
-                {
-                    WINGUI->UpdateCandidateInfo(plvdi);
-                }
+                WINGUI->UpdateTifdInfo(plvdi);
+            }
+            else if (pnmhdr->hwndFrom == WINGUI->infoHandle->tirdInfo)
+            {
+                WINGUI->UpdateTirdInfo(plvdi);
+            }
+            else if (pnmhdr->hwndFrom == WINGUI->infoHandle->chandidateInfo)
+            {
+                WINGUI->UpdateCandidateInfo(plvdi);
             }
         }
         return TRUE;
