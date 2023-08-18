@@ -76,16 +76,6 @@ void Session::UpdateRecv()
 		_recvBuffer.Clean();
 	}
 
-	switch (GetPairState())
-	{
-	case ePairState::PairState_Unpair:
-		TIM->PopPendingList(shared_from_this());
-		break;
-	case ePairState::PairState_Pair:
-		TIM->PopPairingList(GetPairingId(), shared_from_this());
-		break;
-	}
-
 	Disconnect();
 }
 
@@ -126,6 +116,16 @@ void Session::Disconnect()
 
 	_socket = INVALID_SOCKET;
 
+	switch (GetPairState())
+	{
+	case ePairState::PairState_Unpair:
+		TIM->PopPendingList(shared_from_this());
+		break;
+	case ePairState::PairState_Pair:
+		TIM->PopPairingList(GetPairingId(), shared_from_this());
+		break;
+	}
+
 	OnDisconnected();
 }
 
@@ -156,7 +156,6 @@ void Session::Send(BYTE* buffer, int32 size)
 		break;
 	}
 }
-
 
 /*
 //void Session::PrintSessionInfo()

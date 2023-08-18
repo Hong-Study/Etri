@@ -209,6 +209,7 @@
     <ResourceCompile Include="TIM.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\PythonSetup.bat" />
     <None Include="cpp.hint" />
     <None Include="CreateMap.py" />
   </ItemGroup>

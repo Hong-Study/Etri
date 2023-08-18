@@ -85,6 +85,7 @@ bool TIMServer::PopPendingList(SessionRef session)
 		return PopPendingList(dynamic_pointer_cast<TifdSession>(session));
 	else if(session->GetDeviceType() == Device::DeviceTIRD)
 		return PopPendingList(dynamic_pointer_cast<TirdSession>(session));
+
 	return false;
 }
 

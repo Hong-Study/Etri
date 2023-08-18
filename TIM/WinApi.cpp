@@ -109,7 +109,6 @@ void WinApi::SetTabText()
 
 void WinApi::SetButtonPos()
 {
-    // emptySize = 100
     int32 width = 100;
     int32 height = 50;
     SetWindowPos(startButton, HWND_TOP, tabWidth + startX, logHeight + startY + 100, width, height, 0);
@@ -118,8 +117,6 @@ void WinApi::SetButtonPos()
 
 void WinApi::ShowTifdInformation(int32 selectedIndex)
 {
-    //WRITE_LOCK;
-
     for (auto pairs : tifdHashMap)
     {
         if (pairs.second->pos == selectedIndex)
@@ -164,8 +161,6 @@ void WinApi::ShowTirdInformation(int32 selectedIndex)
 
 void WinApi::ShowPairingInformation(int32 selectedIndex)
 {
-    //WRITE_LOCK;
-    
     if (selectedIndex % 2 == 1)
         selectedIndex -= 1;
 
@@ -1209,21 +1204,20 @@ void WinApi::UpdateTirdPendingInfo(int32 id, StTirdData* data)
 
 void WinApi::UpdateTifdPairingInfo(int32 id, int32 distance, StTifdData* tifd, StTirdData* tird)
 {
-    PListPtr ptr = nullptr;
-    {
-        WRITE_LOCK_IDX(PAIRING_LOCK);
+    WRITE_LOCK_IDX(PAIRING_LOCK);
 
-        auto it = pairingHashMap.find(id);
-        if (it == pairingHashMap.end())
-            return;
+    auto it = pairingHashMap.find(id);
+    if (it == pairingHashMap.end())
+        return;
 
-        ptr = it->second;
-        ptr->tifd->SetInfo(tifd);
-        ptr->distance = to_wstring(distance);
+    PListPtr ptr = it->second;
+    if (ptr == nullptr)
+        return;
+    ptr->tifd->SetInfo(tifd);
+    ptr->distance = to_wstring(distance);
 
-        SetTifdPairingList(ptr);
-    }
-    
+    SetTifdPairingList(ptr);
+
     if (ptr == nullptr)
         return;
 
@@ -1242,16 +1236,23 @@ void WinApi::UpdateTifdPairingInfo(int32 id, int32 distance, StTifdData* tifd, S
 void WinApi::UpdateTirdPairingInfo(int32 id, StTirdData* data)
 {
     WRITE_LOCK_IDX(PAIRING_LOCK);
-    PListPtr ptr = nullptr;
 
     auto it = pairingHashMap.find(id);
     if (it == pairingHashMap.end())
         return;
 
-    ptr = it->second;
+    PListPtr ptr = it->second;
+    if (ptr == nullptr)
+        return;
+
     ptr->tird->SetInfo(data);
 
     SetTirdPairingList(ptr);
+}
+
+void WinApi::UpdateInformation(HWND& handle, NMLVDISPINFO* plvdi)
+{
+    
 }
 
 int32 WinApi::NewPairingList(int32 tifdId, int32 tirdId, int32 distance)

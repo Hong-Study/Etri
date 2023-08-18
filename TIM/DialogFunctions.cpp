@@ -191,20 +191,29 @@ LRESULT PortOptionProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 LRESULT InformationProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     UNREFERENCED_PARAMETER(lParam);
-    static int32 threadId = 0;
+    static int32 infoId = 0;
     switch (msg)
     {
     case WM_INITDIALOG:
-        threadId = static_cast<int>(lParam);
+        infoId = static_cast<int>(lParam);
         return TRUE;
 
     case WM_COMMAND:
         if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
         {
-            WINGUI->ClearInfomation(threadId);
+            WINGUI->ClearInfomation(infoId);
             EndDialog(hwnd, LOWORD(wParam));
             return TRUE;
         }
+        return TRUE;
+    case WM_NOTIFY:
+        NMHDR* pnmhdr = reinterpret_cast<NMHDR*>(lParam);
+        if (pnmhdr->code == LVM_GETGROUPINFO)
+        {
+            NMLVDISPINFO* plvdi = reinterpret_cast<NMLVDISPINFO*>(pnmhdr);
+            WINGUI->UpdateInfo
+        }
+        return TRUE;
     }
     return FALSE;
 }

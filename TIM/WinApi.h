@@ -22,6 +22,7 @@ public:
 	void		UpdateTifdPairingInfo(int32 id, int32 distance, StTifdData* tifd, StTirdData* tird);
 	void		UpdateTirdPairingInfo(int32 id, StTirdData* data);
 
+	void		UpdateInformation(HWND& handle, NMLVDISPINFO* plvdi);
 	// Session 종료시 삭제
 	void		DeleteTirdPendingList(int32 id);
 	void		DeleteTifdPendingList(int32 id);
@@ -36,11 +37,13 @@ public:
 	void		ShowPairingInformation(int32 selectedIndex);
 	void		ShowTrainAlramStatus(int32 listId, std::wstring status);
 
+	// Information 생성(ListView)
 	bool		CreateTifdInformation(HWND parent);
 	bool		CreateTirdInformation(HWND parent);
 	bool		CreatePairingInformation(HWND parent);
 	void		ClearInfomation(int32 id);
 
+	// 새로운 PendingList 추가
 	int32		NewPendingList(TifdRef session);
 	int32		NewPendingList(TirdRef session);
 	int32		NewPairingList(int32 tifdId, int32 tirdId, int32 distance);
@@ -109,7 +112,7 @@ private:
 	// 시간	구하는 함수
 	void 		UpdateTime();
 	
-	friend		LRESULT CALLBACK DialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	friend		LRESULT InformationProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 private:
 	// 초기화 타이밍이 매우 매우 매우 아쉽다.
 	HWND dlgHwnd = 0;

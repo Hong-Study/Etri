@@ -194,6 +194,9 @@
     <None Include="CreateMap.py">
       <Filter>Python</Filter>
     </None>
+    <None Include="..\PythonSetup.bat">
+      <Filter>Python</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TIM.rc">

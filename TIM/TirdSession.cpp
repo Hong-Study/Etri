@@ -36,7 +36,6 @@ void TirdSession::OnRecvPacket(BYTE* buffer, int32 size)
 				HandleUpdatePairingInfo(reinterpret_cast<StTirdData*>(&head[1]));
 				SendInputDataToTarget(buffer, size);
 			}
-				
 		}
 		else
 			Disconnect();

@@ -44,6 +44,7 @@ void TifdSession::OnRecvPacket(BYTE* buffer, int32 size)
 
 void TifdSession::OnDisconnected()
 {
+
 	if (_pairingTarget != nullptr)
 		_pairingTarget = nullptr;
 
