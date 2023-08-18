@@ -32,12 +32,16 @@ void PythonMap::Init()
 
 void PythonMap::Clear()
 {
+	WRITE_LOCK;
+
 	PyThreadState_Swap(mainThreadState);
 	Py_Finalize();
 }
 
 bool PythonMap::CreatePendingMapPng(float centerLat, float centerLong, float nowLat, float nowLong, int32 zoomLevel)
 {
+	WRITE_LOCK;
+
 	PyThreadState_Swap(NULL);
 	PyThreadState_Swap(LMyThreadState);
 
@@ -52,6 +56,8 @@ bool PythonMap::CreatePendingMapPng(float centerLat, float centerLong, float now
 
 bool PythonMap::CreatePendingMapPng(float centerLat, float centerLong, float nowLat, float nowLong)
 {
+	WRITE_LOCK;
+
 	PyThreadState_Swap(NULL);
 	PyThreadState_Swap(LMyThreadState);
 
@@ -66,6 +72,8 @@ bool PythonMap::CreatePendingMapPng(float centerLat, float centerLong, float now
 
 bool PythonMap::CreatePairingMapPng(float centerLat, float centerLong, float tifdLat, float tifdLong, float tirdLat, float tirdLong, int32 zoomLevel)
 {
+	WRITE_LOCK;
+
 	PyThreadState_Swap(NULL);
 	PyThreadState_Swap(LMyThreadState);
 
@@ -80,6 +88,8 @@ bool PythonMap::CreatePairingMapPng(float centerLat, float centerLong, float tif
 
 bool PythonMap::CreatePairingMapPng(float centerLat, float centerLong, float tifdLat, float tifdLong, float tirdLat, float tirdLong)
 {
+	WRITE_LOCK;
+
 	PyThreadState_Swap(NULL);
 	PyThreadState_Swap(LMyThreadState);
 

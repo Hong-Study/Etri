@@ -12,6 +12,8 @@ public:
 	bool CreatePairingMapPng(float centerLat, float centerLong, float tifdLat, float tifdLong, float tirdLat, float tirdLong);
 
 private:
+	USE_LOCK;
+
 	PyObject* _pFileName = nullptr;
 	PyObject* _pModule = nullptr;
 	PyObject* _pCreatePendingFunc = nullptr;

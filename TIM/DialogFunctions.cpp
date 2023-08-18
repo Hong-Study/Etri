@@ -211,7 +211,7 @@ LRESULT InformationProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         if (pnmhdr->code == LVM_GETGROUPINFO)
         {
             NMLVDISPINFO* plvdi = reinterpret_cast<NMLVDISPINFO*>(pnmhdr);
-            WINGUI->UpdateInfo
+            //WINGUI->UpdateInfo
         }
         return TRUE;
     }

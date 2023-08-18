@@ -4,6 +4,7 @@ enum ePairState
 {
 	PairState_Unpair = 0
 	, PairState_Pair
+	, Disconnect
 };
 
 enum CommandType : uint16

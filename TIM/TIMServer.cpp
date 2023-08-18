@@ -21,22 +21,27 @@ void TIMServer::Clear()
 	
 	for (auto ref : _pendingTifd)
 	{
+		ref.second->SetPairState(ePairState::Disconnect);
 		ref.second->Disconnect();
 	}
 
 	for (auto ref : _pendingTird)
 	{
+		ref.second->SetPairState(ePairState::Disconnect);
 		ref.second->Disconnect();
 	}
 	
 	for (auto ref : _pairingSessions)
 	{
+		ref.second->GetTifdSession()->SetPairState(ePairState::Disconnect);
 		ref.second->GetTifdSession()->Disconnect();
+
+		ref.second->GetTirdSession()->SetPairState(ePairState::Disconnect);
 		ref.second->GetTirdSession()->Disconnect();
 	}
 
-	_pendingTird.clear();
 	_pendingTifd.clear();
+	_pendingTird.clear();
 	_pairingSessions.clear();
 }
 

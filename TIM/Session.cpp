@@ -12,7 +12,8 @@ Session::Session(SOCKET sock, SOCKADDR_IN addr, Device device)
 
 Session::~Session()
 {
-	Disconnect();
+	if(_socket != INVALID_SOCKET)
+		Disconnect();
 }
 
 void Session::Init()
