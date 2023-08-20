@@ -39,3 +39,12 @@ enum ePairState
 	PairState_Unpair = 0,
 	PairState_Pair
 };
+
+enum enumTrainStatus
+{
+	TrainStatus_Normal = 0,
+	TrainStatus_OpenAlarm,
+	TrainStatus_OpenAlarmRequest,
+	TrainStatus_OpenTunnelAlarm,
+	TrainStatus_TunnelAlarm
+};
