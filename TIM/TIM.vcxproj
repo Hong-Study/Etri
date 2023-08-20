@@ -150,9 +150,9 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="DeadLock.h" />
     <ClInclude Include="FileUtils.h" />
     <ClInclude Include="Global.h" />
+    <ClInclude Include="JobQueue.h" />
     <ClInclude Include="JsonParser.h" />
     <ClInclude Include="Packet.h" />
     <ClInclude Include="PairSession.h" />
@@ -178,10 +178,10 @@
     <ClInclude Include="WinApi.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DeadLock.cpp" />
     <ClCompile Include="FileUtils.cpp" />
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="Information.cpp" />
+    <ClCompile Include="JobQueue.cpp" />
     <ClCompile Include="JsonParser.cpp" />
     <ClCompile Include="PairSession.cpp" />
     <ClCompile Include="Macro.cpp" />
