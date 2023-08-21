@@ -94,7 +94,11 @@ public:
 	{
 		_jobQueue.Push(job);
 	}
-	void Execute();
 
-	LockQueue<JobRef> _jobQueue;
+	void Execute();
+	virtual void Clear() { isWork = false; }
+
+private:
+	bool				isWork = true;
+	LockQueue<JobRef>	_jobQueue;
 };

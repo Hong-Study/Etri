@@ -11,22 +11,22 @@ class AcceptServer
 {
 	SINGLETON(AcceptServer);
 public:
-	void		Init();
-	void		Update();
-	void		Clear();
-	void		Disconnect(SessionInfo& info);
+	void			Init();
+	void			Update();
+	void			Clear();
+	void			Disconnect(SessionInfo& info);
 
 private:
-	void		Recv(SessionInfo& info);
-	int32		OnRecv(SessionInfo& info, BYTE* buffer, int32 size);
-	void		OnRecvPacket(SessionInfo& info, BYTE* buffer, int32 size);
+	void			Recv(SessionInfo& info);
+	int32			OnRecv(SessionInfo& info, BYTE* buffer, int32 size);
+	void			OnRecvPacket(SessionInfo& info, BYTE* buffer, int32 size);
 
-	bool		Send(SOCKET sock, SendBufferRef buffer);
-	bool		Send(SOCKET sock, BYTE* buffer, int32 size);
+	bool			Send(SOCKET sock, SendBufferRef buffer);
+	bool			Send(SOCKET sock, BYTE* buffer, int32 size);
 
 private:
-	void		HandleTifdConnect(SessionInfo& info, const StTifdData* data);
-	void		HandleTirdConnect(SessionInfo& info, const StTirdData* data);
+	void			HandleTifdConnect(SessionInfo& info, const StTifdData* data);
+	void			HandleTirdConnect(SessionInfo& info, const StTirdData* data);
 
 private:
 	SOCKET			_listenSocket = INVALID_SOCKET;

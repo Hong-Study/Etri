@@ -17,14 +17,9 @@ Session::~Session()
 
 void Session::Init()
 {
-	u_long on = 0;
-	int32 retVal = ioctlsocket(_socket, FIONBIO, &on);
-	if (retVal == SOCKET_ERROR)
-		CRASH("ioctlsocket Error");
-
 	// 네이글 알고리즘 제거
 	int nValue = 1;
-	retVal = setsockopt(_socket, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char*>(&nValue), sizeof(nValue));
+	int32 retVal = setsockopt(_socket, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char*>(&nValue), sizeof(nValue));
 	if (retVal != 0)
 		CRASH("setsockopt");
 
