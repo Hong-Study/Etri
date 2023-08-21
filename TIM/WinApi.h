@@ -6,6 +6,7 @@ class WinApi
 public:
 	void		Init();
 	void		Clear();
+	void		Update();
 	void		SetDlgHwnd(HWND hwnd) { dlgHwnd = hwnd; }
 	HWND		GetDlgHwnd() { return dlgHwnd; }
 
@@ -22,6 +23,7 @@ public:
 	void		UpdateTifdPairingInfo(int32 id, int32 distance, StTifdData* tifd, StTirdData* tird);
 	void		UpdateTirdPairingInfo(int32 id, StTirdData* data);
 
+	void		UpdateTemp(NMLVDISPINFO* plvdi);
 	void		UpdateTifdInfo(NMLVDISPINFO* plvdi);
 	void		UpdateTirdInfo(NMLVDISPINFO* plvdi);
 	void		UpdateCandidateInfo(NMLVDISPINFO* plvdi);
@@ -116,6 +118,8 @@ private:
 	void 		UpdateTime();
 	
 	friend		LRESULT InformationProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	friend		LRESULT DialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 private:
 	// 초기화 타이밍이 매우 매우 매우 아쉽다.
 	HWND dlgHwnd = 0;
@@ -145,7 +149,9 @@ private:
 private:
 	// 리스트 저장
 	vector<PListPtr>		pairingItems;
-	
+	vector<TifdListPtr>		tifdItems;
+	vector<TirdListPtr>		tirdItems;
+
 	// 리스트를 빠르게 찾기 위한 해쉬맵
 	map<int32, TirdListPtr> tirdHashMap;
 	map<int32, TifdListPtr> tifdHashMap;

@@ -51,6 +51,8 @@ struct PendingTifdListViewItem
 	wstring time;
 	wstring ip;
 	wstring port;
+
+	std::array<wstring, (int)TifdInfoCategory::SIZE> datas;
 };
 
 struct PendingTirdListViewItem
