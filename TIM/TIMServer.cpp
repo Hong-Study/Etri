@@ -347,3 +347,13 @@ void TIMServer::Start()
 		SERVER->Update();
 		});
 }
+
+void TIMServer::Update()
+{
+	while (true)
+	{
+		FD_ZERO(&_fds);
+
+		
+	}
+}

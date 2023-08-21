@@ -8,6 +8,7 @@ public:
 	void Init();
 	void Clear();
 	void Start();
+	void Update();
 
 	template<typename T>
 	bool PushNewSession(T session);
@@ -36,7 +37,6 @@ private:
 	enum { TIFD, TIRD, PAIRING, LOCK_SIZE};
 	USE_MANY_LOCK(LOCK_SIZE);
 
-	// ListId가 Key로 작동
 	// string이 키 값으로 작동하니 느리다.
 	std::map<std::string, TifdRef> _pendingTifd;
 	std::map<std::string, TirdRef> _pendingTird;
@@ -44,6 +44,7 @@ private:
 	// ListId가 Key로 작동
 	std::map<int32, PairSessionRef> _pairingSessions;
 
+	FD_SET _fds;
 private:
 	StLoraInfo _loraInfo;
 };
