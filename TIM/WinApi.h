@@ -1,6 +1,7 @@
 #pragma once
+#include "JobQueue.h"
 
-class WinApi
+class WinApi : public JobQueue
 {
 	SINGLETON(WinApi)
 public:

@@ -39,45 +39,41 @@ void Session::Init()
 		CRASH("setsockopt");
 }
 
-void Session::UpdateRecv()
+void Session::Recv()
 {
+
 	// 멈추는 기능 넣어주기
-	while (GStart)
+	int32 _recvLen = recv(_socket, reinterpret_cast<char*>(_recvBuffer.WritePos()), _recvBuffer.FreeSize(), 0);
+	if (_recvLen <= 0)
 	{
-		int32 _recvLen = recv(_socket, reinterpret_cast<char*>(_recvBuffer.WritePos()), _recvBuffer.FreeSize(), 0);
-		if (_recvLen <= 0)
+		int32 errorCode = WSAGetLastError();
+		// Check 필요
+		if (errorCode == WSAETIMEDOUT || errorCode == WSAEWOULDBLOCK)
 		{
-			int32 errorCode = WSAGetLastError();
-			// Check 필요
-			if (errorCode == WSAETIMEDOUT || errorCode == WSAEWOULDBLOCK)
-			{
-				if (++_tickCount == GOverCount)
-					break;
-				continue;
-			}
-			break;
-		}
-		// KeepAlive 보내는 코드 구현하기
-		// 구현 부분
-
-		if (_recvBuffer.OnWrite(_recvLen) == false)
-		{
-			// OverFlow
-			CRASH("OverFloaw");
-			break;
+			_tickCount += 1;
+			if (_tickCount == GOverCount)
+				Disconnect();
+			else
+				return;
 		}
 
-		// PktHead 사이즈보다 클 경우 OnRecv 함수 실행
-		int32 processLen = OnRecv(_recvBuffer.ReadPos(), _recvLen);
-		if (processLen < 0 || _recvBuffer.OnRead(processLen) == false)
-			break;
-		
-		_tickCount = 0;
-
-		_recvBuffer.Clean();
+		Disconnect();
 	}
 
-	Disconnect();
+	if (_recvBuffer.OnWrite(_recvLen) == false)
+	{
+		// OverFlow
+		Disconnect();
+	}
+
+	// PktHead 사이즈보다 클 경우 OnRecv 함수 실행
+	int32 processLen = OnRecv(_recvBuffer.ReadPos(), _recvLen);
+	if (processLen < 0 || _recvBuffer.OnRead(processLen) == false)
+		Disconnect();
+
+	_tickCount = 0;
+
+	_recvBuffer.Clean();
 }
 
 int32 Session::OnRecv(BYTE* buffer, int32 size)

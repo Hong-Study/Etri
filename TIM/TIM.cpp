@@ -39,6 +39,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance
             ::TranslateMessage(&msg);
             ::DispatchMessage(&msg);
         }
+        else
+            WINGUI->Execute();
     }
 
     GStart = false;

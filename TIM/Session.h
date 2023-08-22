@@ -9,7 +9,7 @@ public:
 	virtual void		Init();
 
 	// Recv
-	void				UpdateRecv();
+	void				Recv();
 	int32				OnRecv(BYTE* buffer, int32 size);
 	virtual void		OnRecvPacket(BYTE* buffer, int32 size) { }
 

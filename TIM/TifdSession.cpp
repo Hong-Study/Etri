@@ -106,7 +106,8 @@ pair<float, float> TifdSession::GetLocation()
 void TifdSession::HandleUpdatePendingInfo(const StTifdData* data)
 {
 	SetTifdData(data);
-	WINGUI->UpdateTifdPendingInfo(GetListId(), GetTifdSession());
+	
+	WINGUI->DoAsync(&WinApi::UpdateTifdPendingInfo, GetListId(), GetTifdSession());
 
 	if (data->speed >= GLowestSpeed)
 	{

@@ -229,7 +229,7 @@ void AcceptServer::HandleTifdConnect(SessionInfo& info, const StTifdData* data)
 {
 	TifdRef session = make_shared<TifdSession>(info.sock, info.sockAddr, data);
 
-	if (TIM->PushNewSession(session) == true)
+	if (TIM->PushPendingList(session, data->deviceId) == true)
 	{
 		info.sock = INVALID_SOCKET;
 		wstring str = std::format(L"Connected TIFD {0}", StringToWstring(data->deviceId));
@@ -246,7 +246,7 @@ void AcceptServer::HandleTirdConnect(SessionInfo& info, const StTirdData* data)
 {
 	TirdRef session = make_shared<TirdSession>(info.sock, info.sockAddr, data);
 
-	if (TIM->PushNewSession(session) == true)
+	if (TIM->PushPendingList(session, data->deviceId) == true)
 	{
 		info.sock = INVALID_SOCKET;
 		wstring str = std::format(L"Connected TIRD {0}", StringToWstring(data->deviceId));

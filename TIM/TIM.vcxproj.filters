@@ -93,9 +93,6 @@
     <ClInclude Include="JsonParser.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="DeadLock.h">
-      <Filter>Thread</Filter>
-    </ClInclude>
     <ClInclude Include="TirdSession.h">
       <Filter>Sessions</Filter>
     </ClInclude>
@@ -113,6 +110,9 @@
     </ClInclude>
     <ClInclude Include="FileUtils.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="JobQueue.h">
+      <Filter>Thread</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -167,9 +167,6 @@
     <ClCompile Include="JsonParser.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="DeadLock.cpp">
-      <Filter>Thread</Filter>
-    </ClCompile>
     <ClCompile Include="TirdSession.cpp">
       <Filter>Sessions</Filter>
     </ClCompile>
@@ -187,6 +184,9 @@
     </ClCompile>
     <ClCompile Include="FileUtils.cpp">
       <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="JobQueue.cpp">
+      <Filter>Thread</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

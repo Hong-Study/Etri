@@ -1199,7 +1199,7 @@ void WinApi::UpdateTifdPendingInfo(int32 id, TifdRef tifd)
         ptr->SetInfo(tifd->GetData());
         //SetPendingListInfo(ptr);
     }
-
+    
     //if (ptr == nullptr)
     //    return;
 
