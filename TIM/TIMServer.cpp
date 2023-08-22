@@ -52,8 +52,10 @@ void TIMServer::PopTifdList(TifdRef tifd)
 	if (it == _tifdList.end())
 		return;
 
-	FD_CLR(sock, &_fds);
-	_tifdList.erase(it);
+	TIM->DoAsync([=]() {
+		FD_CLR(sock, &_fds);
+		_tifdList.erase(deviceId);
+		});
 }
 
 void TIMServer::PopTirdList(TirdRef tird)
@@ -68,8 +70,10 @@ void TIMServer::PopTirdList(TirdRef tird)
 	if (it == _tirdList.end())
 		return;
 
-	FD_CLR(sock, &_fds);
-	_tirdList.erase(it);
+	TIM->DoAsync([=]() {
+		FD_CLR(sock, &_fds);
+		_tirdList.erase(deviceId);
+		});
 }
 
 void TIMServer::PushPairingList(TifdRef tifd, TirdRef tird, int32 distance)
@@ -127,7 +131,7 @@ void TIMServer::PushPairingList(TifdRef tifd, TirdRef tird, int32 distance)
 	}
 }
 
-bool TIMServer::PopPairingList(int32 pairingId, SessionRef session)
+void TIMServer::PopPairingList(int32 pairingId, SessionRef session)
 {
 	if (session->GetDeviceType() == Device::DeviceTIFD)
 		return PopPairingList(pairingId, dynamic_pointer_cast<TifdSession>(session));
@@ -136,11 +140,11 @@ bool TIMServer::PopPairingList(int32 pairingId, SessionRef session)
 	return false;
 }
 
-bool TIMServer::PopPairingList(int32 pairingId, TifdRef session)
+void TIMServer::PopPairingList(int32 pairingId, TifdRef session)
 {
 	auto it = _pairingSessions.find(pairingId);
 	if (it == _pairingSessions.end())
-		return PopTifdList(session);
+		return;
 	else
 	{
 		PairSessionRef pairRef = it->second;
@@ -156,23 +160,20 @@ bool TIMServer::PopPairingList(int32 pairingId, TifdRef session)
 
 		wstring str = std::format(L"Pairing Off : tifd Disconnected {0}", session->GetDeviceIdToWString());
 		WINGUI->DoAsync(&WinApi::AddLogList, str);
-		_pairingSessions.erase(pairingId);
 
-		return true;
+		_pairingSessions.erase(pairingId);
+		PopTifdList(session);
 	}
 }
 
-bool TIMServer::PopPairingList(int32 pairingId, TirdRef session)
+void TIMServer::PopPairingList(int32 pairingId, TirdRef session)
 {
 	auto it = _pairingSessions.find(pairingId);
 	if (it == _pairingSessions.end())
-		return PopPendingList(session);
+		return;
 	else 
 	{
 		PairSessionRef pairRef = it->second;
-		if (pairRef == nullptr)
-			return false;
-
 		pairRef->Disconnected();
 
 		WINGUI->DeletePairingList(pairRef->GetPairingId(), session->GetDeviceType());
@@ -188,11 +189,10 @@ bool TIMServer::PopPairingList(int32 pairingId, TirdRef session)
 		}
 
 		wstring str = std::format(L"Pairing Off : tird Disconnected {0}", session->GetDeviceIdToWString());
-
 		WINGUI->DoAsync(&WinApi::AddLogList, str);
-		_pairingSessions.erase(it);
 
-		return true;
+		_pairingSessions.erase(it);
+		PopTirdList(session);
 	}
 }
 

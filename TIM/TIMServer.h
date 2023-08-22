@@ -16,11 +16,10 @@ public:
 	void PushTirdList(SOCKET sock, SOCKADDR_IN sockAddr, const StTirdData* data);
 
 	void PopList(SessionRef ref);
-	void PopTifdList(TifdRef tifd);
-	void PopTirdList(TirdRef tird);	
+	
 
 	void PushPairingList(TifdRef tifd, TirdRef tird, int32 distance);
-	bool PopPairingList(int32 pairingId, SessionRef session);
+	void PopPairingList(int32 pairingId, SessionRef session);
 
 	void GetPossiblePairingList(pair<float, float> tifdLocation, vector<PossiblePairingList>& lists);
 
@@ -28,9 +27,11 @@ public:
 	void SendKeepAlive();
 
 private:
+	void PopTifdList(TifdRef tifd);
+	void PopTirdList(TirdRef tird);
 
-	bool PopPairingList(int32 pairingId, TifdRef session);
-	bool PopPairingList(int32 pairingId, TirdRef session);
+	void PopPairingList(int32 pairingId, TifdRef session);
+	void PopPairingList(int32 pairingId, TirdRef session);
 	
 private:
 	USE_LOCK;
