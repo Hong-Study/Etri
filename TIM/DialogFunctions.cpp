@@ -51,9 +51,8 @@ LRESULT CALLBACK DialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         {
             // 더블클릭시 Information 출현
             pnmhdr = reinterpret_cast<NMHDR*>(lParam);
-            if (pnmhdr->code == NM_CLICK)
-                return TRUE;
-            else if (pnmhdr->code == NM_DBLCLK)
+
+            if (pnmhdr->code == NM_DBLCLK)
             {
                 HWND hListView = pnmhdr->hwndFrom;
                 selectedIndex = ListView_GetNextItem(hListView, -1, LVNI_SELECTED);
@@ -73,14 +72,8 @@ LRESULT CALLBACK DialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     }
                 }
             }
-            else if (pnmhdr->code == LVM_GETGROUPINFO)
-            {
-                NMLVDISPINFO* plvdi = reinterpret_cast<NMLVDISPINFO*>(pnmhdr);
-                if(pnmhdr->hwndFrom == WINGUI->pendingTifdList)
-                    WINGUI->UpdateTemp(plvdi);
-            }
         }
-        
+
         return TRUE;
     case WM_CLOSE:
         PostQuitMessage(0);
@@ -218,25 +211,7 @@ LRESULT InformationProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         if (pnmhdr->code == LVM_GETGROUPINFO)
         {
             NMLVDISPINFO* plvdi = reinterpret_cast<NMLVDISPINFO*>(pnmhdr);
-
-            if (pnmhdr->hwndFrom == WINGUI->pendingTifdList)
-            {
-                
-            }
-            /*if (WINGUI->infoHandle == nullptr)
-                return TRUE;
-            if (pnmhdr->hwndFrom == WINGUI->infoHandle->tifdInfo)
-            {
-                WINGUI->UpdateTifdInfo(plvdi);
-            }
-            else if (pnmhdr->hwndFrom == WINGUI->infoHandle->tirdInfo)
-            {
-                WINGUI->UpdateTirdInfo(plvdi);
-            }
-            else if (pnmhdr->hwndFrom == WINGUI->infoHandle->chandidateInfo)
-            {
-                WINGUI->UpdateCandidateInfo(plvdi);
-            }*/
+            //WINGUI->UpdateInfo
         }
         return TRUE;
     }

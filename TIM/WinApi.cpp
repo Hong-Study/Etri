@@ -51,7 +51,7 @@ void WinApi::Clear()
 
     SaveLogData();
 
-    if(IsInfo.load() != 0)
+    if (IsInfo.load() != 0)
     {
         EndDialog(infoHandle->dialog, 0);
         mapInfo = nullptr;
@@ -62,29 +62,6 @@ void WinApi::Clear()
     tifdHashMap.clear();
     pairingHashMap.clear();
     pairingItems.clear();
-}
-
-void WinApi::Update()
-{
-    uint64 tick = GetTickCount64();
-    while (true)
-    {
-        uint64 now = GetTickCount64();
-        if (now - tick >= 200)
-        {
-            tick = now;
-
-            {
-                WRITE_LOCK_IDX(TIFD_LOCK);
-                SendMessage(pendingTifdList, LVM_REDRAWITEMS, 0, tifdItems.size() - 1);
-            }
-        }
-    }
-
-    /*{
-        WRITE_LOCK_IDX(TIRD_LOCK);
-        SendMessage(pendingTirdList, LVM_REDRAWITEMS, 0, tirdHashMap.size() - 1);
-    }*/
 }
 
 void WinApi::SelectTab()
@@ -135,7 +112,7 @@ void WinApi::SetButtonPos()
     int32 width = 100;
     int32 height = 50;
     SetWindowPos(startButton, HWND_TOP, tabWidth + startX, logHeight + startY + 100, width, height, 0);
-    SetWindowPos(closeButton, HWND_TOP, tabWidth + startX + width*2, logHeight + startY + 100, width, height, 0);
+    SetWindowPos(closeButton, HWND_TOP, tabWidth + startX + width * 2, logHeight + startY + 100, width, height, 0);
 }
 
 void WinApi::ShowTifdInformation(int32 selectedIndex)
@@ -146,7 +123,7 @@ void WinApi::ShowTifdInformation(int32 selectedIndex)
         {
             int32 expected = 0;
             int32 desired = pairs.second->idNum << 4;
-            if(IsInfo.compare_exchange_strong(expected, desired) == true)
+            if (IsInfo.compare_exchange_strong(expected, desired) == true)
             {
                 HWND handle = CreateDialogParam(hInstance, MAKEINTRESOURCE(INFORMATION), dlgHwnd, InformationProc, static_cast<LPARAM>(desired));
                 if (CreateTifdInformation(handle) == false)
@@ -227,7 +204,7 @@ void WinApi::ResetTifdPendingList()
     ListView_DeleteAllItems(pendingTifdList);
 
     int32 i = 0;
-    for(auto session : tifdHashMap)
+    for (auto session : tifdHashMap)
     {
         session.second->pos = i++;
         AddPendingListInfo(session.second);
@@ -252,20 +229,17 @@ void WinApi::CreatePendingListView()
     int32 width = tabWidth / 2 - startX;
     int32 height = tabHeight - startY;
     pendingTifdList = CreateWindow(WC_LISTVIEW, L"PendingTifdList"
-        , WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_OWNERDATA
+        , WS_CHILD | WS_VISIBLE | LVS_REPORT
         , startX, startY, width, height
         , dlgHwnd, reinterpret_cast<HMENU>(TIFD_LIST)
         , hInstance, nullptr);
 
-    // 20개 보다 클 경우 수정해줘야함.
-    ListView_SetItemCount(pendingTifdList, 20);
-
     // 컬럼 추가
     CreateTifdListColum(pendingTifdList, (width / (int)PendingTifdListViewCategory::CategorySize));
-    
+
     pendingTirdList = CreateWindow(WC_LISTVIEW, L"PendingTirdList"
         , WS_CHILD | WS_VISIBLE | LVS_REPORT
-        , startX + tabWidth/2, startY , width, height
+        , startX + tabWidth / 2, startY, width, height
         , dlgHwnd, reinterpret_cast<HMENU>(TIRD_LIST)
         , hInstance, nullptr);
 
@@ -284,7 +258,7 @@ void WinApi::CreatePairingListView()
         , hInstance, nullptr);
 
     ListView_SetExtendedListViewStyle(pairingList, LVS_EX_GRIDLINES);
-    
+
     int32 columSize = width / (int)PairingListViewCategory::CategorySize;
     CreatePairingColum(pairingList, columSize);
 }
@@ -316,7 +290,7 @@ void WinApi::CreateText()
     tifdText = CreateWindow(L"static", L"TIFD", WS_CHILD | WS_VISIBLE, startX, startY, textSize, textSize, dlgHwnd, nullptr, hInstance, nullptr);
     // TODO
 
-    tirdText = CreateWindow(L"static", L"TIRD", WS_CHILD | WS_VISIBLE, startX + tabWidth/2, startY, textSize, textSize, dlgHwnd, nullptr, hInstance, nullptr);
+    tirdText = CreateWindow(L"static", L"TIRD", WS_CHILD | WS_VISIBLE, startX + tabWidth / 2, startY, textSize, textSize, dlgHwnd, nullptr, hInstance, nullptr);
 
     ShowWindow(tifdText, SW_SHOW);
     ShowWindow(tirdText, SW_SHOW);
@@ -335,8 +309,7 @@ bool WinApi::CreateTifdInformation(HWND parent)
     int32 width = (rect.right - rect.left) / 4;
     int32 height = rect.bottom - rect.top - 100;
 
-    HWND tifdInfo = CreateWindow(WC_LISTVIEW, L"Logs"
-        , WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_OWNERDATA
+    HWND tifdInfo = CreateWindow(WC_LISTVIEW, L"Logs", WS_CHILD | WS_VISIBLE | LVS_REPORT
         , 20, 20, width, height
         , parent, nullptr
         , hInstance, nullptr);
@@ -350,8 +323,7 @@ bool WinApi::CreateTifdInformation(HWND parent)
     CreateTifdInfoColum(tifdInfo, width / 2);
 
     // 후보자로 변경해줘야 된다.
-    HWND CandidateInfo = CreateWindow(WC_LISTVIEW, L"Logs"
-        , WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_OWNERDATA
+    HWND CandidateInfo = CreateWindow(WC_LISTVIEW, L"Logs", WS_CHILD | WS_VISIBLE | LVS_REPORT
         , width + 30, 20, width, height
         , parent, nullptr
         , hInstance, nullptr);
@@ -365,10 +337,7 @@ bool WinApi::CreateTifdInformation(HWND parent)
     CreateCandidateColum(CandidateInfo, width / 2);
 
     mapInfo = make_shared<MapPendingInfo>();
-    infoHandle = make_shared<InfoHandle>(parent, tifdInfo, nullptr, CandidateInfo);
-
-    ListView_SetItemCount(tifdInfo, (int)TifdInfoCategory::SIZE);
-    ListView_SetItemCount(CandidateInfo, 5);
+    infoHandle = make_shared<InfoHandle>(parent, tifdInfo, CandidateInfo);
 
     ShowWindow(parent, SW_SHOW);
     return true;
@@ -427,7 +396,7 @@ void WinApi::CreateTifdListColum(HWND handle, int32 columSize)
     colum.pszText = (LPWSTR)L"Information";
     colum.cx = columSize;
     ListView_InsertColumn(handle, PendingTifdListViewCategory::Information, &colum);
-    
+
     colum.pszText = (LPWSTR)L"No";
     colum.cx = columSize;
     ListView_InsertColumn(handle, PendingTifdListViewCategory::TableTifd_No, &colum);
@@ -606,7 +575,7 @@ void WinApi::InsertTifdInfo(HWND handle)
     lvItem.mask = LVIF_TEXT;
     lvItem.iSubItem = 0;
 
-    for (int i = 0;i < (int)TifdInfoCategory::SIZE;i++)
+    for (int i = 0; i < (int)TifdInfoCategory::SIZE; i++)
     {
         lvItem.pszText = (LPWSTR)(tifdInfoStr[i].c_str());
         lvItem.iItem = i;
@@ -620,7 +589,7 @@ void WinApi::InsertTirdInfo(HWND handle)
     lvItem.mask = LVIF_TEXT;
     lvItem.iSubItem = 0;
 
-    for (int i = 0;i < (int)TirdInfoCategory::SIZE;i++)
+    for (int i = 0; i < (int)TirdInfoCategory::SIZE; i++)
     {
         lvItem.pszText = (LPWSTR)(tirdInfoStr[i].c_str());
         lvItem.iItem = i;
@@ -771,7 +740,7 @@ void WinApi::SetInfoCandidateItem(const vector<PossiblePairingList>& lists)
     lvItem.iSubItem = 1;
     lvItem.iItem = 0;
     ListView_SetItem(infoHandle->tirdInfo, &lvItem);
-    
+
     for (PossiblePairingList list : lists)
     {
         wstring id = list.target->GetDeviceIdToWString();
@@ -1090,16 +1059,15 @@ int32 WinApi::NewPendingTirdList(StTirdData* data, wstring ip, wstring port)
 
     InsertPendingTirdList(item);
     AddPendingListInfo(item);
-    
+
     return id;
 }
 
 void WinApi::InsertPendingTifdList(TifdListPtr item)
 {
-    tifdItems.push_back(item);
-    /*auto it = tifdHashMap.insert({ item->idNum, item });
+    auto it = tifdHashMap.insert({ item->idNum, item });
     if (it.second == false)
-        CRASH("Error");*/
+        CRASH("Error");
 }
 
 void WinApi::AddPendingListInfo(TifdListPtr item)
@@ -1123,27 +1091,27 @@ void WinApi::SetPendingListInfo(TifdListPtr item)
     lvItem.pszText = (LPWSTR)(item->id.c_str());
     lvItem.iSubItem = (int)PendingTifdListViewCategory::TableTifd_No;
     ListView_SetItem(pendingTifdList, &lvItem);
-   
+
     lvItem.pszText = (LPWSTR)(item->train.c_str());
     lvItem.iSubItem = (int)PendingTifdListViewCategory::TableTifd_TrainNo;
     ListView_SetItem(pendingTifdList, &lvItem);
-    
+
     lvItem.pszText = (LPWSTR)(item->device.c_str());
     lvItem.iSubItem = (int)PendingTifdListViewCategory::TableTifd_DeviceID;
     ListView_SetItem(pendingTifdList, &lvItem);
-    
+
     lvItem.pszText = (LPWSTR)(item->latitude.c_str());
     lvItem.iSubItem = (int)PendingTifdListViewCategory::TableTifd_Lat;
     ListView_SetItem(pendingTifdList, &lvItem);
-    
+
     lvItem.pszText = (LPWSTR)(item->longitude.c_str());
     lvItem.iSubItem = (int)PendingTifdListViewCategory::TableTifd_Lon;
     ListView_SetItem(pendingTifdList, &lvItem);
-    
+
     lvItem.pszText = (LPWSTR)(item->speed.c_str());
     lvItem.iSubItem = (int)PendingTifdListViewCategory::TableTifd_Speed;
     ListView_SetItem(pendingTifdList, &lvItem);
-    
+
     lvItem.pszText = (LPWSTR)(item->sat.c_str());
     lvItem.iSubItem = (int)PendingTifdListViewCategory::TableTifd_Sat;
     ListView_SetItem(pendingTifdList, &lvItem);
@@ -1168,13 +1136,13 @@ int32 WinApi::NewPendingList(TifdRef session)
 int32 WinApi::NewPendingTifdList(StTifdData* data, wstring ip, wstring port)
 {
     int32 id = sessionCount.fetch_add(1);
-    int32 pos = static_cast<int32>(tifdItems.size());
+    int32 pos = static_cast<int32>(tifdHashMap.size());
     TifdListPtr item = make_shared<PendingTifdListViewItem>(id, pos, data);
     item->ip = ip;
     item->port = port;
 
-    tifdItems.push_back(item);
-    //AddPendingListInfo(item);
+    InsertPendingTifdList(item);
+    AddPendingListInfo(item);
 
     return id;
 }
@@ -1185,33 +1153,26 @@ void WinApi::UpdateTifdPendingInfo(int32 id, TifdRef tifd)
     {
         WRITE_LOCK_IDX(TIFD_LOCK);
 
-        for (auto item : tifdItems)
-        {
-            if (id == item->idNum)
-            {
-                ptr = item;
-                break;
-            }
-        }
-
-        if (ptr == nullptr)
+        auto it = tifdHashMap.find(id);
+        if (it == tifdHashMap.end())
             return;
-        ptr->SetInfo(tifd->GetData());
-        //SetPendingListInfo(ptr);
-    }
-    
-    //if (ptr == nullptr)
-    //    return;
 
-    //int32 isInfo = id << 4;
-    //if (IsInfo.compare_exchange_weak(isInfo, isInfo + 1))
-    //{
-    //    ListView_Update(infoHandle->tifdInfo, 0);
-    //    //SetInfoTifdItem(infoHandle->tifdInfo, ptr, L"UnPair", tifd->GetDeviceIdToWString());
-    //    //SetInfoCandidateItem(tifd->_possibleLists);
-    //    SetInfoMapCreate(tifd->GetLocation());
-    //    IsInfo.store(isInfo);
-    //}
+        ptr = it->second;
+        ptr->SetInfo(tifd->GetData());
+        SetPendingListInfo(ptr);
+    }
+
+    if (ptr == nullptr)
+        return;
+
+    int32 isInfo = id << 4;
+    if (IsInfo.compare_exchange_weak(isInfo, isInfo + 1))
+    {
+        SetInfoTifdItem(infoHandle->tifdInfo, ptr, L"UnPair", tifd->GetDeviceIdToWString());
+        SetInfoCandidateItem(tifd->_possibleLists);
+        SetInfoMapCreate(tifd->GetLocation());
+        IsInfo.store(isInfo);
+    }
 }
 
 void WinApi::UpdateTirdPendingInfo(int32 id, StTirdData* data)
@@ -1228,7 +1189,7 @@ void WinApi::UpdateTirdPendingInfo(int32 id, StTirdData* data)
         ptr->SetInfo(data);
         SetPendingListInfo(ptr);
     }
-    
+
     if (ptr == nullptr)
         return;
 
@@ -1289,211 +1250,7 @@ void WinApi::UpdateTirdPairingInfo(int32 id, StTirdData* data)
     SetTirdPairingList(ptr);
 }
 
-void WinApi::UpdateTemp(NMLVDISPINFO* plvdi)
-{
-    auto& item = plvdi->item;
-    if (item.iItem >= tifdItems.size())
-        return;
-    else {
-        int32 id = item.iItem;
-        switch (item.iSubItem)
-        {
-        case (int)PendingTifdListViewCategory::Information:
-            item.pszText = (LPWSTR)L"tifdInformation";
-            break;
-        case (int)PendingTifdListViewCategory::TableTifd_No:
-            item.pszText = (LPWSTR)tifdItems[id]->id.c_str();
-            break;
-        case (int)PendingTifdListViewCategory::TableTifd_TrainNo:
-            item.pszText = (LPWSTR)tifdItems[id]->train.c_str();
-            break;
-        case (int)PendingTifdListViewCategory::TableTifd_DeviceID:
-            item.pszText = (LPWSTR)tifdItems[id]->device.c_str();
-            break;
-        case (int)PendingTifdListViewCategory::TableTifd_Lat:
-            item.pszText = (LPWSTR)tifdItems[id]->latitude.c_str();
-            break;
-        case (int)PendingTifdListViewCategory::TableTifd_Lon:
-            item.pszText = (LPWSTR)tifdItems[id]->longitude.c_str();
-            break;
-        case (int)PendingTifdListViewCategory::TableTifd_Speed:
-            item.pszText = (LPWSTR)tifdItems[id]->speed.c_str();
-            break;
-        case (int)PendingTifdListViewCategory::TableTifd_Sat:
-            item.pszText = (LPWSTR)tifdItems[id]->sat.c_str();
-            break;
-        }
-    }
-}
-
-void WinApi::UpdateTifdInfo(NMLVDISPINFO* plvdi)
-{
-    auto item = plvdi->item;
-    if (item.iSubItem == 0)
-    {
-        item.pszText = (LPWSTR)(tifdInfoStr[item.iItem].c_str());
-    }
-    else {
-        int32 id = IsInfo.load() >> 4;
-
-        switch (item.iItem)
-        {
-        case (int)TifdInfoCategory::Version:
-            item.pszText = (LPWSTR)tifdHashMap[id]->version.c_str();
-            break;
-        case (int)TifdInfoCategory::Device:
-            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
-            break;
-        case (int)TifdInfoCategory::PairingStatus:
-            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
-            break;
-        case (int)TifdInfoCategory::Network_Information:
-            item.pszText = (LPWSTR)L"";
-            break;
-        case (int)TifdInfoCategory::IpAddress:
-            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
-            break;
-        case (int)TifdInfoCategory::Port:
-            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
-            break;
-        case (int)TifdInfoCategory::GPS_Information:
-            item.pszText = (LPWSTR)L"";
-            break;
-        case (int)TifdInfoCategory::Time:
-            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
-            break;
-        case (int)TifdInfoCategory::Latitude:
-            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
-            break;
-        case (int)TifdInfoCategory::Longitude:
-            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
-            break;
-        case (int)TifdInfoCategory::Altitude:
-            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
-            break;
-        case (int)TifdInfoCategory::Speed:
-            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
-            break;
-        case (int)TifdInfoCategory::Satellite:
-            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
-            break;
-        case (int)TifdInfoCategory::Distance:
-            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
-            break;
-        case (int)TifdInfoCategory::LORA_Information:
-            item.pszText = (LPWSTR)L"";
-            break;
-        case (int)TifdInfoCategory::LoRaVersion:
-            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
-            break;
-        case (int)TifdInfoCategory::Channel:
-            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
-            break;
-        case (int)TifdInfoCategory::Power:
-            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
-            break;
-        case (int)TifdInfoCategory::Bandwidth:
-            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
-            break;
-        case (int)TifdInfoCategory::SpreadingFactor:
-            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
-            break;
-        case (int)TifdInfoCategory::CodingRate:
-            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
-            break;
-        case (int)TifdInfoCategory::LoRa_Receive_Information:
-            item.pszText = (LPWSTR)L"";
-            break;
-        case (int)TifdInfoCategory::TIRD_Device:
-            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
-            break;
-        case (int)TifdInfoCategory::RSSI:
-            item.pszText = (LPWSTR)tifdHashMap[id]->device.c_str();
-            break;
-        }
-    }
-}
-
-void WinApi::UpdateTirdInfo(NMLVDISPINFO* plvdi)
-{
-    auto item = plvdi->item;
-    if (item.iSubItem == 0)
-    {
-        item.pszText = (LPWSTR)(tirdInfoStr[item.iItem].c_str());
-    }
-    else {
-        int32 id = IsInfo.load() >> 4;
-
-        switch (item.iItem)
-        {
-        case (int)TirdInfoCategory::Version:
-            item.pszText = (LPWSTR)tirdHashMap[id]->version.c_str();
-            break;
-        case (int)TirdInfoCategory::Device:
-            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
-            break;
-        case (int)TirdInfoCategory::PairingStatus:
-            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
-            break;
-        case (int)TirdInfoCategory::Network_Information:
-            item.pszText = (LPWSTR)L"";
-            break;
-        case (int)TirdInfoCategory::IpAddress:
-            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
-            break;
-        case (int)TirdInfoCategory::Port:
-            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
-            break;
-        case (int)TirdInfoCategory::GPS_Information:
-            item.pszText = (LPWSTR)L"";
-            break;
-        case (int)TirdInfoCategory::Time:
-            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
-            break;
-        case (int)TirdInfoCategory::Latitude:
-            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
-            break;
-        case (int)TirdInfoCategory::Longitude:
-            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
-            break;
-        case (int)TirdInfoCategory::Altitude:
-            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
-            break;
-        case (int)TirdInfoCategory::Speed:
-            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
-            break;
-        case (int)TirdInfoCategory::Satellite:
-            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
-            break;
-        case (int)TirdInfoCategory::LORA_Information:
-            item.pszText = (LPWSTR)L"";
-            break;
-        case (int)TirdInfoCategory::Channel:
-            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
-            break;
-        case (int)TirdInfoCategory::Power:
-            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
-            break;
-        case (int)TirdInfoCategory::Bandwidth:
-            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
-            break;
-        case (int)TirdInfoCategory::SpreadingFactor:
-            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
-            break;
-        case (int)TirdInfoCategory::CodingRate:
-            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
-            break;
-        case (int)TirdInfoCategory::Battery_Information:
-            item.pszText = (LPWSTR)L"";
-            break;
-        case (int)TirdInfoCategory::Battery_Voltage:
-            item.pszText = (LPWSTR)tirdHashMap[id]->device.c_str();
-            break;
-        }
-    }
-}
-
-void WinApi::UpdateCandidateInfo(NMLVDISPINFO* plvdi)
+void WinApi::UpdateInformation(HWND& handle, NMLVDISPINFO* plvdi)
 {
 
 }
@@ -1514,7 +1271,7 @@ int32 WinApi::NewPairingList(int32 tifdId, int32 tirdId, int32 distance)
             CRASH("Not Inside");
         tifd = it->second;
     }
-    
+
     {
         WRITE_LOCK_IDX(TIRD_LOCK);
         auto it = tirdHashMap.find(tirdId);
@@ -1522,7 +1279,7 @@ int32 WinApi::NewPairingList(int32 tifdId, int32 tirdId, int32 distance)
             CRASH("Not Inside");
         tird = it->second;
     }
-    
+
     PListPtr ptr = make_shared<PairingListViewItem>(id, pos, to_wstring(distance), tifd, tird);
     pairingItems.push_back(ptr);
 
@@ -1682,7 +1439,7 @@ void WinApi::DeleteTirdPendingList(int32 id)
     if (tirdIt == tirdHashMap.end())
     {
         return;
-    }    
+    }
     else
     {
         int32 expected = IsInfo.load() >> 4;
@@ -1701,7 +1458,7 @@ void WinApi::DeleteTifdPendingList(int32 id)
     if (tifdIt == tifdHashMap.end())
     {
         return;
-    }        
+    }
     else
     {
         int32 expected = IsInfo.load() >> 4;
@@ -1709,13 +1466,13 @@ void WinApi::DeleteTifdPendingList(int32 id)
             ClearInfomation(expected << 4);
         tifdHashMap.erase(tifdIt);
         ResetTifdPendingList();
-    }    
+    }
 }
 
 void WinApi::DeletePairingList(int32 id, Device device)
 {
     WRITE_LOCK_IDX(PAIRING_LOCK);
-    
+
     auto ptr = pairingHashMap.find(id);
     if (ptr == pairingHashMap.end())
         return;
@@ -1748,6 +1505,6 @@ void WinApi::DeletePairingList(int32 id, Device device)
 void WinApi::PairingDisconnectDection(uint32 trainNum)
 {
     TCHAR str[126];
-    _stprintf_s(str,126, L"Train No. %d was Disconnet Detected", trainNum);
+    _stprintf_s(str, 126, L"Train No. %d was Disconnet Detected", trainNum);
     MessageBox(dlgHwnd, str, _T("끊김 알림"), MB_OK | MB_ICONINFORMATION);
 }

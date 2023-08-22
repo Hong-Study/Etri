@@ -7,7 +7,6 @@ class WinApi : public JobQueue
 public:
 	void		Init();
 	void		Clear();
-	void		Update();
 	void		SetDlgHwnd(HWND hwnd) { dlgHwnd = hwnd; }
 	HWND		GetDlgHwnd() { return dlgHwnd; }
 
@@ -24,11 +23,7 @@ public:
 	void		UpdateTifdPairingInfo(int32 id, int32 distance, StTifdData* tifd, StTirdData* tird);
 	void		UpdateTirdPairingInfo(int32 id, StTirdData* data);
 
-	void		UpdateTemp(NMLVDISPINFO* plvdi);
-	void		UpdateTifdInfo(NMLVDISPINFO* plvdi);
-	void		UpdateTirdInfo(NMLVDISPINFO* plvdi);
-	void		UpdateCandidateInfo(NMLVDISPINFO* plvdi);
-	
+	void		UpdateInformation(HWND& handle, NMLVDISPINFO* plvdi);
 	// Session 종료시 삭제
 	void		DeleteTirdPendingList(int32 id);
 	void		DeleteTifdPendingList(int32 id);
@@ -117,18 +112,16 @@ private:
 
 	// 시간	구하는 함수
 	void 		UpdateTime();
-	
-	friend		LRESULT InformationProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-	friend		LRESULT DialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
+	friend		LRESULT InformationProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 private:
 	// 초기화 타이밍이 매우 매우 매우 아쉽다.
 	HWND dlgHwnd = 0;
 	HINSTANCE hInstance = 0;
-	
+
 private:
-	enum 
-	{ 
+	enum
+	{
 		TIFD_LOCK
 		, TIRD_LOCK
 		, PAIRING_LOCK
@@ -150,8 +143,6 @@ private:
 private:
 	// 리스트 저장
 	vector<PListPtr>		pairingItems;
-	vector<TifdListPtr>		tifdItems;
-	vector<TirdListPtr>		tirdItems;
 
 	// 리스트를 빠르게 찾기 위한 해쉬맵
 	map<int32, TirdListPtr> tirdHashMap;

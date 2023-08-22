@@ -52,7 +52,7 @@ void TIMServer::PopTifdList(TifdRef tifd)
 	if (it == _tifdList.end())
 		return;
 
-	TIM->DoAsync([=]() {
+	DoAsync([=]() {
 		FD_CLR(sock, &_fds);
 		_tifdList.erase(deviceId);
 		});
@@ -70,27 +70,27 @@ void TIMServer::PopTirdList(TirdRef tird)
 	if (it == _tirdList.end())
 		return;
 
-	TIM->DoAsync([=]() {
+	DoAsync([=]() {
 		FD_CLR(sock, &_fds);
 		_tirdList.erase(deviceId);
 		});
 }
 
-void TIMServer::PushPairingList(TifdRef tifd, TirdRef tird, int32 distance)
+bool TIMServer::PushPairingList(TifdRef tifd, TirdRef tird, int32 distance)
 {
 	if (tifd == nullptr || tird == nullptr)
-		return;
+		return false;
 
 	if (tird->GetDeviceType() != Device::DeviceTIRD || tifd->GetDeviceType() != Device::DeviceTIFD)
-		return;
+		return false;
 	if (tird->GetPairState() == ePairState::PairState_Pair || tifd->GetPairState() == ePairState::PairState_Pair)
-		return;
+		return false;
 
 	auto tifdData = tifd->GetData();
 	auto tirdData = tird->GetData();
 	
 	if (tifdData == nullptr || tirdData == nullptr)
-		return;
+		return false;
 
 	// 정보 저장 및 세션 옮김
 	{
@@ -129,15 +129,16 @@ void TIMServer::PushPairingList(TifdRef tifd, TirdRef tird, int32 distance)
 		if (_loraInfo.ch > LORA_MAX_CH)
 			_loraInfo.ch = 2;
 	}
+
+	return true;
 }
 
 void TIMServer::PopPairingList(int32 pairingId, SessionRef session)
 {
 	if (session->GetDeviceType() == Device::DeviceTIFD)
-		return PopPairingList(pairingId, dynamic_pointer_cast<TifdSession>(session));
+		PopPairingList(pairingId, dynamic_pointer_cast<TifdSession>(session));
 	else if (session->GetDeviceType() == Device::DeviceTIRD)
-		return PopPairingList(pairingId, dynamic_pointer_cast<TirdSession>(session));
-	return false;
+		PopPairingList(pairingId, dynamic_pointer_cast<TirdSession>(session));
 }
 
 void TIMServer::PopPairingList(int32 pairingId, TifdRef session)
@@ -268,6 +269,10 @@ void TIMServer::Start()
 	THREAD->Push([=]() {
 		SERVER->Update();
 		});
+
+	THREAD->Push([=]() {
+		TIM->Update();
+		});
 }
 
 void TIMServer::Update()
@@ -277,11 +282,10 @@ void TIMServer::Update()
 	timeval cv;
 	cv.tv_sec = 0;
 	cv.tv_usec = 10000;
+
 	while (_isWork)
 	{
 		Execute();
-
-		FD_ZERO(&_fds);
 
 		fd_set tempFds = _fds;
 
@@ -290,7 +294,7 @@ void TIMServer::Update()
 		if (retVal == SOCKET_ERROR)
 		{
 			int32 errorCode = WSAGetLastError();
-			if (errorCode == WSAETIMEDOUT || errorCode == WSAEWOULDBLOCK)
+			if (errorCode == WSAETIMEDOUT || errorCode == WSAEWOULDBLOCK || errorCode == 10022)
 				continue;
 			break;
 		}
@@ -325,10 +329,14 @@ void TIMServer::PushTifdList(SOCKET sock, SOCKADDR_IN sockAddr, const StTifdData
 	}
 
 	FD_SET(sock, &_fds);
-	_tifdList.insert({ name, make_shared<TifdSession>(sock, sockAddr, data) });
+	TifdRef tifd = make_shared<TifdSession>(sock, sockAddr, data);
+	_tifdList.insert({ name, tifd });
 
 	wstring str = std::format(L"Connected TIFD {0}", StringToWstring(name));
 	WINGUI->DoAsync(&WinApi::AddLogList, str);
+
+	int32 listId = WINGUI->NewPendingList(tifd);
+	tifd->SetListId(listId);
 }
 
 void TIMServer::PushTirdList(SOCKET sock, SOCKADDR_IN sockAddr, const StTirdData* data)
@@ -343,8 +351,12 @@ void TIMServer::PushTirdList(SOCKET sock, SOCKADDR_IN sockAddr, const StTirdData
 	}
 
 	FD_SET(sock, &_fds);
-	_tirdList.insert({ name, make_shared<TirdSession>(sock, sockAddr, data) });
+	TirdRef tird = make_shared<TirdSession>(sock, sockAddr, data);
+	_tirdList.insert({ name, tird });
 
 	wstring str = std::format(L"Connected TIRD {0}", StringToWstring(name));
 	WINGUI->DoAsync(&WinApi::AddLogList, str);
+
+	int32 listId = WINGUI->NewPendingList(tird);
+	tird->SetListId(listId);
 }
