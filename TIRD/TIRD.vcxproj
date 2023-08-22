@@ -75,7 +75,8 @@
     <IntDir>$(SolutionDir)Intermediate\TIRD\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)Binary\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)Binary\Test\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Intermediate\TIRD\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

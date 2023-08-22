@@ -16,9 +16,9 @@ set "Check=1"
 
 REM 파이썬이 설치되어 있는가
 where python > nul 2>&1
-if %errorlevel% equ 0 (
+if !errorlevel! equ 0 (
     python -c "import sys; exit(0) if sys.version.startswith('3.8') else exit(1)" > nul 2>&1
-    if %errorlevel% equ 0 (
+    if !errorlevel! equ 0 (
         echo 파이썬 3.8 버전이 이미 설치되어 있습니다.
         set "PythonV=0"
     )
