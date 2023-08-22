@@ -18,7 +18,7 @@ public:
 	void PopList(SessionRef ref);
 	
 
-	bool PushPairingList(TifdRef tifd, TirdRef tird, int32 distance);
+	void PushPairingList(TifdRef tifd, TirdRef tird, int32 distance);
 	void PopPairingList(int32 pairingId, SessionRef session);
 
 	void GetPossiblePairingList(pair<float, float> tifdLocation, vector<PossiblePairingList>& lists);
