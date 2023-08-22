@@ -27,21 +27,11 @@ void Session::Init()
 	int nValue = 1;
 	retVal = setsockopt(_socket, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char*>(&nValue), sizeof(nValue));
 	if (retVal != 0)
-		CRASH("setsockopt");
-
-	// 1.5초 시간 -> 타임아웃 부여
-	DWORD time = NO_MSG_CHECK_TIME;
-	retVal = setsockopt(_socket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char*>(&time), sizeof(time));
-	if (retVal != 0)
-		CRASH("setsockopt");
-	retVal = setsockopt(_socket, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char*>(&time), sizeof(time));
-	if (retVal != 0)
-		CRASH("setsockopt");
+		CRASH("setsockopt"); 
 }
 
 void Session::Recv()
 {
-
 	// 멈추는 기능 넣어주기
 	int32 _recvLen = recv(_socket, reinterpret_cast<char*>(_recvBuffer.WritePos()), _recvBuffer.FreeSize(), 0);
 	if (_recvLen <= 0)
@@ -50,11 +40,7 @@ void Session::Recv()
 		// Check 필요
 		if (errorCode == WSAETIMEDOUT || errorCode == WSAEWOULDBLOCK)
 		{
-			_tickCount += 1;
-			if (_tickCount == GOverCount)
-				Disconnect();
-			else
-				return;
+			return;
 		}
 
 		Disconnect();
@@ -107,21 +93,20 @@ void Session::Disconnect()
 	if (_socket == INVALID_SOCKET)
 		return;
 
+	if (_pairState == ePairState::PairState_Pair)
+	{
+		TIM->PopPairingList(_pairingId, shared_from_this());
+	}
+	else if (_pairState == ePairState::PairState_Unpair)
+	{
+		TIM->PopList(shared_from_this());
+	}
+
 	int32 retVal = closesocket(_socket);
 	if (retVal != 0)
 		CRASH("CloseSocket");
 
 	_socket = INVALID_SOCKET;
-
-	switch (GetPairState())
-	{
-	case ePairState::PairState_Unpair:
-		TIM->PopPendingList(shared_from_this());
-		break;
-	case ePairState::PairState_Pair:
-		TIM->PopPairingList(GetPairingId(), shared_from_this());
-		break;
-	}
 
 	OnDisconnected();
 }
@@ -153,18 +138,3 @@ void Session::Send(BYTE* buffer, int32 size)
 		break;
 	}
 }
-
-/*
-//void Session::PrintSessionInfo()
-//{
-//	// 정보 출력
-//	char ip[INET_ADDRSTRLEN] = {};
-//	inet_ntop(AF_INET, &(_sockAddr.sin_addr), ip, INET_ADDRSTRLEN);
-//	string str = "";
-//	if (_trainType == TrainType::TIRD_)
-//		str = "TIRD";
-//	else
-//		str = "TIFD";
-//	cout << std::format("TrainNum : {0}\nTrainTypoe : {1}\nIPAddr : {2}\nPort : {3}", _myInfo.trainNum, str, ip, ntohs(_sockAddr.sin_port)) << endl;
-//}
-*/

@@ -227,34 +227,14 @@ bool AcceptServer::Send(SOCKET sock, BYTE* buffer, int32 size)
 
 void AcceptServer::HandleTifdConnect(SessionInfo& info, const StTifdData* data)
 {
-	TifdRef session = make_shared<TifdSession>(info.sock, info.sockAddr, data);
+	TIM->DoAsync(&TIMServer::PushTifdList, info.sock, info.sockAddr, data);
 
-	if (TIM->PushPendingList(session, data->deviceId) == true)
-	{
-		info.sock = INVALID_SOCKET;
-		wstring str = std::format(L"Connected TIFD {0}", StringToWstring(data->deviceId));
-		WINGUI->AddLogList(str);
-	}
-	else
-	{
-		Disconnect(info);
-		session->SetSocket(INVALID_SOCKET);
-	}
+	info.sock = INVALID_SOCKET;
 }
 
 void AcceptServer::HandleTirdConnect(SessionInfo& info, const StTirdData* data)
 {
-	TirdRef session = make_shared<TirdSession>(info.sock, info.sockAddr, data);
+	TIM->DoAsync(&TIMServer::PushTirdList, info.sock, info.sockAddr, data);
 
-	if (TIM->PushPendingList(session, data->deviceId) == true)
-	{
-		info.sock = INVALID_SOCKET;
-		wstring str = std::format(L"Connected TIRD {0}", StringToWstring(data->deviceId));
-		WINGUI->AddLogList(str);
-	}
-	else
-	{
-		Disconnect(info);
-		session->SetSocket(INVALID_SOCKET);
-	}
+	info.sock = INVALID_SOCKET;
 }
