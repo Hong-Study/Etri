@@ -48,7 +48,7 @@ void TifdSession::OnDisconnected()
 		_pairingTarget = nullptr;
 
 	wstring str = std::format(L"Disconnected TIFD {0}", GetDeviceIdToWString());
-	WINGUI->AddLogList(str);
+	WINGUI->DoAsync(&WinApi::AddLogList, str);
 
 	if (_myData != nullptr)
 		delete _myData;
@@ -107,7 +107,8 @@ void TifdSession::HandleUpdatePendingInfo(const StTifdData* data)
 {
 	SetTifdData(data);
 	
-	WINGUI->DoAsync(&WinApi::UpdateTifdPendingInfo, GetListId(), GetTifdSession());
+	//WINGUI->DoAsync(&WinApi::UpdateTifdPendingInfo, GetListId(), GetTifdSession());
+	WINGUI->UpdateTifdPendingInfo(GetListId(), GetTifdSession());
 
 	if (data->speed >= GLowestSpeed)
 	{

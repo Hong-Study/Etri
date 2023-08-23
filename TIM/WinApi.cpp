@@ -49,6 +49,8 @@ void WinApi::Clear()
 {
     WRITE_LOCK_IDX(LOG_LOCK);
 
+    Execute();
+
     SaveLogData();
 
     if (IsInfo.load() != 0)

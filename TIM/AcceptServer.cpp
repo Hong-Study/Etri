@@ -27,6 +27,8 @@ void AcceptServer::Init()
 	_cv.tv_sec = 1;
 	_cv.tv_usec = 0;
 	_recvBuffer = make_shared<RecvBuffer>(BUFSIZE);
+
+	FD_ZERO(&_rds);
 }
 
 void AcceptServer::Update()
@@ -38,26 +40,17 @@ void AcceptServer::Update()
 		CRASH("Bind Error");
 	if (listen(_listenSocket, SOMAXCONN) == SOCKET_ERROR)
 		CRASH("Listen Error");
+	FD_SET(_listenSocket, &_rds);
 
 	while (GStart)
 	{
 		if (_listenSocket == INVALID_SOCKET)
 			break;
 
-		FD_ZERO(&_rds);
-		FD_SET(_listenSocket, &_rds);
-		for (auto it = _infos.begin(); it != _infos.end();)
-		{
-			if (it->sock == INVALID_SOCKET)
-				it = _infos.erase(it);
-			else
-			{
-				FD_SET(it->sock, &_rds);
-				it++;
-			}
-		}
+		fd_set tempSet = _rds;
 
-		int32 retVal = select(0, &_rds, (fd_set*)0, (fd_set*)0, &_cv);
+		int32 retVal = select(0, &tempSet, (fd_set*)0, (fd_set*)0, &_cv);
+
 		if (retVal == SOCKET_ERROR)
 		{
 			int32 errorCode = WSAGetLastError();
@@ -65,7 +58,7 @@ void AcceptServer::Update()
 				continue;
 			break;
 		}
-		if (FD_ISSET(_listenSocket, &_rds))
+		if (FD_ISSET(_listenSocket, &tempSet))
 		{
 			SOCKADDR_IN addr;
 			ZeroMemory(&addr, sizeof(addr));
@@ -85,25 +78,33 @@ void AcceptServer::Update()
 
 				SendBufferRef ref = MakeSendBuffer(CommandType::CmdType_Reg_Request);
 				if (Send(clientSock, ref) == true)
+				{
 					_infos.push_back({ clientSock, addr });
+					FD_SET(clientSock, &_rds);
+				}
 				else
 					closesocket(clientSock);
 			}
 		}
-		for (SessionInfo& info : _infos)
+		for (auto it = _infos.begin() ; it !=_infos.end();)
 		{
-			if (FD_ISSET(info.sock, &_rds))
+			if (it->sock == INVALID_SOCKET)
+				it = _infos.erase(it);
+			else if (FD_ISSET(it->sock, &tempSet))
 			{
-				Recv(info);
+				Recv(*it);
 			}
 		}
 	}
+	WINGUI->AddLogList(L"End");
 }
 
 void AcceptServer::Disconnect(SessionInfo& info)
 {
 	if (info.sock == INVALID_SOCKET)
 		return;
+
+	FD_CLR(info.sock, &_rds);
 
 	closesocket(info.sock);
 	info.sock = INVALID_SOCKET;
@@ -123,6 +124,7 @@ void AcceptServer::Clear()
 
 	_recvBuffer->Clean();
 	_infos.clear();
+	FD_ZERO(&_rds);
 }
 
 void AcceptServer::Recv(SessionInfo& info)
@@ -229,12 +231,12 @@ void AcceptServer::HandleTifdConnect(SessionInfo& info, const StTifdData* data)
 {
 	TIM->DoAsync(&TIMServer::PushTifdList, info.sock, info.sockAddr, data);
 
-	info.sock = INVALID_SOCKET;
+	FD_CLR(info.sock, &_rds);
 }
 
 void AcceptServer::HandleTirdConnect(SessionInfo& info, const StTirdData* data)
 {
 	TIM->DoAsync(&TIMServer::PushTirdList, info.sock, info.sockAddr, data);
 
-	info.sock = INVALID_SOCKET;
+	FD_CLR(info.sock, &_rds);
 }

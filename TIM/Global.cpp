@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Global.h"
 #include "JsonParser.h"
+#include "TIMServer.h"
+#include "WinApi.h"
 
 JsonParser*		GParser = nullptr;
 
@@ -18,6 +20,9 @@ std::wstring	GSpreadingFactor = L"";
 
 std::wstring*	tifdInfoStr = nullptr;
 std::wstring*	tirdInfoStr = nullptr;
+
+shared_ptr<class TIMServer>	TIM = nullptr;
+shared_ptr<class WinApi>	WINGUI = nullptr;
 
 class GlobalVariables
 {
@@ -67,6 +72,9 @@ public:
 			, L"Time", L"Latitude", L"Longitude", L"Altitude", L"Speed", L"Satellite", L"Distance", L"LORA Information"
 			, L"Channel", L"Power", L"Bandwidth", L"SpreadingFactor", L"CodingRate", L"Battery Information"
 			, L"Battery Voltage" };
+
+		TIM = make_shared<TIMServer>();
+		WINGUI = make_shared<WinApi>();
 	}
 
 	~GlobalVariables()

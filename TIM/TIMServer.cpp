@@ -10,7 +10,7 @@
 using std::string;
 void TIMServer::Init()
 {
-	
+	FD_ZERO(&_fds);
 }
 
 void TIMServer::Clear()
@@ -30,6 +30,12 @@ void TIMServer::Clear()
 	_tifdList.clear();
 	_tirdList.clear();
 	_pairingSessions.clear();
+
+	ClearJobs();
+
+	FD_ZERO(&_fds);
+	_isWork = false;
+	_totalSize.store(0);
 }
 
 void TIMServer::PopList(SessionRef ref)
@@ -52,9 +58,12 @@ void TIMServer::PopTifdList(TifdRef tifd)
 	if (it == _tifdList.end())
 		return;
 
-	DoAsync([=]() {
+	WINGUI->DoAsync(&WinApi::DeleteTifdPendingList, tifd->GetListId());
+
+	TIM->DoAsync([=]() {
 		FD_CLR(sock, &_fds);
 		_tifdList.erase(deviceId);
+		_totalSize -= 1;
 		});
 }
 
@@ -70,9 +79,12 @@ void TIMServer::PopTirdList(TirdRef tird)
 	if (it == _tirdList.end())
 		return;
 
-	DoAsync([=]() {
+	WINGUI->DoAsync(&WinApi::DeleteTirdPendingList, tird->GetListId());
+
+	TIM->DoAsync([=]() {
 		FD_CLR(sock, &_fds);
 		_tirdList.erase(deviceId);
+		_totalSize -= 1;
 		});
 }
 
@@ -106,6 +118,9 @@ bool TIMServer::PushPairingList(TifdRef tifd, TirdRef tird, int32 distance)
 		auto it = _pairingSessions.insert({ pairingId, pair });
 		if (it.second == false)
 			CRASH("Pairing already inside");
+
+		WINGUI->DoAsync(&WinApi::DeleteTifdPendingList, tifd->GetListId());
+		WINGUI->DoAsync(&WinApi::DeleteTirdPendingList, tird->GetListId());
 	}
 
 	wstring str = std::format(L"Pairing On : TIFD = {0}, TIRD = {1}"
@@ -201,7 +216,7 @@ void TIMServer::SendKeepAliveUpdate()
 {
 	THREAD->Push([=]() {
 		uint64 tick = GetTickCount64();
-		while (GStart)
+		while (_isWork)
 		{
 			uint64 nowTick = GetTickCount64();
 			if (nowTick - tick > 3000)
@@ -246,6 +261,7 @@ void TIMServer::GetPossiblePairingList(pair<float, float> tifdLocation, vector<P
 				break;
 			}
 		}
+
 		if (possible)
 		{
 			// 속도 체크 해야하는가?
@@ -286,6 +302,9 @@ void TIMServer::Update()
 	while (_isWork)
 	{
 		Execute();
+
+		if (_totalSize == 0)
+			continue;
 
 		fd_set tempFds = _fds;
 
@@ -329,7 +348,11 @@ void TIMServer::PushTifdList(SOCKET sock, SOCKADDR_IN sockAddr, const StTifdData
 	}
 
 	FD_SET(sock, &_fds);
+	_totalSize.fetch_add(1);
+
 	TifdRef tifd = make_shared<TifdSession>(sock, sockAddr, data);
+	SendBufferRef buffer = MakeSendBuffer(CommandType::CmdType_Reg_Confirm);
+	tifd->Send(buffer);
 	_tifdList.insert({ name, tifd });
 
 	wstring str = std::format(L"Connected TIFD {0}", StringToWstring(name));
@@ -351,7 +374,11 @@ void TIMServer::PushTirdList(SOCKET sock, SOCKADDR_IN sockAddr, const StTirdData
 	}
 
 	FD_SET(sock, &_fds);
+	_totalSize.fetch_add(1);
+
 	TirdRef tird = make_shared<TirdSession>(sock, sockAddr, data);
+	SendBufferRef buffer = MakeSendBuffer(CommandType::CmdType_Reg_Confirm);
+	tird->Send(buffer);
 	_tirdList.insert({ name, tird });
 
 	wstring str = std::format(L"Connected TIRD {0}", StringToWstring(name));

@@ -62,6 +62,4 @@ public:													\
 
 #define SERVER	GETSINGLE(AcceptServer)
 #define THREAD	GETSINGLE(ThreadManager)
-#define TIM		GETSINGLE(TIMServer)
-#define WINGUI	GETSINGLE(WinApi)
 #define MAP		GETSINGLE(PythonMap)

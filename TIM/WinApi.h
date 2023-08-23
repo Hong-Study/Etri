@@ -3,7 +3,6 @@
 
 class WinApi : public JobQueue
 {
-	SINGLETON(WinApi)
 public:
 	void		Init();
 	void		Clear();

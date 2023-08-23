@@ -3,9 +3,10 @@
 
 class TIMServer : public JobQueue
 {
-	SINGLETON(TIMServer)
-
 public:
+	TIMServer() { } 
+	~TIMServer() { }
+
 	void Init();
 	void Clear();
 	void Start();
@@ -17,8 +18,7 @@ public:
 
 	void PopList(SessionRef ref);
 	
-
-	void PushPairingList(TifdRef tifd, TirdRef tird, int32 distance);
+	bool PushPairingList(TifdRef tifd, TirdRef tird, int32 distance);
 	void PopPairingList(int32 pairingId, SessionRef session);
 
 	void GetPossiblePairingList(pair<float, float> tifdLocation, vector<PossiblePairingList>& lists);
@@ -36,6 +36,7 @@ private:
 private:
 	USE_LOCK;
 
+	atomic<int32>							_totalSize = 0;
 	map<std::string, TifdRef>				_tifdList;
 	map<std::string, TirdRef>				_tirdList;
 	
