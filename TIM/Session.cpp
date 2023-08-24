@@ -56,7 +56,6 @@ void Session::Recv()
 			else
 				return;
 		}
-
 		Disconnect();
 	}
 
