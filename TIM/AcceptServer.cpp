@@ -54,6 +54,7 @@ void AcceptServer::Update()
 			{
 				FD_SET(it->sock, &_rds);
 				it++;
+
 			}
 		}
 

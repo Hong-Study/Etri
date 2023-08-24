@@ -1,5 +1,5 @@
 {
-	"ServerIP": "127.0.0.1",
+	"ServerIP": "192.168.10.100",
 	"LogPos": "./Logs/",
 	"ServerPort": 10000,
 	"MaximumDistance": 1000,
