@@ -43,7 +43,6 @@ public:													\
 
 #define CRASH(cause)						\
 {											\
-	WINGUI->SaveLogData();					\
 	uint32* crash = nullptr;				\
 	__analysis_assume(crash != nullptr);	\
 	*crash = 0xDEADBEEF;					\
@@ -60,6 +59,5 @@ public:													\
 
 #define GETSINGLE(classname) classname::GetInstance()
 
-#define SERVER	GETSINGLE(AcceptServer)
 #define THREAD	GETSINGLE(ThreadManager)
 #define MAP		GETSINGLE(PythonMap)

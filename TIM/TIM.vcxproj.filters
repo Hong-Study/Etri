@@ -31,9 +31,6 @@
     <Filter Include="Python">
       <UniqueIdentifier>{39f683ce-2b19-458b-acd0-4c44efed8b05}</UniqueIdentifier>
     </Filter>
-    <Filter Include="MainLogic">
-      <UniqueIdentifier>{d6a4f5da-ca29-47e3-bf6b-60c2b9b47843}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Session.h">
@@ -65,12 +62,6 @@
     </ClInclude>
     <ClInclude Include="TLS.h">
       <Filter>pch</Filter>
-    </ClInclude>
-    <ClInclude Include="AcceptServer.h">
-      <Filter>MainLogic</Filter>
-    </ClInclude>
-    <ClInclude Include="TIMServer.h">
-      <Filter>MainLogic</Filter>
     </ClInclude>
     <ClInclude Include="SendBuffer.h">
       <Filter>Buffer</Filter>
@@ -114,6 +105,9 @@
     <ClInclude Include="JobQueue.h">
       <Filter>Thread</Filter>
     </ClInclude>
+    <ClInclude Include="TIMServer.h">
+      <Filter>Main</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TIM.cpp">
@@ -145,12 +139,6 @@
     </ClCompile>
     <ClCompile Include="TLS.cpp">
       <Filter>pch</Filter>
-    </ClCompile>
-    <ClCompile Include="AcceptServer.cpp">
-      <Filter>MainLogic</Filter>
-    </ClCompile>
-    <ClCompile Include="TIMServer.cpp">
-      <Filter>MainLogic</Filter>
     </ClCompile>
     <ClCompile Include="RecvBuffer.cpp">
       <Filter>Buffer</Filter>
@@ -187,6 +175,9 @@
     </ClCompile>
     <ClCompile Include="JobQueue.cpp">
       <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="TIMServer.cpp">
+      <Filter>Main</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

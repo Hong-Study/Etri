@@ -5,12 +5,30 @@
 #include "WinApi.h"
 #include "TifdSession.h"
 #include "TirdSession.h"
-#include "AcceptServer.h"
 
 using std::string;
 void TIMServer::Init()
 {
+	_listenSocket = socket(AF_INET, SOCK_STREAM, 0);
+	if (_listenSocket == INVALID_SOCKET)
+		CRASH("Create Socket");
+
+	ZeroMemory(&_sockAddr, sizeof(SOCKADDR_IN));
+
+	_sockAddr.sin_family = AF_INET;
+
+	IN_ADDR address;
+	::InetPtonW(AF_INET, GServerIP.c_str(), &address);
+	_sockAddr.sin_addr = address;
+
+	u_long on = 1;
+	int32 retVal = ioctlsocket(_listenSocket, FIONBIO, &on);
+	if (retVal == SOCKET_ERROR)
+		CRASH("ioctlsocket Error");
+
 	FD_ZERO(&_fds);
+	_recvBuffer = make_shared<RecvBuffer>(1024);
+	_infos.reserve(64);
 }
 
 void TIMServer::Clear()
@@ -212,6 +230,122 @@ void TIMServer::PopPairingList(int32 pairingId, TirdRef session)
 	}
 }
 
+void TIMServer::Disconnect(SessionInfo* info)
+{
+	if (info->sock == INVALID_SOCKET)
+		return;
+
+	FD_CLR(info->sock, &_fds);
+
+	closesocket(info->sock);
+	info->sock = INVALID_SOCKET;
+
+	wstring str = std::format(L"Disconnect Unknow Clinet");
+	WINGUI->DoAsync(&WinApi::AddLogList, str);
+}
+
+void TIMServer::Recv(SessionInfo* info)
+{
+	int32 _recvLen = recv(info->sock, reinterpret_cast<char*>(_recvBuffer->WritePos()), _recvBuffer->FreeSize(), 0);
+	if (_recvLen < 0)
+	{
+		Disconnect(info);
+		return;
+	}
+
+	if (_recvBuffer->OnWrite(_recvLen) == false)
+	{
+		// OverFlow
+		Disconnect(info);
+		return;
+	}
+
+	// PktHead 사이즈보다 클 경우 OnRecv 함수 실행
+	int32 processLen = OnRecv(info, _recvBuffer->ReadPos(), _recvLen);
+	if (processLen < 0 || _recvBuffer->OnRead(processLen) == false)
+	{
+		Disconnect(info);
+		return;
+	}
+
+	_recvBuffer->Clean();
+}
+
+int32 TIMServer::OnRecv(SessionInfo* info, BYTE* buffer, int32 size)
+{
+	int32 processLen = 0;
+	while (true)
+	{
+		int32 dataSize = size - processLen;
+
+		if (HEAD_SIZE > dataSize)
+		{
+			break;
+		}
+
+		PktHead* head = reinterpret_cast<PktHead*>(&buffer[processLen]);
+
+		if ((head->payloadSize + HEAD_SIZE) > dataSize)
+			break;
+		int total = HEAD_SIZE + head->payloadSize;
+		OnRecvPacket(info, &buffer[processLen], total);
+
+		processLen += total;
+	}
+
+	return processLen;
+}
+
+void TIMServer::OnRecvPacket(SessionInfo* info, BYTE* buffer, int32 size)
+{
+	PktHead* head = reinterpret_cast<PktHead*>(buffer);
+	if (head->command == CommandType::CmdType_Reg_Request)
+	{
+		if (head->category == Device::DeviceTIFD)
+		{
+			PushTifdList(info->sock, info->sockAddr, reinterpret_cast<const StTifdData*>(&head[1]));
+			info->sock = INVALID_SOCKET;
+		}
+		else if (head->category == Device::DeviceTIRD)
+		{
+			PushTirdList(info->sock, info->sockAddr, reinterpret_cast<const StTirdData*>(&head[1]));
+			info->sock = INVALID_SOCKET;
+		}
+	}
+	else
+	{
+		Disconnect(info);
+	}
+}
+
+bool TIMServer::Send(SOCKET sock, SendBufferRef buffer)
+{
+	return Send(sock, buffer->Data(), buffer->Size());
+}
+
+bool TIMServer::Send(SOCKET sock, BYTE* buffer, int32 size)
+{
+	int32 tickCount = 0;
+	while (true)
+	{
+		int32 retVal = send(sock, reinterpret_cast<char*>(buffer), size, 0);
+		if (retVal <= 0)
+		{
+			int32 errorCode = WSAGetLastError();
+			if (errorCode == WSAETIMEDOUT || errorCode == WSAEWOULDBLOCK)
+			{
+				if (++tickCount == 5)
+					CRASH("Can't Send")
+					continue;
+				return false;
+			}
+		}
+		break;
+	}
+
+	return true;
+}
+
 void TIMServer::SendKeepAliveUpdate()
 {
 	THREAD->Push([=]() {
@@ -283,17 +417,22 @@ void TIMServer::GetPossiblePairingList(pair<float, float> tifdLocation, vector<P
 void TIMServer::Start()
 {
 	THREAD->Push([=]() {
-		SERVER->Update();
-		});
-
-	THREAD->Push([=]() {
 		TIM->Update();
 		});
+
+	SendKeepAliveUpdate();
 }
 
 void TIMServer::Update()
 {
-	SendKeepAliveUpdate();
+	_sockAddr.sin_port = htons(GServerPort);
+
+	if (bind(_listenSocket, (SOCKADDR*)&_sockAddr, sizeof(SOCKADDR_IN)) == SOCKET_ERROR)
+		CRASH("Bind Error");
+	if (listen(_listenSocket, SOMAXCONN) == SOCKET_ERROR)
+		CRASH("Listen Error");
+
+	FD_SET(_listenSocket, &_fds);
 
 	timeval cv;
 	cv.tv_sec = 0;
@@ -303,26 +442,66 @@ void TIMServer::Update()
 	{
 		Execute();
 
-		if (_totalSize == 0)
-			continue;
+		fd_set tempSet = _fds;
 
-		fd_set tempFds = _fds;
-
-		int32 retVal = select(0, &tempFds, (fd_set*)0, (fd_set*)0, &cv);
+		int32 retVal = select(0, &tempSet, (fd_set*)0, (fd_set*)0, &cv);
 
 		if (retVal == SOCKET_ERROR)
 		{
 			int32 errorCode = WSAGetLastError();
-			if (errorCode == WSAETIMEDOUT || errorCode == WSAEWOULDBLOCK || errorCode == 10022)
+			if (errorCode == WSAETIMEDOUT || errorCode == WSAEWOULDBLOCK)
 				continue;
 			break;
+		}
+
+		if (FD_ISSET(_listenSocket, &tempSet))
+		{
+			SOCKADDR_IN addr;
+			ZeroMemory(&addr, sizeof(addr));
+			int32 addrLen = sizeof(SOCKADDR_IN);
+			SOCKET clientSock = accept(_listenSocket, reinterpret_cast<sockaddr*>(&addr), &addrLen);
+			if (clientSock == INVALID_SOCKET)
+			{
+				// TODO
+				continue;
+			}
+			else
+			{
+				char clientIP[INET_ADDRSTRLEN];
+				inet_ntop(AF_INET, &(addr.sin_addr), clientIP, INET_ADDRSTRLEN);
+				wstring str = std::format(L"Connected {0}:{1}", StringToWstring(clientIP), ntohs(addr.sin_port));
+				WINGUI->DoAsync(&WinApi::AddLogList, str);
+
+				SendBufferRef ref = MakeSendBuffer(CommandType::CmdType_Reg_Request);
+
+				if (Send(clientSock, ref) == true)
+				{
+					_infos.push_back({ clientSock, addr });
+					FD_SET(clientSock, &_fds);
+				}
+				else
+					closesocket(clientSock);
+			}
+		}
+
+		for (auto info = _infos.begin();info != _infos.end();)
+		{
+			if (info->sock == INVALID_SOCKET)
+				info = _infos.erase(info);
+			else if (FD_ISSET(info->sock, &tempSet))
+			{
+				Recv(info._Ptr);
+				info++;
+			}
+			else
+				info++;
 		}
 
 		for (auto begin = _tifdList.begin();begin != _tifdList.end();begin++)
 		{
 			TifdRef tifd = begin->second;
 			SOCKET sock = tifd->GetSocket();
-			if (FD_ISSET(sock, &_fds))
+			if (FD_ISSET(sock, &tempSet))
 				tifd->Recv();
 		}
 
@@ -330,7 +509,7 @@ void TIMServer::Update()
 		{
 			TirdRef tird = begin->second;
 			SOCKET sock = tird->GetSocket();
-			if (FD_ISSET(sock, &_fds))
+			if (FD_ISSET(sock, &tempSet))
 				tird->Recv();
 		}
 	}
@@ -343,11 +522,11 @@ void TIMServer::PushTifdList(SOCKET sock, SOCKADDR_IN sockAddr, const StTifdData
 	auto it = _tifdList.find(name);
 	if (it != _tifdList.end())
 	{
+		FD_CLR(sock, &_fds);
 		closesocket(sock);
 		return;
 	}
 
-	FD_SET(sock, &_fds);
 	_totalSize.fetch_add(1);
 
 	TifdRef tifd = make_shared<TifdSession>(sock, sockAddr, data);
@@ -369,11 +548,11 @@ void TIMServer::PushTirdList(SOCKET sock, SOCKADDR_IN sockAddr, const StTirdData
 	auto it = _tirdList.find(name);
 	if (it != _tirdList.end())
 	{
+		FD_CLR(sock, &_fds);
 		closesocket(sock);
 		return;
 	}
 
-	FD_SET(sock, &_fds);
 	_totalSize.fetch_add(1);
 
 	TirdRef tird = make_shared<TirdSession>(sock, sockAddr, data);
