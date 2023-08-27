@@ -81,6 +81,9 @@ void MapPendingInfo::SetPos(float posLat, float posLong)
 	this->posLat = posLat;
 	this->posLong = posLong;
 
+	if (posLat == 0 || posLong == 0)
+		return;
+
 	if (CalculateDistance(posLat, posLong, centerLat, centerLong) >= 700)
 	{
 		SetCenter(posLat, posLong);
@@ -98,6 +101,10 @@ void MapPairingInfo::SetPos(float tifdLat, float tifdLong, float tirdLat, float 
 	this->tifdLong = tifdLong;
 	this->tirdLat = tirdLat;
 	this->tirdLong = tirdLong;
+
+	// 일단 선택
+	if (tifdLat == 0.0f || tifdLong == 0.0f)
+		return;
 
 	// 여쭤보기
 	if (CalculateDistance(tifdLat, tifdLong, centerLat, centerLong) >= 1000)

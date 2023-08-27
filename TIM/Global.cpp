@@ -69,7 +69,7 @@ public:
 			, L"TIRD Device" , L"RSSI" };
 		tirdInfoStr = new std::wstring[]{
 			L"Version", L"Device", L"PairingStatus", L"Network Information", L"IpAddress", L"Port", L"GPS Information"
-			, L"Time", L"Latitude", L"Longitude", L"Altitude", L"Speed", L"Satellite", L"Distance", L"LORA Information"
+			, L"Time", L"Latitude", L"Longitude", L"Altitude", L"Speed", L"Satellite", L"LORA Information"
 			, L"Channel", L"Power", L"Bandwidth", L"SpreadingFactor", L"CodingRate", L"Battery Information"
 			, L"Battery Voltage" };
 

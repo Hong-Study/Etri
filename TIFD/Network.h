@@ -15,6 +15,7 @@ public:
 	void	Send(BYTE* buf, int32 size);
 	void	HandleRegister();
 	void	HandleConfirm();
+	void	HandleAlram();
 	double	calculateDistance(double lat1, double lon1, double lat2, double lon2);
 	int32	GetTestDistance(double p1, double p2);
     

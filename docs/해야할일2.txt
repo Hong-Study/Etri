@@ -1,0 +1,2 @@
+tim 서버에서 10초동안, 데이터를 보구 적절한 거리를 벗어나면, OpenAlramRequest를 받은 것으로 간주하고, 그 후에 AlramSend를 보내는 것으로, 
+trainLength에서 200m 이상 벗어나는지 체크 -> 10초동안 지속적으로 일어나면 OpenAlramRequest로 간주
