@@ -16,3 +16,6 @@ extern std::string		GLogPos;
 
 extern std::wstring*	tifdInfoStr;
 extern std::wstring*	tirdInfoStr;
+
+extern shared_ptr<class TIMServer> TIM;
+extern shared_ptr<class WinApi>	WINGUI;

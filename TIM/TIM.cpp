@@ -1,5 +1,4 @@
 ﻿#include "pch.h"
-#include "AcceptServer.h"
 #include "TIMServer.h"
 #include "ThreadManager.h"
 #include "WinApi.h"
@@ -17,7 +16,6 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance
     MAP->Init();
     TIM->Init();
     THREAD->Init();
-    SERVER->Init();
     
     // WINAPI Instance 저장
     WINGUI->SetInstacne(hInstance);
@@ -39,13 +37,14 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance
             ::TranslateMessage(&msg);
             ::DispatchMessage(&msg);
         }
+        else
+            WINGUI->Execute();
     }
 
     GStart = false;
 
     TIM->Clear();
     WINGUI->Clear();
-    SERVER->Clear();
     MAP->Clear();
 
     // 모든 스레드가 종료될 때 까지 기다림

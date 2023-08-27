@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <array>
 #include "Enums.h"
 #include "Packet.h"
 
@@ -50,6 +51,8 @@ struct PendingTifdListViewItem
 	wstring time;
 	wstring ip;
 	wstring port;
+
+	std::array<wstring, (int)TifdInfoCategory::SIZE> datas;
 };
 
 struct PendingTirdListViewItem
@@ -120,14 +123,20 @@ struct PossiblePairingList
 
 struct InfoHandle
 {
-	InfoHandle(HWND d, HWND fd, HWND rd)
-		: dialog(d), tifdInfo(fd), tirdInfo(rd) { }
+	InfoHandle(HWND d, HWND fd, HWND rd, HWND chadi = nullptr)
+		: dialog(d), tifdInfo(fd), tirdInfo(rd), chandidateInfo(chadi) { }
 	~InfoHandle() { }
 
-	void SetNullptr() { dialog = nullptr; tifdInfo = nullptr; tirdInfo = nullptr; }
+	void SetNullptr() {
+		dialog = nullptr; 
+		tifdInfo = nullptr; 
+		tirdInfo = nullptr; 
+		chandidateInfo = nullptr;
+	}
 	HWND dialog;
 	HWND tifdInfo;
 	HWND tirdInfo;
+	HWND chandidateInfo;
 };
 
 struct MapInfo

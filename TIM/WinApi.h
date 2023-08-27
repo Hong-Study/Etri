@@ -1,8 +1,8 @@
 #pragma once
+#include "JobQueue.h"
 
-class WinApi
+class WinApi : public JobQueue
 {
-	SINGLETON(WinApi)
 public:
 	void		Init();
 	void		Clear();
@@ -111,16 +111,16 @@ private:
 
 	// 시간	구하는 함수
 	void 		UpdateTime();
-	
+
 	friend		LRESULT InformationProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 private:
 	// 초기화 타이밍이 매우 매우 매우 아쉽다.
 	HWND dlgHwnd = 0;
 	HINSTANCE hInstance = 0;
-	
+
 private:
-	enum 
-	{ 
+	enum
+	{
 		TIFD_LOCK
 		, TIRD_LOCK
 		, PAIRING_LOCK

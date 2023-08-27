@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Lock.h"
 #include "WinApi.h"
-#include "DeadLock.h"
+
 void Lock::WriteLock(const char* name)
 {
 	// 동일한 쓰레드가 소유하고 있다면 무조건 성공.
@@ -50,7 +50,6 @@ void Lock::WriteUnlock(const char* name)
 
 #if _DEBUG
 	std::string str = std::format("UnLock {0}:{1} -> {2}\n", LThreadId, lockCount, name);
-	GDeadLock->PushLog(str);
 #endif
 }
 

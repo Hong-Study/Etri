@@ -150,9 +150,9 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="DeadLock.h" />
     <ClInclude Include="FileUtils.h" />
     <ClInclude Include="Global.h" />
+    <ClInclude Include="JobQueue.h" />
     <ClInclude Include="JsonParser.h" />
     <ClInclude Include="Packet.h" />
     <ClInclude Include="PairSession.h" />
@@ -168,7 +168,6 @@
     <ClInclude Include="Session.h" />
     <ClInclude Include="Lock.h" />
     <ClInclude Include="ThreadManager.h" />
-    <ClInclude Include="AcceptServer.h" />
     <ClInclude Include="TifdSession.h" />
     <ClInclude Include="TIMServer.h" />
     <ClInclude Include="TirdSession.h" />
@@ -178,10 +177,10 @@
     <ClInclude Include="WinApi.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DeadLock.cpp" />
     <ClCompile Include="FileUtils.cpp" />
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="Information.cpp" />
+    <ClCompile Include="JobQueue.cpp" />
     <ClCompile Include="JsonParser.cpp" />
     <ClCompile Include="PairSession.cpp" />
     <ClCompile Include="Macro.cpp" />
@@ -195,7 +194,6 @@
     <ClCompile Include="Session.cpp" />
     <ClCompile Include="Lock.cpp" />
     <ClCompile Include="ThreadManager.cpp" />
-    <ClCompile Include="AcceptServer.cpp" />
     <ClCompile Include="TifdSession.cpp" />
     <ClCompile Include="TIM.cpp" />
     <ClCompile Include="TIMServer.cpp" />

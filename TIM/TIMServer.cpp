@@ -5,140 +5,113 @@
 #include "WinApi.h"
 #include "TifdSession.h"
 #include "TirdSession.h"
-#include "AcceptServer.h"
 
 using std::string;
 void TIMServer::Init()
 {
-	
+	_listenSocket = socket(AF_INET, SOCK_STREAM, 0);
+	if (_listenSocket == INVALID_SOCKET)
+		CRASH("Create Socket");
+
+	ZeroMemory(&_sockAddr, sizeof(SOCKADDR_IN));
+
+	_sockAddr.sin_family = AF_INET;
+
+	IN_ADDR address;
+	::InetPtonW(AF_INET, GServerIP.c_str(), &address);
+	_sockAddr.sin_addr = address;
+
+	u_long on = 1;
+	int32 retVal = ioctlsocket(_listenSocket, FIONBIO, &on);
+	if (retVal == SOCKET_ERROR)
+		CRASH("ioctlsocket Error");
+
+	FD_ZERO(&_fds);
+	_recvBuffer = make_shared<RecvBuffer>(1024);
+	_infos.reserve(64);
 }
 
 void TIMServer::Clear()
 {
-	WRITE_LOCK_IDX(TIFD);
-	WRITE_LOCK_IDX(TIRD);
-	WRITE_LOCK_IDX(PAIRING);
-	
-	for (auto ref : _pendingTifd)
+	_isWork = false;
+
+	for (auto tifd : _tifdList)
 	{
-		ref.second->SetPairState(ePairState::Disconnect);
-		ref.second->Disconnect();
+		tifd.second->SetPairState(ePairState::Disconnect);
+		tifd.second->Disconnect();
 	}
 
-	for (auto ref : _pendingTird)
+	for (auto tird : _tirdList)
 	{
-		ref.second->SetPairState(ePairState::Disconnect);
-		ref.second->Disconnect();
-	}
-	
-	for (auto ref : _pairingSessions)
-	{
-		ref.second->GetTifdSession()->SetPairState(ePairState::Disconnect);
-		ref.second->GetTifdSession()->Disconnect();
-
-		ref.second->GetTirdSession()->SetPairState(ePairState::Disconnect);
-		ref.second->GetTirdSession()->Disconnect();
+		tird.second->SetPairState(ePairState::Disconnect);
+		tird.second->Disconnect();
 	}
 
-	_pendingTifd.clear();
-	_pendingTird.clear();
+	_tifdList.clear();
+	_tirdList.clear();
 	_pairingSessions.clear();
+
+	ClearJobs();
+
+	FD_ZERO(&_fds);
+	_totalSize.store(0);
 }
 
-bool TIMServer::PushPendingList(TifdRef tifd, string deviceId)
+void TIMServer::PopList(SessionRef ref)
 {
-	WRITE_LOCK_IDX(TIFD);
-
-	if (_pendingTifd.find(deviceId) != _pendingTifd.end() || tifd == nullptr)
-	{
-		return false;
-	}
-	
-	if (tifd->GetListId() == 0)
-	{
-		int32 id = WINGUI->NewPendingList(tifd);
-		tifd->SetListId(id);
-	}
-	
-	_pendingTifd.insert({ deviceId, tifd });
-
-	return true;
+	if (ref->GetDeviceType() == DeviceTIFD)
+		PopTifdList(static_pointer_cast<TifdSession>(ref));
+	else if(ref->GetDeviceType() == DeviceTIRD)
+		PopTirdList(static_pointer_cast<TirdSession>(ref));
 }
 
-bool TIMServer::PushPendingList(TirdRef tird, string deviceId)
+void TIMServer::PopTifdList(TifdRef tifd)
 {
-	WRITE_LOCK_IDX(TIRD);
-
-	if (_pendingTird.find(deviceId) != _pendingTird.end() || tird == nullptr)
-	{
-		return false;
-	}
-	if (tird->GetListId() == 0)
-	{
-		int32 id = WINGUI->NewPendingList(tird);
-		tird->SetListId(id);
-	}
-	
-	_pendingTird.insert({ deviceId, tird });
-
-	return true;
-}
-
-bool TIMServer::PopPendingList(SessionRef session)
-{
-	if (session->GetDeviceType() == Device::DeviceTIFD)
-		return PopPendingList(dynamic_pointer_cast<TifdSession>(session));
-	else if(session->GetDeviceType() == Device::DeviceTIRD)
-		return PopPendingList(dynamic_pointer_cast<TirdSession>(session));
-
-	return false;
-}
-
-bool TIMServer::PopPendingList(TifdRef tifd)
-{
-	WRITE_LOCK_IDX(TIFD);
-
-	if (tifd == nullptr)
-		return false;
-
+	SOCKET sock = tifd->GetSocket();
 	string deviceId = tifd->GetDeviceIdToString();
 
-	auto it = _pendingTifd.find(deviceId);
-	if (it == _pendingTifd.end())
-		return false;
+	if (sock == INVALID_SOCKET)
+		return;
 
-	WINGUI->DeleteTifdPendingList(tifd->GetListId());
-	_pendingTifd.erase(it);
+	auto it = _tifdList.find(deviceId);
+	if (it == _tifdList.end())
+		return;
 
-	return true;
+	WINGUI->DoAsync(&WinApi::DeleteTifdPendingList, tifd->GetListId());
+
+	TIM->DoAsync([=]() {
+		FD_CLR(sock, &_fds);
+		_tifdList.erase(deviceId);
+		_totalSize -= 1;
+		});
 }
 
-bool TIMServer::PopPendingList(TirdRef tird)
+void TIMServer::PopTirdList(TirdRef tird)
 {
-	WRITE_LOCK_IDX(TIRD);
-
-	if (tird == nullptr)
-		return false;
-
+	SOCKET sock = tird->GetSocket();
 	string deviceId = tird->GetDeviceIdToString();
 
-	auto it = _pendingTird.find(deviceId);
-	if (it == _pendingTird.end())
-		return false;
+	if (sock == INVALID_SOCKET)
+		return;
 
-	WINGUI->DeleteTirdPendingList(tird->GetListId());
-	_pendingTird.erase(it);
+	auto it = _tirdList.find(deviceId);
+	if (it == _tirdList.end())
+		return;
 
-	return true;
+	WINGUI->DoAsync(&WinApi::DeleteTirdPendingList, tird->GetListId());
+
+	TIM->DoAsync([=]() {
+		FD_CLR(sock, &_fds);
+		_tirdList.erase(deviceId);
+		_totalSize -= 1;
+		});
 }
 
 bool TIMServer::PushPairingList(TifdRef tifd, TirdRef tird, int32 distance)
 {
-	// 두개 다 해줘야됨.
-	WRITE_LOCK_IDX(PAIRING);
-
 	if (tifd == nullptr || tird == nullptr)
 		return false;
+
 	if (tird->GetDeviceType() != Device::DeviceTIRD || tifd->GetDeviceType() != Device::DeviceTIFD)
 		return false;
 	if (tird->GetPairState() == ePairState::PairState_Pair || tifd->GetPairState() == ePairState::PairState_Pair)
@@ -158,21 +131,21 @@ bool TIMServer::PushPairingList(TifdRef tifd, TirdRef tird, int32 distance)
 		int32 pairingId = WINGUI->NewPairingList(tifd->GetListId(), tird->GetListId(), distance);
 		PairSessionRef pair = make_shared<PairSession>(tifd, tird, pairingId, distance);
 
-		PopPendingList(tifd);
-		PopPendingList(tird);
-
 		tifd->SetPairingId(pairingId);
 		tird->SetPairingId(pairingId);
 
 		auto it = _pairingSessions.insert({ pairingId, pair });
 		if (it.second == false)
 			CRASH("Pairing already inside");
+
+		WINGUI->DoAsync(&WinApi::DeleteTifdPendingList, tifd->GetListId());
+		WINGUI->DoAsync(&WinApi::DeleteTirdPendingList, tird->GetListId());
 	}
 
 	wstring str = std::format(L"Pairing On : TIFD = {0}, TIRD = {1}"
 		, StringToWstring(tifdData->deviceId)
 		, StringToWstring(tirdData->deviceId));
-	WINGUI->AddLogList(str);
+	WINGUI->DoAsync(&WinApi::AddLogList, str);
 	
 	// Pairing Send
 	{
@@ -194,22 +167,19 @@ bool TIMServer::PushPairingList(TifdRef tifd, TirdRef tird, int32 distance)
 	return true;
 }
 
-bool TIMServer::PopPairingList(int32 pairingId, SessionRef session)
+void TIMServer::PopPairingList(int32 pairingId, SessionRef session)
 {
 	if (session->GetDeviceType() == Device::DeviceTIFD)
-		return PopPairingList(pairingId, dynamic_pointer_cast<TifdSession>(session));
+		PopPairingList(pairingId, dynamic_pointer_cast<TifdSession>(session));
 	else if (session->GetDeviceType() == Device::DeviceTIRD)
-		return PopPairingList(pairingId, dynamic_pointer_cast<TirdSession>(session));
-	return false;
+		PopPairingList(pairingId, dynamic_pointer_cast<TirdSession>(session));
 }
 
-bool TIMServer::PopPairingList(int32 pairingId, TifdRef session)
+void TIMServer::PopPairingList(int32 pairingId, TifdRef session)
 {
-	WRITE_LOCK_IDX(PAIRING);
-
 	auto it = _pairingSessions.find(pairingId);
 	if (it == _pairingSessions.end())
-		return PopPendingList(session);
+		return;
 	else
 	{
 		PairSessionRef pairRef = it->second;
@@ -221,30 +191,24 @@ bool TIMServer::PopPairingList(int32 pairingId, TifdRef session)
 			auto tird = pairRef->GetTirdSession();
 			SendBufferRef sendBuf = MakeSendLoraBuffer(LORA_DEFAULT_CH);
 			tird->Send(sendBuf);
-			if (PushPendingList(tird, tird->GetDeviceIdToString()) == false)
-				return false;
 		}
-		wstring str = std::format(L"Pairing Off : tifd Disconnected {0}", session->GetDeviceIdToWString());
-		WINGUI->AddLogList(str);
-		_pairingSessions.erase(pairingId);
 
-		return true;
+		wstring str = std::format(L"Pairing Off : tifd Disconnected {0}", session->GetDeviceIdToWString());
+		WINGUI->DoAsync(&WinApi::AddLogList, str);
+
+		_pairingSessions.erase(pairingId);
+		PopTifdList(session);
 	}
 }
 
-bool TIMServer::PopPairingList(int32 pairingId, TirdRef session)
+void TIMServer::PopPairingList(int32 pairingId, TirdRef session)
 {
-	WRITE_LOCK_IDX(PAIRING);
-
 	auto it = _pairingSessions.find(pairingId);
 	if (it == _pairingSessions.end())
-		return PopPendingList(session);
+		return;
 	else 
 	{
 		PairSessionRef pairRef = it->second;
-		if (pairRef == nullptr)
-			return false;
-
 		pairRef->Disconnected();
 
 		WINGUI->DeletePairingList(pairRef->GetPairingId(), session->GetDeviceType());
@@ -252,7 +216,6 @@ bool TIMServer::PopPairingList(int32 pairingId, TirdRef session)
 		{
 			// TODO 체크
 			auto tifd = pairRef->GetTifdSession();
-			PushPendingList(tifd, tifd->GetDeviceIdToString());
 
 			SendBufferRef sendBuf = MakeSendUnPairingBuffer();
 			tifd->Send(sendBuf);
@@ -261,60 +224,170 @@ bool TIMServer::PopPairingList(int32 pairingId, TirdRef session)
 		}
 
 		wstring str = std::format(L"Pairing Off : tird Disconnected {0}", session->GetDeviceIdToWString());
-		WINGUI->AddLogList(str);
-		_pairingSessions.erase(it);
+		WINGUI->DoAsync(&WinApi::AddLogList, str);
 
-		return true;
+		_pairingSessions.erase(it);
+		PopTirdList(session);
 	}
 }
 
-void TIMServer::SendKeepAlive()
+void TIMServer::Disconnect(SessionInfo* info)
+{
+	if (info->sock == INVALID_SOCKET)
+		return;
+
+	FD_CLR(info->sock, &_fds);
+
+	closesocket(info->sock);
+	info->sock = INVALID_SOCKET;
+
+	wstring str = std::format(L"Disconnect Unknow Clinet");
+	WINGUI->DoAsync(&WinApi::AddLogList, str);
+}
+
+void TIMServer::Recv(SessionInfo* info)
+{
+	int32 _recvLen = recv(info->sock, reinterpret_cast<char*>(_recvBuffer->WritePos()), _recvBuffer->FreeSize(), 0);
+	if (_recvLen < 0)
+	{
+		Disconnect(info);
+		return;
+	}
+
+	if (_recvBuffer->OnWrite(_recvLen) == false)
+	{
+		// OverFlow
+		Disconnect(info);
+		return;
+	}
+
+	// PktHead 사이즈보다 클 경우 OnRecv 함수 실행
+	int32 processLen = OnRecv(info, _recvBuffer->ReadPos(), _recvLen);
+	if (processLen < 0 || _recvBuffer->OnRead(processLen) == false)
+	{
+		Disconnect(info);
+		return;
+	}
+
+	_recvBuffer->Clean();
+}
+
+int32 TIMServer::OnRecv(SessionInfo* info, BYTE* buffer, int32 size)
+{
+	int32 processLen = 0;
+	while (true)
+	{
+		int32 dataSize = size - processLen;
+
+		if (HEAD_SIZE > dataSize)
+		{
+			break;
+		}
+
+		PktHead* head = reinterpret_cast<PktHead*>(&buffer[processLen]);
+
+		if ((head->payloadSize + HEAD_SIZE) > dataSize)
+			break;
+		int total = HEAD_SIZE + head->payloadSize;
+		OnRecvPacket(info, &buffer[processLen], total);
+
+		processLen += total;
+	}
+
+	return processLen;
+}
+
+void TIMServer::OnRecvPacket(SessionInfo* info, BYTE* buffer, int32 size)
+{
+	PktHead* head = reinterpret_cast<PktHead*>(buffer);
+	if (head->command == CommandType::CmdType_Reg_Request)
+	{
+		if (head->category == Device::DeviceTIFD)
+		{
+			PushTifdList(info->sock, info->sockAddr, reinterpret_cast<const StTifdData*>(&head[1]));
+			info->sock = INVALID_SOCKET;
+		}
+		else if (head->category == Device::DeviceTIRD)
+		{
+			PushTirdList(info->sock, info->sockAddr, reinterpret_cast<const StTirdData*>(&head[1]));
+			info->sock = INVALID_SOCKET;
+		}
+	}
+	else
+	{
+		Disconnect(info);
+	}
+}
+
+bool TIMServer::Send(SOCKET sock, SendBufferRef buffer)
+{
+	return Send(sock, buffer->Data(), buffer->Size());
+}
+
+bool TIMServer::Send(SOCKET sock, BYTE* buffer, int32 size)
+{
+	int32 tickCount = 0;
+	while (true)
+	{
+		int32 retVal = send(sock, reinterpret_cast<char*>(buffer), size, 0);
+		if (retVal <= 0)
+		{
+			int32 errorCode = WSAGetLastError();
+			if (errorCode == WSAETIMEDOUT || errorCode == WSAEWOULDBLOCK)
+			{
+				if (++tickCount == 5)
+					CRASH("Can't Send")
+					continue;
+				return false;
+			}
+		}
+		break;
+	}
+
+	return true;
+}
+
+void TIMServer::SendKeepAliveUpdate()
 {
 	THREAD->Push([=]() {
-		uint64 currentTick = GetTickCount64();
-		while (GStart)
+		uint64 tick = GetTickCount64();
+		while (_isWork)
 		{
 			uint64 nowTick = GetTickCount64();
-			if (nowTick - currentTick > 3000)
+			if (nowTick - tick > 3000)
 			{
-				SendBufferRef ref = MakeSendBuffer(CommandType::CmdType_KeepAlive);
-				{
-					WRITE_LOCK_IDX(TIFD);
-					for (auto& tifd : _pendingTifd)
-					{
-						tifd.second->Send(ref);
-					}
-				}
-				{
-					WRITE_LOCK_IDX(TIRD);
-					for (auto& tird : _pendingTird)
-					{
-						tird.second->Send(ref);
-					}
-				}
-				{
-					WRITE_LOCK_IDX(PAIRING);
-					for (auto& pair : _pairingSessions)
-					{
-						pair.second->GetTifdSession()->Send(ref);
-						pair.second->GetTirdSession()->Send(ref);
-					}
-				}
-				
-				currentTick = nowTick;
+				tick = nowTick;
+				TIM->DoAsync(&TIMServer::SendKeepAlive);
 			}
 		}
 	});
 }
 
+void TIMServer::SendKeepAlive()
+{
+	SendBufferRef ref = MakeSendBuffer(CommandType::CmdType_KeepAlive);
+
+	for (auto begin = _tifdList.begin();begin != _tifdList.end();begin++)
+	{
+		begin->second->Send(ref);
+	}
+
+	for (auto begin = _tirdList.begin(); begin != _tirdList.end(); begin++)
+	{
+		begin->second->Send(ref);
+	}
+}
+
 void TIMServer::GetPossiblePairingList(pair<float, float> tifdLocation, vector<PossiblePairingList>& lists)
 {
-	WRITE_LOCK_IDX(TIRD);
-
-	for (auto tirds : _pendingTird)
+	for (auto tirds : _tirdList)
 	{
 		bool possible = true;
 		TirdRef tird = tirds.second;
+
+		if (tird->GetPairState() == PairState_Pair)
+			continue;
+
 		for (PossiblePairingList& list : lists)
 		{
 			if (list.target == tird)
@@ -323,6 +396,7 @@ void TIMServer::GetPossiblePairingList(pair<float, float> tifdLocation, vector<P
 				break;
 			}
 		}
+
 		if (possible)
 		{
 			// 속도 체크 해야하는가?
@@ -344,6 +418,152 @@ void TIMServer::GetPossiblePairingList(pair<float, float> tifdLocation, vector<P
 void TIMServer::Start()
 {
 	THREAD->Push([=]() {
-		SERVER->Update();
+		TIM->Update();
 		});
+
+	SendKeepAliveUpdate();
+}
+
+void TIMServer::Update()
+{
+	_sockAddr.sin_port = htons(GServerPort);
+
+	if (bind(_listenSocket, (SOCKADDR*)&_sockAddr, sizeof(SOCKADDR_IN)) == SOCKET_ERROR)
+		CRASH("Bind Error");
+	if (listen(_listenSocket, SOMAXCONN) == SOCKET_ERROR)
+		CRASH("Listen Error");
+
+	FD_SET(_listenSocket, &_fds);
+
+	timeval cv;
+	cv.tv_sec = 0;
+	cv.tv_usec = 10000;
+
+	while (_isWork)
+	{
+		Execute();
+
+		fd_set tempSet = _fds;
+
+		int32 retVal = select(0, &tempSet, (fd_set*)0, (fd_set*)0, &cv);
+
+		if (retVal == SOCKET_ERROR)
+		{
+			int32 errorCode = WSAGetLastError();
+			if (errorCode == WSAETIMEDOUT || errorCode == WSAEWOULDBLOCK)
+				continue;
+			break;
+		}
+
+		if (FD_ISSET(_listenSocket, &tempSet))
+		{
+			SOCKADDR_IN addr;
+			ZeroMemory(&addr, sizeof(addr));
+			int32 addrLen = sizeof(SOCKADDR_IN);
+			SOCKET clientSock = accept(_listenSocket, reinterpret_cast<sockaddr*>(&addr), &addrLen);
+			if (clientSock == INVALID_SOCKET)
+			{
+				// TODO
+				continue;
+			}
+			else
+			{
+				char clientIP[INET_ADDRSTRLEN];
+				inet_ntop(AF_INET, &(addr.sin_addr), clientIP, INET_ADDRSTRLEN);
+				wstring str = std::format(L"Connected {0}:{1}", StringToWstring(clientIP), ntohs(addr.sin_port));
+				WINGUI->DoAsync(&WinApi::AddLogList, str);
+
+				SendBufferRef ref = MakeSendBuffer(CommandType::CmdType_Reg_Request);
+
+				if (Send(clientSock, ref) == true)
+				{
+					_infos.push_back({ clientSock, addr });
+					FD_SET(clientSock, &_fds);
+				}
+				else
+					closesocket(clientSock);
+			}
+		}
+
+		for (auto info = _infos.begin();info != _infos.end();)
+		{
+			if (info->sock == INVALID_SOCKET)
+				info = _infos.erase(info);
+			else if (FD_ISSET(info->sock, &tempSet))
+			{
+				Recv(info._Ptr);
+				info++;
+			}
+			else
+				info++;
+		}
+
+		for (auto begin = _tifdList.begin();begin != _tifdList.end();begin++)
+		{
+			TifdRef tifd = begin->second;
+			SOCKET sock = tifd->GetSocket();
+			if (FD_ISSET(sock, &tempSet))
+				tifd->Recv();
+		}
+
+		for (auto begin = _tirdList.begin(); begin != _tirdList.end(); begin++)
+		{
+			TirdRef tird = begin->second;
+			SOCKET sock = tird->GetSocket();
+			if (FD_ISSET(sock, &tempSet))
+				tird->Recv();
+		}
+	}
+}
+
+void TIMServer::PushTifdList(SOCKET sock, SOCKADDR_IN sockAddr, const StTifdData* data)
+{
+	string name = data->deviceId;
+
+	auto it = _tifdList.find(name);
+	if (it != _tifdList.end())
+	{
+		FD_CLR(sock, &_fds);
+		closesocket(sock);
+		return;
+	}
+
+	_totalSize.fetch_add(1);
+
+	TifdRef tifd = make_shared<TifdSession>(sock, sockAddr, data);
+	SendBufferRef buffer = MakeSendBuffer(CommandType::CmdType_Reg_Confirm);
+	tifd->Send(buffer);
+	_tifdList.insert({ name, tifd });
+
+	wstring str = std::format(L"Connected TIFD {0}", StringToWstring(name));
+	WINGUI->DoAsync(&WinApi::AddLogList, str);
+
+	int32 listId = WINGUI->NewPendingList(tifd);
+	tifd->SetListId(listId);
+}
+
+void TIMServer::PushTirdList(SOCKET sock, SOCKADDR_IN sockAddr, const StTirdData* data)
+{
+	string name = data->deviceId;
+
+	auto it = _tirdList.find(name);
+	if (it != _tirdList.end())
+	{
+		FD_CLR(sock, &_fds);
+		closesocket(sock);
+		return;
+	}
+
+	_totalSize.fetch_add(1);
+
+	TirdRef tird = make_shared<TirdSession>(sock, sockAddr, data);
+	SendBufferRef buffer = MakeSendBuffer(CommandType::CmdType_Reg_Confirm);
+	tird->Send(buffer);
+	_tirdList.insert({ name, tird });
+
+	wstring str = std::format(L"Connected TIRD {0}", StringToWstring(name));
+	WINGUI->DoAsync(&WinApi::AddLogList, str);
+
+	int32 listId = WINGUI->NewPendingList(tird);
+	tird->SetListId(listId);
 }
