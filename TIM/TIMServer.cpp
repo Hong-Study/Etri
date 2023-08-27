@@ -33,6 +33,8 @@ void TIMServer::Init()
 
 void TIMServer::Clear()
 {
+	_isWork = false;
+
 	for (auto tifd : _tifdList)
 	{
 		tifd.second->SetPairState(ePairState::Disconnect);
@@ -52,7 +54,6 @@ void TIMServer::Clear()
 	ClearJobs();
 
 	FD_ZERO(&_fds);
-	_isWork = false;
 	_totalSize.store(0);
 }
 

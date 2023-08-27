@@ -162,8 +162,9 @@ void TifdSession::HandleUpdatePairingInfo(const StTifdData* data)
 		//if(distance >)
 
 		wstring str = std::format(L"Train({0}) is OpenAlramRequest", _myData->trainNo);
-		WINGUI->AddLogList(str);
-		WINGUI->ShowTrainAlramStatus(GetPairingId(), L"Open Alram Request");
+		wstring alram = L"Open Alram Request";
+		WINGUI->DoAsync(&WinApi::AddLogList, str);
+		WINGUI->DoAsync(&WinApi::ShowTrainAlramStatus, GetPairingId(), alram);
 	}
 
 	if (_pairingTarget != nullptr)
@@ -171,7 +172,6 @@ void TifdSession::HandleUpdatePairingInfo(const StTifdData* data)
 		WINGUI->UpdateTifdPairingInfo(GetPairingId(), data->distance, GetData(), _pairingTarget->GetData());
 	}
 }
-
 void TifdSession::FindNearPossibleTird()
 {
 	TIM->GetPossiblePairingList(GetLocation(), _possibleLists);
