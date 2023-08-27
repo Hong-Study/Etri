@@ -28,8 +28,13 @@ LRESULT CALLBACK DialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             if (!GStart)
             {
                 GStart = true;
-                TIM->Start();
-                MessageBox(hwnd, _T("서버가 정상적으로 실행되었습니다."), _T("알림"), MB_OK | MB_ICONINFORMATION);
+                if(TIM->Start())
+                    MessageBox(hwnd, _T("서버가 정상적으로 실행되었습니다."), _T("알림"), MB_OK | MB_ICONINFORMATION | MB_APPLMODAL);
+                else
+                {
+                    MessageBox(hwnd, _T("비정상적인 에러가 발생하였습니다."), _T("알림"), MB_OK | MB_ICONINFORMATION | MB_APPLMODAL);
+                    PostQuitMessage(0);
+                }
             }
             return TRUE;
         case ID_PORT:

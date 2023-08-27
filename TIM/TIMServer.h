@@ -15,7 +15,7 @@ public:
 
 	void		Init();
 	void		Clear();
-	void		Start();
+	bool		Start();
 	void		Update();
 
 	// JobQueue »ç¿ë

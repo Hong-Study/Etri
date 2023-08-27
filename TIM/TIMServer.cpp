@@ -415,25 +415,29 @@ void TIMServer::GetPossiblePairingList(pair<float, float> tifdLocation, vector<P
 	}
 }
 
-void TIMServer::Start()
+bool TIMServer::Start()
 {
+	_sockAddr.sin_port = htons(GServerPort);
+
+	if (bind(_listenSocket, (SOCKADDR*)&_sockAddr, sizeof(SOCKADDR_IN)) == SOCKET_ERROR)
+		return false;
+	if (listen(_listenSocket, SOMAXCONN) == SOCKET_ERROR)
+		return false;
+
+	FD_SET(_listenSocket, &_fds);
+
 	THREAD->Push([=]() {
 		TIM->Update();
 		});
 
 	SendKeepAliveUpdate();
+
+	return true;
 }
 
 void TIMServer::Update()
 {
-	_sockAddr.sin_port = htons(GServerPort);
-
-	if (bind(_listenSocket, (SOCKADDR*)&_sockAddr, sizeof(SOCKADDR_IN)) == SOCKET_ERROR)
-		CRASH("Bind Error");
-	if (listen(_listenSocket, SOMAXCONN) == SOCKET_ERROR)
-		CRASH("Listen Error");
-
-	FD_SET(_listenSocket, &_fds);
+	
 
 	timeval cv;
 	cv.tv_sec = 0;
