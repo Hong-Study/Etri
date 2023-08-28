@@ -17,6 +17,8 @@ public:
 
 	// Clear
 	void		Disconnected();
+	void		ChangeTird(TirdRef newTird);
+
 private:
 	TirdRef _tirdSession;
 	TifdRef _tifdSession;

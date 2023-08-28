@@ -26,7 +26,8 @@ private:
 
 	thread* thread;
 	string id;
-
+	int trainStatus = 0;
+	
 	std::tm local_Time;
 };
 

@@ -26,13 +26,14 @@ public:
 	void		PopList(SessionRef ref);
 	
 	bool		PushPairingList(TifdRef tifd, TirdRef tird, int32 distance);
+	bool		ChangePairingList(TifdRef tifd, TirdRef tird);
 	void		PopPairingList(int32 pairingId, SessionRef session);
 
 	void		GetPossiblePairingList(pair<float, float> tifdLocation, vector<PossiblePairingList>& lists);
 
 	void		SendKeepAliveUpdate();
 	void		SendKeepAlive();
-
+	StLoraInfo	GetLoraInfo() { return _loraInfo; }
 private:
 	// 실제 작동하는 코드
 	void		PopTifdList(TifdRef tifd);
@@ -68,7 +69,7 @@ private:
 	map<std::string, TirdRef>				_tirdList;
 	
 	// ListId가 Key로 작동
-	std::map<int32, PairSessionRef>	_pairingSessions;
+	std::map<int32, PairSessionRef>			_pairingSessions;
 
 	fd_set _fds;
 

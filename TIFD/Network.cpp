@@ -175,7 +175,7 @@ void Network::HandleConfirm()
 
 				data.trainNo = 203;
 				data.trainLength = 1234;
-				data.trainStatus = 0;
+				data.trainStatus = trainStatus;
 				data.lat = latitude;
 				data.lon = longitude;
 				data.speed = 21;
@@ -197,35 +197,7 @@ void Network::HandleConfirm()
 
 void Network::HandleAlram()
 {	
-	StTifdData data;
-	ZeroMemory(&data, sizeof(StTifdData));
-	data.nTifdVer[0] = 2;
-	data.nTifdVer[1] = 3;
-	data.nTifdVer[2] = 4;
-	data.nTifdVer[3] = 5;
-
-	strcpy_s(data.deviceId, 12, id.c_str());
-	data.deviceId[11] = '\0';
-
-	data.nLoraVer[0] = 2;
-	data.nLoraVer[1] = 3;
-	data.nLoraVer[2] = 4;
-	data.nLoraVer[3] = 5;
-
-	data.trainNo = 203;
-	data.trainLength = 1234;
-	data.trainStatus = TrainStatus_OpenAlarmRequest;
-	data.lat = 0.0f;
-	data.lon = 0.0f;
-	data.speed = 21;
-	data.distance = 0;
-
-	data.stTime.hour = local_Time.tm_hour;
-	data.stTime.min = local_Time.tm_min;
-	data.stTime.sec = local_Time.tm_sec;
-
-	BYTE* buf = MakeSendBuffer(data, CmdType_Tifd_Info, 0, Device::DeviceTIFD);
-	Send(buf, HEAD_SIZE + sizeof(StTifdData));
+	trainStatus = TrainStatus_OpenAlarmRequest;
 }
 
 double Network::calculateDistance(double lat1, double lon1, double lat2, double lon2)

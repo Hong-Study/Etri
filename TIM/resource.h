@@ -9,6 +9,7 @@
 #define IDD_TEST                        106
 #define TEST_OPTION                     106
 #define INFORMATION                     108
+#define LORA_INFO                       112
 #define IDC_TAB                         1001
 #define SERVER_PORT                     1003
 #define IDC_TEXTPORT                    1004
@@ -22,20 +23,24 @@
 #define INFO_DEVICE                     1015
 #define temp                            1015
 #define IDC_EDIT1                       1017
+#define IDC_LIST1                       1018
 #define Option                          40001
 #define MENU_OPTION                     40002
 #define ID_40003                        40003
 #define ID_40004                        40004
 #define ID_PORT                         40005
 #define ID_TEST                         40006
+#define ID_Menu                         40007
+#define ID_40008                        40008
+#define ID_LORA                         40009
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        110
-#define _APS_NEXT_COMMAND_VALUE         40007
-#define _APS_NEXT_CONTROL_VALUE         1018
+#define _APS_NEXT_RESOURCE_VALUE        114
+#define _APS_NEXT_COMMAND_VALUE         40010
+#define _APS_NEXT_CONTROL_VALUE         1019
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

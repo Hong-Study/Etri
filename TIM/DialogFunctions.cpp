@@ -43,6 +43,9 @@ LRESULT CALLBACK DialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         case ID_TEST:
             DialogBoxParam(WINGUI->GetHInstance(), MAKEINTRESOURCE(TEST_OPTION), hwnd, TestOptionProc, 0);
             return TRUE;
+        case ID_LORA:
+            DialogBoxParam(WINGUI->GetHInstance(), MAKEINTRESOURCE(LORA_INFO), hwnd, LoraInformation, 0);
+            return TRUE;
         }
         return TRUE;
 
@@ -238,5 +241,82 @@ LRESULT InformationProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         }
         return TRUE;
     }
+    return FALSE;
+}
+
+LRESULT LoraInformation(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    static HWND loraInfo;
+    RECT rect{};
+    int32 width;
+    int32 height;
+    StLoraInfo info;
+    LVITEM item{};
+    LVCOLUMN colum{};
+    switch (msg)
+    {
+    case WM_INITDIALOG:
+        GetWindowRect(hwnd, &rect);
+
+        width = (rect.right - rect.left) - 100;
+        height = rect.bottom - rect.top - 150;
+        info = TIM->GetLoraInfo();
+
+        loraInfo = CreateWindow(WC_LISTVIEW, L"", WS_CHILD | WS_VISIBLE | LVS_REPORT
+            , 20, 20, width, height
+            , hwnd, nullptr, WINGUI->GetHInstance(), nullptr);
+        if (loraInfo == NULL)
+        {
+            EndDialog(hwnd, 0);
+            return false;
+        }
+
+        colum.mask = LVCF_TEXT | LVCF_WIDTH;
+        colum.pszText = (LPWSTR)L"로라 채널";
+        colum.cx = width/2;
+        ListView_InsertColumn(loraInfo, 0, &colum);
+
+        colum.mask = LVCF_TEXT | LVCF_WIDTH;
+        colum.pszText = (LPWSTR)L"사용 유무";
+        colum.cx = width/2;
+        ListView_InsertColumn(loraInfo, 1, &colum);
+
+        item.mask = LVIF_TEXT;
+        item.iItem = 0;
+        item.iSubItem = 0;
+        item.pszText = (LPWSTR)L"LORA CH : 1";
+        ListView_InsertItem(loraInfo, &item);
+
+        item.iSubItem = 1;
+        item.pszText = (LPWSTR)L"Default";
+        ListView_SetItem(loraInfo, &item);
+
+        for (int i = 1;i < LORA_MAX_CH - 1;i++)
+        {
+            item.iItem = i;
+            item.iSubItem = 0;
+            wstring str = std::format(L"LORA CH : {0}", i+1);
+            item.pszText = (LPWSTR)(str.c_str());
+            ListView_InsertItem(loraInfo, &item);
+
+            item.iSubItem = 1;
+            if (info.bUse[i+1])
+                item.pszText = (LPWSTR)L"TRUE";
+            else
+                item.pszText = (LPWSTR)L"FALSE";
+            ListView_SetItem(loraInfo, &item);
+        }
+
+        return TRUE;
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+        {
+            CloseWindow(loraInfo);
+            EndDialog(hwnd, LOWORD(wParam));
+            return TRUE;
+        }
+        break;
+    }
+
     return FALSE;
 }

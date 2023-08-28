@@ -158,12 +158,27 @@ bool TIMServer::PushPairingList(TifdRef tifd, TirdRef tird, int32 distance)
 		SendBufferRef buf = MakeSendLoraBuffer(_loraInfo.ch);
 		tifd->Send(buf);
 		tird->Send(buf);
-		_loraInfo.bUse[_loraInfo.ch-1] = true;
+		_loraInfo.bUse[_loraInfo.ch] = true;
 		_loraInfo.ch += 1;
 		if (_loraInfo.ch > LORA_MAX_CH)
 			_loraInfo.ch = 2;
 	}
 
+	return true;
+}
+
+bool TIMServer::ChangePairingList(TifdRef tifd, TirdRef tird)
+{
+	if (tird == nullptr)
+		return false;
+	if (tird->GetPairState() == ePairState::PairState_Pair)
+		return false;
+
+	auto it = _pairingSessions.find(tifd->GetPairingId());
+	if (it == _pairingSessions.end())
+		return false;
+	
+	it->second->ChangeTird(tird);
 	return true;
 }
 

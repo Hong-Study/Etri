@@ -113,7 +113,6 @@ void TifdSession::HandleUpdatePendingInfo(const StTifdData* data)
 {
 	SetTifdData(data);
 	
-	//WINGUI->DoAsync(&WinApi::UpdateTifdPendingInfo, GetListId(), GetTifdSession());
 	WINGUI->UpdateTifdPendingInfo(GetListId(), GetTifdSession());
 
 	if (data->speed >= GLowestSpeed)
@@ -208,8 +207,15 @@ bool TifdSession::CheckingPairingPossibleList()
 
 			if (it->timeCount >= GSuccessCount)
 			{
+				if (GetPairState() == ePairState::PairState_Pair)
+				{
+					if(TIM->ChangePairingList(GetTifdSession(), it->target))
+						return true;
+					else
+						it = _possibleLists.erase(it);
+				}
 				// 실패했다는 소리는 이미 페어링이 되어있다는 소리거나 TIRD가 아니라는 소리
-				if (TIM->PushPairingList(GetTifdSession(), it->target, distance))
+				else if (TIM->PushPairingList(GetTifdSession(), it->target, distance))
 				{
 					return true;
 				}

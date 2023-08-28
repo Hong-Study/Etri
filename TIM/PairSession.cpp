@@ -28,3 +28,13 @@ void PairSession::Disconnected()
 		_tifdSession->SetPairState(ePairState::PairState_Unpair);
 	}
 }
+
+void PairSession::ChangeTird(TirdRef newTird)
+{
+	_tirdSession = newTird;
+	_tirdSession->SetPairingId(_pairingId);
+	_tirdSession->SetPairState(ePairState::PairState_Pair);
+	
+	_tifdSession->SetTarget(_tirdSession);
+	_tirdSession->SetTarget(_tifdSession);
+}
