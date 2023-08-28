@@ -85,7 +85,7 @@ void TifdSession::SetTifdData(const StTifdData* data)
 		{
 			StTirdData tird;
 			memcpy(&tird, _pairingTarget->GetData(), sizeof(StTirdData));
-			if (_myData->distance - _myData->trainLength >= 200)
+			if (_myData->distance - _myData->trainLength >= GTrainSeparationCheckDistance)
 				_distanceCheckCount.fetch_add(1);
 			else
 				_distanceCheckCount.store(0);
@@ -132,7 +132,7 @@ void TifdSession::HandleUpdatePairingInfo(const StTifdData* data)
 {
 	SetTifdData(data);
 
-	if (_distanceCheckCount == 10)
+	if (_distanceCheckCount == GTrainSeparationCheckCount)
 		_myData->trainStatus = TrainStatus_OpenAlarmRequest;
 
 	// 알람이 울렸으니 새로운 페어링을 찾아보는건가?

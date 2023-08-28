@@ -7,8 +7,10 @@ extern int32			GMaximumDistance;
 extern int32			GLowestSpeed;
 extern int32			GDistanceAccuarcy;
 extern int32			GSuccessCount;
+extern int32			GTrainSeparationCheckDistance;
+extern int32			GTrainSeparationCheckCount;
+
 extern bool				GStart;
-extern int32			GOverCount;
 extern std::wstring		GServerIP;
 extern std::wstring		GSpreadingFactor;
 extern std::wstring		GCodingRate;

@@ -17,6 +17,8 @@
 #define IDC_FAILD                       1007
 #define IDC_START                       1007
 #define IDC_COMPLETE                    1008
+#define IDC_CHECK_DISTANCE              1009
+#define IDC_CHECK_COUNT                 1010
 #define INFO_DEVICE                     1015
 #define temp                            1015
 #define IDC_EDIT1                       1017

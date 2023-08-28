@@ -1,12 +1,13 @@
 {
-	"ServerIP": "127.0.0.1",
+	"ServerIP": "192.168.10.100",
 	"LogPos": "./Logs/",
 	"ServerPort": 10000,
 	"MaximumDistance": 1000,
 	"LowestSpeed": 20,
 	"DistanceAccuarcy": 100,
 	"SuccessCount": 5,
-	"OverCount": 10,
+	"TrainSeparationCheckDistance": 200,
+	"TrainSeparationCheckCount": 10,
 	"SpreadingFactor": 10,
 	"CodingRate": 1
 }

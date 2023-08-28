@@ -94,6 +94,7 @@ LRESULT CALLBACK DialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 LRESULT TestOptionProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     static HWND maxDistance = 0, lowestSpeed = 0, failedDistance = 0, successCount = 0;
+    static HWND checkDistance, checkCount;
     TCHAR buf[256] = { };
     int32 textLength = 0;
     UNREFERENCED_PARAMETER(lParam);
@@ -111,6 +112,12 @@ LRESULT TestOptionProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
         successCount = GetDlgItem(hwnd, IDC_COMPLETE);
         SetWindowText(successCount, to_wstring(GSuccessCount).c_str());
+
+        checkDistance = GetDlgItem(hwnd, IDC_CHECK_DISTANCE);
+        SetWindowText(checkDistance, to_wstring(GTrainSeparationCheckDistance).c_str());
+
+        checkCount = GetDlgItem(hwnd, IDC_CHECK_COUNT);
+        SetWindowText(checkCount, to_wstring(GTrainSeparationCheckCount).c_str());
 
         return true;
 
@@ -140,6 +147,18 @@ LRESULT TestOptionProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             {
                 GetWindowText(successCount, buf, sizeof(buf) / sizeof(TCHAR));
                 GSuccessCount = _tstoi(buf);
+            }
+            textLength = GetWindowTextLength(checkDistance);
+            if (textLength > 0)
+            {
+                GetWindowText(checkDistance, buf, sizeof(buf) / sizeof(TCHAR));
+                GTrainSeparationCheckDistance = _tstoi(buf);
+            }
+            textLength = GetWindowTextLength(checkCount);
+            if (textLength > 0)
+            {
+                GetWindowText(checkCount, buf, sizeof(buf) / sizeof(TCHAR));
+                GTrainSeparationCheckCount = _tstoi(buf);
             }
             EndDialog(hwnd, LOWORD(wParam));
         }

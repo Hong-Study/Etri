@@ -11,7 +11,9 @@ int32			GMaximumDistance = 1000;
 int32			GLowestSpeed = 20;
 int32			GDistanceAccuarcy = 100;
 int32			GSuccessCount = 5;
-int32			GOverCount = 10;
+int32			GTrainSeparationCheckDistance = 0;
+int32			GTrainSeparationCheckCount = 0;
+
 bool			GStart = false;
 std::wstring	GServerIP = L"";
 std::string		GLogPos = "";
@@ -46,11 +48,13 @@ public:
 			return;
 		if (GParser->GetValue("SuccessCount", GSuccessCount) == false)
 			return;
-		if (GParser->GetValue("OverCount", GOverCount) == false)
-			return;
 		if (GParser->GetValue("ServerIP", GServerIP) == false)
 			return;
 		if (GParser->GetValue("LogPos", GLogPos) == false)
+			return;
+		if (GParser->GetValue("TrainSeparationCheckDistance", GTrainSeparationCheckDistance) == false)
+			return;
+		if (GParser->GetValue("TrainSeparationCheckCount", GTrainSeparationCheckCount) == false)
 			return;
 
 		int32 inputData = 0;

@@ -19,7 +19,7 @@ public:
 	bool		Start();
 	void		Update();
 
-	// JobQueue 사용
+	// JobQueue 사용 -> 멀티스레드 오류 방지
 	void		PushTifdList(SOCKET sock, SOCKADDR_IN sockAddr, const StTifdData* data);
 	void		PushTirdList(SOCKET sock, SOCKADDR_IN sockAddr, const StTirdData* data);
 
@@ -34,6 +34,7 @@ public:
 	void		SendKeepAlive();
 
 private:
+	// 실제 작동하는 코드
 	void		PopTifdList(TifdRef tifd);
 	void		PopTirdList(TirdRef tird);
 
@@ -41,6 +42,7 @@ private:
 	void		PopPairingList(int32 pairingId, TirdRef session);
 	
 private:
+	// 초기 접속용 네트워크 코드
 	void		Disconnect(SessionInfo* info);
 	void		Recv(SessionInfo* info);
 	int32		OnRecv(SessionInfo* info, BYTE* buffer, int32 size);
@@ -48,8 +50,6 @@ private:
 
 	bool		Send(SOCKET sock, SendBufferRef buffer);
 	bool		Send(SOCKET sock, BYTE* buffer, int32 size);
-
-private:
 
 private:
 	SOCKET			_listenSocket = INVALID_SOCKET;

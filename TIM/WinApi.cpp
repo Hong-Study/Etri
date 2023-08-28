@@ -1170,8 +1170,8 @@ void WinApi::UpdateTifdPendingInfo(int32 id, TifdRef tifd)
     int32 isInfo = id << 4;
     if (IsInfo.compare_exchange_weak(isInfo, isInfo + 1))
     {
-        wstring tirdDeviceId = L"";
-        DoAsync(&WinApi::TifdInfoUpdate, isInfo, tifd->GetLocation(), tirdDeviceId, tifd->_possibleLists, ptr);
+        string tirdDeviceId = tifd->GetData()->nTirdRcvId;
+        DoAsync(&WinApi::TifdInfoUpdate, isInfo, tifd->GetLocation(), StringToWstring(tirdDeviceId), tifd->_possibleLists, ptr);
     }
 }
 
