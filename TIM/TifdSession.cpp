@@ -85,6 +85,11 @@ void TifdSession::SetTifdData(const StTifdData* data)
 		{
 			StTirdData tird;
 			memcpy(&tird, _pairingTarget->GetData(), sizeof(StTirdData));
+			if (_myData->distance - _myData->trainLength >= 200)
+				_distanceCheckCount.fetch_add(1);
+			else
+				_distanceCheckCount.store(0);
+
 			if (_writer->WritePairingString(_myData, tird) == false)
 				CRASH("WritePairingStringWithTifd");
 		}
@@ -99,7 +104,8 @@ void TifdSession::SetTifdData(const StTifdData* data)
 pair<float, float> TifdSession::GetLocation()
 {
 	WRITE_LOCK;
-
+	if (_myData == nullptr)
+		return { -1.f, -1.f };
 	return { _myData->lat, _myData->lon };
 }
 
@@ -125,6 +131,9 @@ void TifdSession::HandleUpdatePendingInfo(const StTifdData* data)
 void TifdSession::HandleUpdatePairingInfo(const StTifdData* data)
 {
 	SetTifdData(data);
+
+	if (_distanceCheckCount == 10)
+		_myData->trainStatus = TrainStatus_OpenAlarmRequest;
 
 	// 알람이 울렸으니 새로운 페어링을 찾아보는건가?
 	if (_myData->trainStatus == TrainStatus_OpenAlarmRequest)
@@ -154,13 +163,6 @@ void TifdSession::HandleUpdatePairingInfo(const StTifdData* data)
 		}
 
 #endif // TEST
-		auto tirdLocation = _pairingTarget->GetLocation();
-		auto tifdLocation = GetLocation();
-		int32 distance = CalculateDistance(tifdLocation, tirdLocation);
-
-		// TODO (거리 체크)
-		//if(distance >)
-
 		wstring str = std::format(L"Train({0}) is OpenAlramRequest", _myData->trainNo);
 		wstring alram = L"Open Alram Request";
 		WINGUI->DoAsync(&WinApi::AddLogList, str);

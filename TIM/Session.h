@@ -38,6 +38,8 @@ public:
 	int32				GetPairingId() { return _pairingId; }
 	int32				GetListId() { return _listId; }
 
+	uint64				GetCurrnetRecvTime() { return _currentRecvTime; }
+	void				SetCurrentRecvTime(uint64 time) { _currentRecvTime = time; }
 	// CMD 창에서 정보 출력
 	// void				PrintSessionInfo();
 
@@ -48,6 +50,7 @@ private:
 
 	RecvBuffer	_recvBuffer;
 	uint64		_startTime = 0;
+	uint64		_currentRecvTime = 0;
 
 protected:
 	USE_LOCK;

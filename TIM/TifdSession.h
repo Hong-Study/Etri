@@ -43,6 +43,7 @@ private:
 private:
 	std::vector<PossiblePairingList>	_possibleLists;
 	std::atomic<int32>					_possibleListsSize = 0;
+	std::atomic<int32>					_distanceCheckCount = 0;
 	TirdRef								_pairingTarget;
 	StTifdData*							_myData = nullptr;
 	class FileWriter*					_writer;

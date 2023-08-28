@@ -23,6 +23,13 @@ void Session::Init()
 	int32 retVal = setsockopt(_socket, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char*>(&nValue), sizeof(nValue));
 	if (retVal != 0)
 		CRASH("setsockopt"); 
+
+	DWORD time = NO_MSG_CHECK_TIME;
+	retVal = setsockopt(_socket, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char*>(&time), sizeof(time));
+	if (retVal != 0)
+		CRASH("setsockopt");
+
+	_currentRecvTime = GetTickCount64();
 }
 
 void Session::Recv()

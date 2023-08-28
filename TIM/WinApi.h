@@ -22,7 +22,13 @@ public:
 	void		UpdateTifdPairingInfo(int32 id, int32 distance, StTifdData* tifd, StTirdData* tird);
 	void		UpdateTirdPairingInfo(int32 id, StTirdData* data);
 
-	void		UpdateInformation(HWND& handle, NMLVDISPINFO* plvdi);
+	// Information Update
+	void		TifdInfoUpdate(int32 infoId, pair<float, float> location
+		,wstring tirdDeviceId, vector<PossiblePairingList> possibleLists, TifdListPtr tifdList);
+	void		TirdInfoUpdate(int32 infoId, pair<float, float> location, TirdListPtr tirdList);
+	void		PairingInfoUpdate(int32 infoId, pair<float, float> tifdLocation, pair<float, float> tirdLocation
+		, TifdListPtr tifdList, TirdListPtr tirdList);
+
 	// Session 종료시 삭제
 	void		DeleteTirdPendingList(int32 id);
 	void		DeleteTifdPendingList(int32 id);
@@ -103,7 +109,7 @@ private:
 	void		SetInfoCandidateItem(const vector<PossiblePairingList>& lists);
 
 	void		SetInfoMapCreate(const pair<float, float> nowLocatoin);
-	void		SetInfoMapCreate(float lat1, float long1, float lat2, float long2);
+	void		SetInfoMapCreate(const pair<float, float> tifdLoc, const pair<float, float> tirdLoc);
 	void		DrawPngMap(const HWND handle);
 
 	void		SetInfoTifdItem(const HWND handle, const TifdListPtr tifd, const std::wstring pairState, const std::wstring tirdDeviceId);

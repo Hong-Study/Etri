@@ -9,7 +9,6 @@ using std::wstring;
 using std::to_wstring;
 using std::atomic;
 
-
 using SessionRef		= std::shared_ptr<class Session>;
 using TifdRef			= std::shared_ptr<class TifdSession>;
 using TirdRef			= std::shared_ptr<class TirdSession>;
@@ -61,3 +60,5 @@ public:													\
 
 #define THREAD	GETSINGLE(ThreadManager)
 #define MAP		GETSINGLE(PythonMap)
+
+#define TICK_COUNT 5000

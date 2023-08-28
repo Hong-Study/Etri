@@ -774,14 +774,14 @@ void WinApi::SetInfoMapCreate(const pair<float, float> nowLocation)
     DrawPngMap(infoHandle->dialog);
 }
 
-void WinApi::SetInfoMapCreate(float lat1, float long1, float lat2, float long2)
+void WinApi::SetInfoMapCreate(const pair<float, float> tifdLoc, const pair<float, float> tirdLoc)
 {
     if (infoHandle == nullptr || mapInfo == nullptr)
         return;
     shared_ptr<MapPairingInfo> mapPairingInfo = static_pointer_cast<MapPairingInfo>(mapInfo);
     if (mapPairingInfo == nullptr)
         return;
-    mapPairingInfo->SetPos(lat1, long1, lat2, long2);
+    mapPairingInfo->SetPos(tifdLoc.first, tifdLoc.second, tirdLoc.first, tirdLoc.second);
     if (MAP->CreatePairingMapPng(
         mapPairingInfo->centerLat, mapPairingInfo->centerLong
         , mapPairingInfo->tifdLat, mapPairingInfo->tifdLong
@@ -1170,10 +1170,8 @@ void WinApi::UpdateTifdPendingInfo(int32 id, TifdRef tifd)
     int32 isInfo = id << 4;
     if (IsInfo.compare_exchange_weak(isInfo, isInfo + 1))
     {
-        SetInfoTifdItem(infoHandle->tifdInfo, ptr, L"UnPair", tifd->GetDeviceIdToWString());
-        SetInfoCandidateItem(tifd->_possibleLists);
-        SetInfoMapCreate(tifd->GetLocation());
-        IsInfo.store(isInfo);
+        wstring tirdDeviceId = L"";
+        DoAsync(&WinApi::TifdInfoUpdate, isInfo, tifd->GetLocation(), tirdDeviceId, tifd->_possibleLists, ptr);
     }
 }
 
@@ -1198,9 +1196,7 @@ void WinApi::UpdateTirdPendingInfo(int32 id, StTirdData* data)
     int32 isInfo = id << 4;
     if (IsInfo.compare_exchange_weak(isInfo, isInfo + 1))
     {
-        SetInfoTirdItem(infoHandle->tirdInfo, ptr, L"Not Paired");
-        SetInfoMapCreate(pair{ data->lat, data->lon });
-        IsInfo.store(isInfo);
+        DoAsync(&WinApi::TirdInfoUpdate, isInfo, pair<float, float>{data->lat, data->lon}, ptr);
     }
 }
 
@@ -1220,18 +1216,14 @@ void WinApi::UpdateTifdPairingInfo(int32 id, int32 distance, StTifdData* tifd, S
 
     SetTifdPairingList(ptr);
 
-    if (ptr == nullptr)
+    if (ptr == nullptr || ptr->tifd == nullptr || ptr->tird == nullptr)
         return;
 
     int32 isId = ptr->tifd->idNum << 4;
     if (IsInfo.compare_exchange_weak(isId, isId + 1))
     {
-        SetInfoTifdItem(infoHandle->tifdInfo, ptr->tifd, L"Paired", ptr->tird->device);
-        SetInfoTirdItem(infoHandle->tirdInfo, ptr->tird, L"Paired");
-
-        // 고쳐야할 부분
-        SetInfoMapCreate(tifd->lat, tifd->lon, tird->lat, tird->lon);
-        IsInfo.store(isId);
+        DoAsync(&WinApi::PairingInfoUpdate, isId, pair{ tifd->lat, tifd->lon }
+        , pair{ tird->lat, tird->lon }, ptr->tifd, ptr->tird);
     }
 }
 
@@ -1252,9 +1244,31 @@ void WinApi::UpdateTirdPairingInfo(int32 id, StTirdData* data)
     SetTirdPairingList(ptr);
 }
 
-void WinApi::UpdateInformation(HWND& handle, NMLVDISPINFO* plvdi)
+void WinApi::TifdInfoUpdate(int32 infoId, pair<float, float> location
+    , wstring tirdDeviceId, vector<PossiblePairingList> possibleLists, TifdListPtr tifdList)
 {
+    SetInfoTifdItem(infoHandle->tifdInfo, tifdList, L"UnPair", tirdDeviceId);
+    SetInfoCandidateItem(possibleLists);
+    SetInfoMapCreate(location);
 
+    IsInfo.store(infoId);
+}
+
+void WinApi::TirdInfoUpdate(int32 infoId, pair<float, float> location, TirdListPtr tirdList)
+{
+    SetInfoTirdItem(infoHandle->tirdInfo, tirdList, L"Not Paired");
+    SetInfoMapCreate(location);
+    IsInfo.store(infoId);
+}
+
+void WinApi::PairingInfoUpdate(int32 infoId, pair<float, float> tifdLocation, pair<float, float> tirdLocation, TifdListPtr tifdList, TirdListPtr tirdList)
+{
+    SetInfoTifdItem(infoHandle->tifdInfo, tifdList, L"Paired", tirdList->device);
+    SetInfoTirdItem(infoHandle->tirdInfo, tirdList, L"Paired");
+
+    // 고쳐야할 부분
+    SetInfoMapCreate(tifdLocation, tirdLocation);
+    IsInfo.store(infoId);
 }
 
 int32 WinApi::NewPairingList(int32 tifdId, int32 tirdId, int32 distance)
@@ -1446,7 +1460,7 @@ void WinApi::DeleteTirdPendingList(int32 id)
     {
         int32 expected = IsInfo.load() >> 4;
         if (expected == id)
-            ClearInfomation(expected << 4);
+            DoAsync(&WinApi::ClearInfomation, expected << 4);
         tirdHashMap.erase(tirdIt);
         ResetTirdPendingList();
     }

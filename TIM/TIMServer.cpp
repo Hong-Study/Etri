@@ -437,8 +437,6 @@ bool TIMServer::Start()
 
 void TIMServer::Update()
 {
-	
-
 	timeval cv;
 	cv.tv_sec = 0;
 	cv.tv_usec = 10000;
@@ -481,7 +479,7 @@ void TIMServer::Update()
 
 				if (Send(clientSock, ref) == true)
 				{
-					_infos.push_back({ clientSock, addr });
+					_infos.push_back({ clientSock, addr, GetTickCount64()});
 					FD_SET(clientSock, &_fds);
 				}
 				else
@@ -491,11 +489,16 @@ void TIMServer::Update()
 
 		for (auto info = _infos.begin();info != _infos.end();)
 		{
+			uint64 tick = GetTickCount64();
+			if (tick - info->currentRecvTime >= 5000)
+				Disconnect(info._Ptr);
+
 			if (info->sock == INVALID_SOCKET)
 				info = _infos.erase(info);
 			else if (FD_ISSET(info->sock, &tempSet))
 			{
 				Recv(info._Ptr);
+				info->currentRecvTime = GetTickCount64();
 				info++;
 			}
 			else
@@ -506,16 +509,28 @@ void TIMServer::Update()
 		{
 			TifdRef tifd = begin->second;
 			SOCKET sock = tifd->GetSocket();
-			if (FD_ISSET(sock, &tempSet))
+			uint64 tick = GetTickCount64();
+			if (tick - tifd->GetCurrnetRecvTime() >= TICK_COUNT)
+				tifd->Disconnect();
+			else if (FD_ISSET(sock, &tempSet))
+			{
 				tifd->Recv();
+				tifd->SetCurrentRecvTime(tick);
+			}
 		}
 
 		for (auto begin = _tirdList.begin(); begin != _tirdList.end(); begin++)
 		{
 			TirdRef tird = begin->second;
 			SOCKET sock = tird->GetSocket();
-			if (FD_ISSET(sock, &tempSet))
+			uint64 tick = GetTickCount64();
+			if (tick - tird->GetCurrnetRecvTime() >= TICK_COUNT)
+				tird->Disconnect();
+			else if (FD_ISSET(sock, &tempSet))
+			{
 				tird->Recv();
+				tird->SetCurrentRecvTime(tick);
+			}
 		}
 	}
 }

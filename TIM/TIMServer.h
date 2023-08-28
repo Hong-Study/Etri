@@ -5,6 +5,7 @@ struct SessionInfo
 {
 	SOCKET sock;
 	SOCKADDR_IN sockAddr;
+	uint64	currentRecvTime = 0;
 };
 
 class TIMServer : public JobQueue
