@@ -16,15 +16,15 @@ public:
 
 public:
 	// 저장 되어 있는 정보들 업데이트
-	void		UpdateTifdPendingInfo(int32 id, TifdRef tifd);
-	void		UpdateTirdPendingInfo(int32 id, StTirdData* data);
+	void		UpdateTifdPendingInfo(int32 id, StTifdData data, vector<PossiblePairingList> possibleList);
+	void		UpdateTirdPendingInfo(int32 id, StTirdData data);
 
-	void		UpdateTifdPairingInfo(int32 id, int32 distance, StTifdData* tifd, StTirdData* tird);
-	void		UpdateTirdPairingInfo(int32 id, StTirdData* data);
+	void		UpdateTifdPairingInfo(int32 id, int32 distance, StTifdData tifd, StTirdData tird);
+	void		UpdateTirdPairingInfo(int32 id, StTirdData data);
 
 	// Information Update
 	void		TifdInfoUpdate(int32 infoId, pair<float, float> location
-		,wstring tirdDeviceId, vector<PossiblePairingList> possibleLists, TifdListPtr tifdList);
+		,wstring tirdDeviceId, vector<PossiblePairingList>& possibleLists, TifdListPtr tifdList);
 	void		TirdInfoUpdate(int32 infoId, pair<float, float> location, TirdListPtr tirdList);
 	void		PairingInfoUpdate(int32 infoId, pair<float, float> tifdLocation, pair<float, float> tirdLocation
 		, TifdListPtr tifdList, TirdListPtr tirdList);
@@ -50,9 +50,9 @@ public:
 	void		ClearInfomation(int32 id);
 
 	// 새로운 PendingList 추가
-	int32		NewPendingList(TifdRef session);
-	int32		NewPendingList(TirdRef session);
-	int32		NewPairingList(int32 tifdId, int32 tirdId, int32 distance);
+	void		NewTifdPendingList(int32 id, TifdRef session);
+	void		NewTirdPendingList(int32 id, TirdRef session);
+	void		NewPairingList(int32 pairingId, int32 tifdListId, int32 tirdListId, int32 distance);
 
 private:
 	// 초기화 부분들
@@ -87,8 +87,8 @@ private:
 	void		ResetPairingList();
 
 	// Pending List 보조 함수
-	int32		NewPendingTifdList(StTifdData* data, wstring ip, wstring port);
-	int32		NewPendingTirdList(StTirdData* data, wstring ip, wstring port);
+	void		NewPendingTifdList(int32 id, StTifdData data, wstring ip, wstring port);
+	void		NewPendingTirdList(int32 id, StTirdData data, wstring ip, wstring port);
 
 	// Pendinglist에 집어넣기
 	void		InsertPendingTifdList(TifdListPtr item);
@@ -125,24 +125,11 @@ private:
 	HINSTANCE hInstance = 0;
 
 private:
-	enum
-	{
-		TIFD_LOCK
-		, TIRD_LOCK
-		, PAIRING_LOCK
-		, LOG_LOCK
-		, LOCK_SIZE
-	};
-
-	USE_MANY_LOCK(LOCK_SIZE);
-
 	HWND mainTab = 0, pendingTifdList = 0, pendingTirdList = 0, pairingList = 0;
 	HWND startButton = 0, closeButton = 0;
 	HWND tifdText = 0, tirdText = 0;
 	HWND logListView = 0, logText = 0;
 
-	atomic<int32> sessionCount = 1;
-	atomic<int32> pairingCount = 1;
 	vector<pair<wstring, wstring>> logList;
 
 private:

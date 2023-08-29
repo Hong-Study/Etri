@@ -47,8 +47,6 @@ void WinApi::Init()
 
 void WinApi::Clear()
 {
-    WRITE_LOCK_IDX(LOG_LOCK);
-
     Execute();
 
     SaveLogData();
@@ -722,7 +720,7 @@ void WinApi::InsertPendingTirdList(TirdListPtr item)
 {
     auto it = tirdHashMap.insert({ item->idNum, item });
     if (it.second == false)
-        CRASH("Error");
+        return;
 }
 
 void WinApi::SetInfoCandidateItem(const vector<PossiblePairingList>& lists)
@@ -769,7 +767,7 @@ void WinApi::SetInfoMapCreate(const pair<float, float> nowLocation)
     mapPendingInfo->SetPos(nowLocation);
     if (MAP->CreatePendingMapPng(mapPendingInfo->centerLat, mapPendingInfo->centerLong
         , mapPendingInfo->posLat, mapPendingInfo->posLong) == false)
-        CRASH("");
+        return;
 
     DrawPngMap(infoHandle->dialog);
 }
@@ -786,7 +784,8 @@ void WinApi::SetInfoMapCreate(const pair<float, float> tifdLoc, const pair<float
         mapPairingInfo->centerLat, mapPairingInfo->centerLong
         , mapPairingInfo->tifdLat, mapPairingInfo->tifdLong
         , mapPairingInfo->tirdLat, mapPairingInfo->tirdLong) == false)
-        CRASH("");
+        return;
+
 
     DrawPngMap(infoHandle->dialog);
 }
@@ -968,8 +967,6 @@ void WinApi::SetInfoTirdItem(const HWND handle, const TirdListPtr tird, std::wst
 
 void WinApi::AddLogList(wstring contexts)
 {
-    WRITE_LOCK_IDX(LOG_LOCK);
-
     // 현재 시간을 시스템 클록으로부터 구합니다.
     UpdateTime();
 
@@ -1035,25 +1032,23 @@ void WinApi::SaveLogData()
     }
 }
 
-int32 WinApi::NewPendingList(TirdRef session)
+void WinApi::NewTirdPendingList(int32 id, TirdRef session)
 {
-    WRITE_LOCK_IDX(TIFD_LOCK);
-
     StTirdData* data = session->GetData();
     if (data != nullptr)
     {
+        StTirdData tirdData;
+        memcpy(&tirdData, data, sizeof(StTirdData));
+
         wchar_t ipBuffer[INET6_ADDRSTRLEN];
         const SOCKADDR_IN& addr = session->GetSockAddr();
         InetNtop(AF_INET, &(addr.sin_addr), ipBuffer, INET6_ADDRSTRLEN);
-        return NewPendingTirdList(data, ipBuffer, to_wstring(ntohs(addr.sin_port)));
+        NewPendingTirdList(id, tirdData, ipBuffer, to_wstring(ntohs(addr.sin_port)));
     }
-    else
-        return -1;
 }
 
-int32 WinApi::NewPendingTirdList(StTirdData* data, wstring ip, wstring port)
+void WinApi::NewPendingTirdList(int32 id, StTirdData data, wstring ip, wstring port)
 {
-    int32 id = sessionCount.fetch_add(1);
     int32 pos = static_cast<int32>(tirdHashMap.size());
     TirdListPtr item = make_shared<PendingTirdListViewItem>(id, pos, data);
     item->ip = ip;
@@ -1061,15 +1056,13 @@ int32 WinApi::NewPendingTirdList(StTirdData* data, wstring ip, wstring port)
 
     InsertPendingTirdList(item);
     AddPendingListInfo(item);
-
-    return id;
 }
 
 void WinApi::InsertPendingTifdList(TifdListPtr item)
 {
     auto it = tifdHashMap.insert({ item->idNum, item });
     if (it.second == false)
-        CRASH("Error");
+        return;
 }
 
 void WinApi::AddPendingListInfo(TifdListPtr item)
@@ -1119,25 +1112,23 @@ void WinApi::SetPendingListInfo(TifdListPtr item)
     ListView_SetItem(pendingTifdList, &lvItem);
 }
 
-int32 WinApi::NewPendingList(TifdRef session)
+void WinApi::NewTifdPendingList(int32 id, TifdRef session)
 {
-    WRITE_LOCK_IDX(TIFD_LOCK);
-
     StTifdData* data = session->GetData();
     if (data != nullptr)
     {
+        StTifdData tifdData;
+        memcpy(&tifdData, data, sizeof(StTifdData));
+
         wchar_t ipBuffer[INET6_ADDRSTRLEN];
         const SOCKADDR_IN& addr = session->GetSockAddr();
         InetNtop(AF_INET, &(addr.sin_addr), ipBuffer, INET6_ADDRSTRLEN);
-        return NewPendingTifdList(data, ipBuffer, to_wstring(ntohs(addr.sin_port)));
+        NewPendingTifdList(id, tifdData, ipBuffer, to_wstring(ntohs(addr.sin_port)));
     }
-
-    return -1;
 }
 
-int32 WinApi::NewPendingTifdList(StTifdData* data, wstring ip, wstring port)
+void WinApi::NewPendingTifdList(int32 id, StTifdData data, wstring ip, wstring port)
 {
-    int32 id = sessionCount.fetch_add(1);
     int32 pos = static_cast<int32>(tifdHashMap.size());
     TifdListPtr item = make_shared<PendingTifdListViewItem>(id, pos, data);
     item->ip = ip;
@@ -1145,22 +1136,18 @@ int32 WinApi::NewPendingTifdList(StTifdData* data, wstring ip, wstring port)
 
     InsertPendingTifdList(item);
     AddPendingListInfo(item);
-
-    return id;
 }
 
-void WinApi::UpdateTifdPendingInfo(int32 id, TifdRef tifd)
+void WinApi::UpdateTifdPendingInfo(int32 id, StTifdData data, vector<PossiblePairingList> possibleList)
 {
     TifdListPtr ptr = nullptr;
     {
-        WRITE_LOCK_IDX(TIFD_LOCK);
-
         auto it = tifdHashMap.find(id);
         if (it == tifdHashMap.end())
             return;
 
         ptr = it->second;
-        ptr->SetInfo(tifd->GetData());
+        ptr->SetInfo(data);
         SetPendingListInfo(ptr);
     }
 
@@ -1170,17 +1157,15 @@ void WinApi::UpdateTifdPendingInfo(int32 id, TifdRef tifd)
     int32 isInfo = id << 4;
     if (IsInfo.compare_exchange_weak(isInfo, isInfo + 1))
     {
-        string tirdDeviceId = tifd->GetData()->nTirdRcvId;
-        DoAsync(&WinApi::TifdInfoUpdate, isInfo, tifd->GetLocation(), StringToWstring(tirdDeviceId), tifd->_possibleLists, ptr);
+        string tirdDeviceId = data.nTirdRcvId;
+        TifdInfoUpdate(isInfo, pair{ data.lat, data.lon }, StringToWstring(tirdDeviceId), possibleList, ptr);
     }
 }
 
-void WinApi::UpdateTirdPendingInfo(int32 id, StTirdData* data)
+void WinApi::UpdateTirdPendingInfo(int32 id, StTirdData data)
 {
     TirdListPtr ptr = nullptr;
     {
-        WRITE_LOCK_IDX(TIRD_LOCK);
-
         auto it = tirdHashMap.find(id);
         if (it == tirdHashMap.end())
             return;
@@ -1196,14 +1181,12 @@ void WinApi::UpdateTirdPendingInfo(int32 id, StTirdData* data)
     int32 isInfo = id << 4;
     if (IsInfo.compare_exchange_weak(isInfo, isInfo + 1))
     {
-        DoAsync(&WinApi::TirdInfoUpdate, isInfo, pair<float, float>{data->lat, data->lon}, ptr);
+        TirdInfoUpdate(isInfo, pair<float, float>{data.lat, data.lon}, ptr);
     }
 }
 
-void WinApi::UpdateTifdPairingInfo(int32 id, int32 distance, StTifdData* tifd, StTirdData* tird)
+void WinApi::UpdateTifdPairingInfo(int32 id, int32 distance, StTifdData tifd, StTirdData tird)
 {
-    WRITE_LOCK_IDX(PAIRING_LOCK);
-
     auto it = pairingHashMap.find(id);
     if (it == pairingHashMap.end())
         return;
@@ -1222,15 +1205,13 @@ void WinApi::UpdateTifdPairingInfo(int32 id, int32 distance, StTifdData* tifd, S
     int32 isId = ptr->tifd->idNum << 4;
     if (IsInfo.compare_exchange_weak(isId, isId + 1))
     {
-        DoAsync(&WinApi::PairingInfoUpdate, isId, pair{ tifd->lat, tifd->lon }
-        , pair{ tird->lat, tird->lon }, ptr->tifd, ptr->tird);
+        PairingInfoUpdate(isId, pair{tifd.lat, tifd.lon}
+        , pair{ tird.lat, tird.lon }, ptr->tifd, ptr->tird);
     }
 }
 
-void WinApi::UpdateTirdPairingInfo(int32 id, StTirdData* data)
+void WinApi::UpdateTirdPairingInfo(int32 id, StTirdData data)
 {
-    WRITE_LOCK_IDX(PAIRING_LOCK);
-
     auto it = pairingHashMap.find(id);
     if (it == pairingHashMap.end())
         return;
@@ -1245,7 +1226,7 @@ void WinApi::UpdateTirdPairingInfo(int32 id, StTirdData* data)
 }
 
 void WinApi::TifdInfoUpdate(int32 infoId, pair<float, float> location
-    , wstring tirdDeviceId, vector<PossiblePairingList> possibleLists, TifdListPtr tifdList)
+    , wstring tirdDeviceId, vector<PossiblePairingList>& possibleLists, TifdListPtr tifdList)
 {
     SetInfoTifdItem(infoHandle->tifdInfo, tifdList, L"UnPair", tirdDeviceId);
     SetInfoCandidateItem(possibleLists);
@@ -1271,42 +1252,30 @@ void WinApi::PairingInfoUpdate(int32 infoId, pair<float, float> tifdLocation, pa
     IsInfo.store(infoId);
 }
 
-int32 WinApi::NewPairingList(int32 tifdId, int32 tirdId, int32 distance)
+void WinApi::NewPairingList(int32 pairingId, int32 tifdListId, int32 tirdListId, int32 distance)
 {
-    WRITE_LOCK_IDX(PAIRING_LOCK);
-
-    int32 id = pairingCount.fetch_add(1);
     int32 pos = pairingSize;
-    TifdListPtr tifd;
-    TirdListPtr tird;
 
-    {
-        WRITE_LOCK_IDX(TIFD_LOCK);
-        auto it = tifdHashMap.find(tifdId);
-        if (it == tifdHashMap.end())
-            CRASH("Not Inside");
-        tifd = it->second;
-    }
+    auto tifdIt = tifdHashMap.find(tifdListId);
+    if (tifdIt == tifdHashMap.end())
+        return;
 
-    {
-        WRITE_LOCK_IDX(TIRD_LOCK);
-        auto it = tirdHashMap.find(tirdId);
-        if (it == tirdHashMap.end())
-            CRASH("Not Inside");
-        tird = it->second;
-    }
-
-    PListPtr ptr = make_shared<PairingListViewItem>(id, pos, to_wstring(distance), tifd, tird);
+    auto tirdIt = tirdHashMap.find(tirdListId);
+    if (tirdIt == tirdHashMap.end())
+        return;
+    
+    PListPtr ptr = make_shared<PairingListViewItem>(pairingId, pos, to_wstring(distance), tifdIt->second, tirdIt->second);
     pairingItems.push_back(ptr);
 
-    auto it = pairingHashMap.insert({ id, ptr });
+    auto it = pairingHashMap.insert({ pairingId, ptr });
     if (it.second == false)
-        CRASH("AddPairing");
+        return;
 
     AddPairing(ptr);
     pairingSize += 2;
 
-    return id;
+    DeleteTifdPendingList(tifdListId);
+    DeleteTirdPendingList(tirdListId);
 }
 
 void WinApi::AddPairing(const PListPtr ptr)
@@ -1449,8 +1418,6 @@ void WinApi::SetTirdPairingList(const PListPtr ptr)
 
 void WinApi::DeleteTirdPendingList(int32 id)
 {
-    WRITE_LOCK_IDX(TIRD_LOCK);
-
     auto tirdIt = tirdHashMap.find(id);
     if (tirdIt == tirdHashMap.end())
     {
@@ -1468,8 +1435,6 @@ void WinApi::DeleteTirdPendingList(int32 id)
 
 void WinApi::DeleteTifdPendingList(int32 id)
 {
-    WRITE_LOCK_IDX(TIFD_LOCK);
-
     auto tifdIt = tifdHashMap.find(id);
     if (tifdIt == tifdHashMap.end())
     {
@@ -1487,8 +1452,6 @@ void WinApi::DeleteTifdPendingList(int32 id)
 
 void WinApi::DeletePairingList(int32 id, Device device)
 {
-    WRITE_LOCK_IDX(PAIRING_LOCK);
-
     auto ptr = pairingHashMap.find(id);
     if (ptr == pairingHashMap.end())
         return;
@@ -1506,13 +1469,11 @@ void WinApi::DeletePairingList(int32 id, Device device)
 
     if (device == Device::DeviceTIFD)
     {
-        WRITE_LOCK_IDX(TIRD_LOCK);
         InsertPendingTirdList(pList->tird);
         ResetTirdPendingList();
     }
     else if (device == Device::DeviceTIRD)
     {
-        WRITE_LOCK_IDX(TIFD_LOCK);
         InsertPendingTifdList(pList->tifd);
         ResetTifdPendingList();
     }

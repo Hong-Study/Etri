@@ -49,5 +49,6 @@ private:
 	class FileWriter*					_writer;
 	int32								_nowTime = -1;
 	std::string							_fileName;
+	bool								_first = true;
 };
 

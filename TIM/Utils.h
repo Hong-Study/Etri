@@ -14,8 +14,7 @@ std::string		WstringToString(std::wstring str);
 SendBufferRef	MakeSendBuffer(CommandType type);
 SendBufferRef	MakeSendPairingBuffer(char* deviceId, int32 length);
 SendBufferRef	MakeSendUnPairingBuffer();
-SendBufferRef	MakeSendLoraBuffer(int32 ch);
-
+SendBufferRef	MakeSendLoraBuffer(uint8 ch);
 
 template<typename T>
 SendBufferRef MakeSendBuffer(const T data, CommandType type, uint8 answer, uint8 category)

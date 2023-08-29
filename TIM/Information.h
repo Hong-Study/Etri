@@ -9,15 +9,16 @@ using std::wstring;
 using std::to_wstring;
 using std::pair;
 
+// GUI 상의 필요한 정보들
 struct PendingTifdListViewItem
 {
-	PendingTifdListViewItem(int32 id, int32 pos, StTifdData* data) : idNum(id), pos(pos), id(to_wstring(id))
+	PendingTifdListViewItem(int32 id, int32 pos, StTifdData& data) : idNum(id), pos(pos), id(to_wstring(id))
 	{
 		SetInfo(data);
 	}
 	void SetDevice(string deviceId) { device.assign(deviceId.begin(), deviceId.end()); }
 	void SetTirdId(string tidr) { tirdId.assign(tidr.begin(), tidr.end()); }
-	void SetInfo(StTifdData* data);
+	void SetInfo(StTifdData& data);
 	void SetTrainStatus(int32 type);
 
 	int32 idNum;		// listId
@@ -57,12 +58,12 @@ struct PendingTifdListViewItem
 
 struct PendingTirdListViewItem
 {
-	PendingTirdListViewItem(int32 id, int32 pos, StTirdData* data) : idNum(id), pos(pos), id(to_wstring(id))
+	PendingTirdListViewItem(int32 id, int32 pos, StTirdData& data) : idNum(id), pos(pos), id(to_wstring(id))
 	{
 		SetInfo(data);
 	}
 	void SetDevice(string deviceId) { device.assign(deviceId.begin(), deviceId.end()); }
-	void SetInfo(StTirdData* data);
+	void SetInfo(StTirdData& data);
 
 	int32 idNum;		// listId
 	int32 pos;
@@ -106,19 +107,6 @@ struct PairingListViewItem
 
 	TifdListPtr tifd;
 	TirdListPtr tird;
-};
-
-struct PossiblePairingList
-{
-	PossiblePairingList(TirdRef ref, int32 distance)
-		: target(ref), fistDistance(distance), currentDistacne(distance), timeCount(0), isStart(false) { }
-	~PossiblePairingList() { target = nullptr; }
-
-	int32 fistDistance;
-	int32 currentDistacne;
-	int32 timeCount;
-	bool  isStart;
-	TirdRef target = nullptr;
 };
 
 struct InfoHandle
@@ -165,4 +153,18 @@ struct MapPairingInfo : public MapInfo
 	float tifdLong;
 	float tirdLat;
 	float tirdLong;
+};
+
+// TIFD 페어링 후보들의 정보들에 필요한 내용
+struct PossiblePairingList
+{
+	PossiblePairingList(TirdRef ref, int32 distance)
+		: target(ref), fistDistance(distance), currentDistacne(distance), timeCount(0), isStart(false) { }
+	~PossiblePairingList() { target = nullptr; }
+
+	int32 fistDistance;
+	int32 currentDistacne;
+	int32 timeCount;
+	bool  isStart;
+	TirdRef target = nullptr;
 };

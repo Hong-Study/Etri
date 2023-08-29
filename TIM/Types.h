@@ -10,9 +10,5 @@ using uint16 = unsigned __int16;
 using uint32 = unsigned __int32;
 using uint64 = unsigned __int64;
 
-
-// 전역 변수 관리 생각하기
-// Struct로 묶을까?
-
 #define TEST
 #define DEBUG

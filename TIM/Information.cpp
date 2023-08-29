@@ -1,30 +1,30 @@
 #include "pch.h"
 #include "Utils.h"
 
-void PendingTifdListViewItem::SetInfo(StTifdData* data)
+void PendingTifdListViewItem::SetInfo(StTifdData& data)
 {
-	version = std::format(L"{0}.{1}.{2}.{3}", data->nTifdVer[0], data->nTifdVer[1], data->nTifdVer[2], data->nTifdVer[3]);
-	SetDevice(data->deviceId);
-	train = to_wstring(data->trainNo);
-	trainLength = to_wstring(data->trainLength);
-	SetTrainStatus(data->trainStatus);
-	latitude = to_wstring(data->lat);
-	longitude = to_wstring(data->lon);
-	altitude = to_wstring(data->alt);
-	speed = to_wstring(data->speed);
-	sat = to_wstring(data->sat);
-	distance = to_wstring(data->distance);
+	version = std::format(L"{0}.{1}.{2}.{3}", data.nTifdVer[0], data.nTifdVer[1], data.nTifdVer[2], data.nTifdVer[3]);
+	SetDevice(data.deviceId);
+	train = to_wstring(data.trainNo);
+	trainLength = to_wstring(data.trainLength);
+	SetTrainStatus(data.trainStatus);
+	latitude = to_wstring(data.lat);
+	longitude = to_wstring(data.lon);
+	altitude = to_wstring(data.alt);
+	speed = to_wstring(data.speed);
+	sat = to_wstring(data.sat);
+	distance = to_wstring(data.distance);
 
-	loraVersion = std::format(L"{0}.{1}.{2}.{3}", data->nLoraVer[0], data->nLoraVer[1], data->nLoraVer[2], data->nLoraVer[3]);		loraCh = to_wstring(data->nLoraCh);
-	loraPower = to_wstring(data->nLoraPower);
-	loraSF = to_wstring(data->nLoraSF);
-	loraBW = to_wstring(data->nLoraBW);
-	loraCR = to_wstring(data->nLoraCR);
+	loraVersion = std::format(L"{0}.{1}.{2}.{3}", data.nLoraVer[0], data.nLoraVer[1], data.nLoraVer[2], data.nLoraVer[3]);		loraCh = to_wstring(data.nLoraCh);
+	loraPower = to_wstring(data.nLoraPower);
+	loraSF = to_wstring(data.nLoraSF);
+	loraBW = to_wstring(data.nLoraBW);
+	loraCR = to_wstring(data.nLoraCR);
 
-	rssi = to_wstring(data->nRssi);
+	rssi = to_wstring(data.nRssi);
 
 	// TODO
-	time = std::format(L"{0}:{1}:{2}", data->stTime.hour, data->stTime.min, data->stTime.sec);
+	time = std::format(L"{0}:{1}:{2}", data.stTime.hour, data.stTime.min, data.stTime.sec);
 }
 
 void PendingTifdListViewItem::SetTrainStatus(int32 type)
@@ -51,24 +51,24 @@ void PendingTifdListViewItem::SetTrainStatus(int32 type)
 	}
 }
 
-void PendingTirdListViewItem::SetInfo(StTirdData* data)
+void PendingTirdListViewItem::SetInfo(StTirdData& data)
 {
-	version = std::format(L"{0}.{1}.{2}.{3}", data->nTirdVer[0], data->nTirdVer[1], data->nTirdVer[2], data->nTirdVer[3]);
-	SetDevice(data->deviceId);
+	version = std::format(L"{0}.{1}.{2}.{3}", data.nTirdVer[0], data.nTirdVer[1], data.nTirdVer[2], data.nTirdVer[3]);
+	SetDevice(data.deviceId);
 
-	latitude = to_wstring(data->lat);
-	longitude = to_wstring(data->lon);
-	altitude = to_wstring(data->alt);
-	speed = to_wstring(data->speed);
-	sat = to_wstring(data->sat);
-	loraCh = to_wstring(data->nLoraCh);
-	loraPower = to_wstring(data->nLoraPower);
-	loraSF = to_wstring(data->nLoraSF);
-	loraBW = to_wstring(data->nLoraBW);
-	loraCR = to_wstring(data->nLoraCR);
+	latitude = to_wstring(data.lat);
+	longitude = to_wstring(data.lon);
+	altitude = to_wstring(data.alt);
+	speed = to_wstring(data.speed);
+	sat = to_wstring(data.sat);
+	loraCh = to_wstring(data.nLoraCh);
+	loraPower = to_wstring(data.nLoraPower);
+	loraSF = to_wstring(data.nLoraSF);
+	loraBW = to_wstring(data.nLoraBW);
+	loraCR = to_wstring(data.nLoraCR);
 
-	battery = to_wstring(data->battery);
-	time = std::format(L"{0}:{1}:{2}", data->stTime.hour, data->stTime.min, data->stTime.sec);
+	battery = to_wstring(data.battery);
+	time = std::format(L"{0}:{1}:{2}", data.stTime.hour, data.stTime.min, data.stTime.sec);
 }
 
 void MapPendingInfo::SetPos(pair<float, float> pos)

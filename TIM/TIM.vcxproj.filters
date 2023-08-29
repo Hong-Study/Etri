@@ -69,9 +69,6 @@
     <ClInclude Include="RecvBuffer.h">
       <Filter>Buffer</Filter>
     </ClInclude>
-    <ClInclude Include="DialogFunctions.h">
-      <Filter>Main</Filter>
-    </ClInclude>
     <ClInclude Include="Enums.h">
       <Filter>DataFormat</Filter>
     </ClInclude>
@@ -107,6 +104,9 @@
     </ClInclude>
     <ClInclude Include="TIMServer.h">
       <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="DialogFunctions.h">
+      <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -146,9 +146,6 @@
     <ClCompile Include="SendBuffer.cpp">
       <Filter>Buffer</Filter>
     </ClCompile>
-    <ClCompile Include="DialogFunctions.cpp">
-      <Filter>Main</Filter>
-    </ClCompile>
     <ClCompile Include="Information.cpp">
       <Filter>DataFormat</Filter>
     </ClCompile>
@@ -178,6 +175,9 @@
     </ClCompile>
     <ClCompile Include="TIMServer.cpp">
       <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="DialogFunctions.cpp">
+      <Filter>GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

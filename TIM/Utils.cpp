@@ -99,7 +99,8 @@ SendBufferRef MakeSendUnPairingBuffer()
 
     return sendBuf;
 }
-SendBufferRef MakeSendLoraBuffer(int32 ch)
+
+SendBufferRef MakeSendLoraBuffer(uint8 ch)
 {
     SendBufferRef sendBuf = make_shared<SendBuffer>(HEAD_SIZE + 1);
 

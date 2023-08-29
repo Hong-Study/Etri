@@ -35,6 +35,8 @@ void TIMServer::Clear()
 {
 	_isWork = false;
 
+	Execute();
+
 	for (auto tifd : _tifdList)
 	{
 		tifd.second->SetPairState(ePairState::Disconnect);
@@ -51,9 +53,8 @@ void TIMServer::Clear()
 	_tirdList.clear();
 	_pairingSessions.clear();
 
-	ClearJobs();
-
 	FD_ZERO(&_fds);
+	closesocket(_listenSocket);
 	_totalSize.store(0);
 }
 
@@ -128,18 +129,13 @@ bool TIMServer::PushPairingList(TifdRef tifd, TirdRef tird, int32 distance)
 		tifd->SetTarget(tird);
 		tird->SetTarget(tifd);
 
-		int32 pairingId = WINGUI->NewPairingList(tifd->GetListId(), tird->GetListId(), distance);
+		int32 pairingId = _pairingCount.fetch_add(1);
 		PairSessionRef pair = make_shared<PairSession>(tifd, tird, pairingId, distance);
 
-		tifd->SetPairingId(pairingId);
-		tird->SetPairingId(pairingId);
-
+		WINGUI->DoAsync(&WinApi::NewPairingList, pairingId, tifd->GetListId(), tird->GetListId(), distance);
 		auto it = _pairingSessions.insert({ pairingId, pair });
 		if (it.second == false)
 			CRASH("Pairing already inside");
-
-		WINGUI->DoAsync(&WinApi::DeleteTifdPendingList, tifd->GetListId());
-		WINGUI->DoAsync(&WinApi::DeleteTirdPendingList, tird->GetListId());
 	}
 
 	wstring str = std::format(L"Pairing On : TIFD = {0}, TIRD = {1}"
@@ -200,10 +196,14 @@ void TIMServer::PopPairingList(int32 pairingId, TifdRef session)
 		PairSessionRef pairRef = it->second;
 		pairRef->Disconnected();
 
-		WINGUI->DeletePairingList(pairRef->GetPairingId(), session->GetDeviceType());
+		WINGUI->DoAsync(&WinApi::DeletePairingList, pairRef->GetPairingId(), session->GetDeviceType());
 
 		{
 			auto tird = pairRef->GetTirdSession();
+
+			int32 loraCh = tird->GetData()->nLoraCh;
+			_loraInfo.bUse[loraCh] = false;
+
 			SendBufferRef sendBuf = MakeSendLoraBuffer(LORA_DEFAULT_CH);
 			tird->Send(sendBuf);
 		}
@@ -226,11 +226,14 @@ void TIMServer::PopPairingList(int32 pairingId, TirdRef session)
 		PairSessionRef pairRef = it->second;
 		pairRef->Disconnected();
 
-		WINGUI->DeletePairingList(pairRef->GetPairingId(), session->GetDeviceType());
+		WINGUI->DoAsync(&WinApi::DeletePairingList, pairRef->GetPairingId(), session->GetDeviceType());
 
 		{
 			// TODO üũ
 			auto tifd = pairRef->GetTifdSession();
+
+			int32 loraCh = tifd->GetData()->nLoraCh;
+			_loraInfo.bUse[loraCh] = false;
 
 			SendBufferRef sendBuf = MakeSendUnPairingBuffer();
 			tifd->Send(sendBuf);
@@ -561,9 +564,6 @@ void TIMServer::PushTifdList(SOCKET sock, SOCKADDR_IN sockAddr, const StTifdData
 		closesocket(sock);
 		return;
 	}
-
-	_totalSize.fetch_add(1);
-
 	TifdRef tifd = make_shared<TifdSession>(sock, sockAddr, data);
 	SendBufferRef buffer = MakeSendBuffer(CommandType::CmdType_Reg_Confirm);
 	tifd->Send(buffer);
@@ -572,8 +572,10 @@ void TIMServer::PushTifdList(SOCKET sock, SOCKADDR_IN sockAddr, const StTifdData
 	wstring str = std::format(L"Connected TIFD {0}", StringToWstring(name));
 	WINGUI->DoAsync(&WinApi::AddLogList, str);
 
-	int32 listId = WINGUI->NewPendingList(tifd);
+	int32 listId = _sessionCount.fetch_add(1);
 	tifd->SetListId(listId);
+
+	WINGUI->DoAsync(&WinApi::NewTifdPendingList, listId, tifd);
 }
 
 void TIMServer::PushTirdList(SOCKET sock, SOCKADDR_IN sockAddr, const StTirdData* data)
@@ -598,6 +600,8 @@ void TIMServer::PushTirdList(SOCKET sock, SOCKADDR_IN sockAddr, const StTirdData
 	wstring str = std::format(L"Connected TIRD {0}", StringToWstring(name));
 	WINGUI->DoAsync(&WinApi::AddLogList, str);
 
-	int32 listId = WINGUI->NewPendingList(tird);
+	int32 listId = _sessionCount.fetch_add(1);
 	tird->SetListId(listId);
+
+	WINGUI->DoAsync(&WinApi::NewTirdPendingList, listId, tird);
 }

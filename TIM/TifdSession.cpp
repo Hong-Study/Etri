@@ -113,7 +113,7 @@ void TifdSession::HandleUpdatePendingInfo(const StTifdData* data)
 {
 	SetTifdData(data);
 	
-	WINGUI->UpdateTifdPendingInfo(GetListId(), GetTifdSession());
+	WINGUI->DoAsync(&WinApi::UpdateTifdPendingInfo, GetListId(), *data, _possibleLists);
 
 	if (data->speed >= GLowestSpeed)
 	{
@@ -165,12 +165,17 @@ void TifdSession::HandleUpdatePairingInfo(const StTifdData* data)
 		wstring str = std::format(L"Train({0}) is OpenAlramRequest", _myData->trainNo);
 		wstring alram = L"Open Alram Request";
 		WINGUI->DoAsync(&WinApi::AddLogList, str);
-		WINGUI->DoAsync(&WinApi::ShowTrainAlramStatus, GetPairingId(), alram);
+
+		if(_first)
+			WINGUI->DoAsync(&WinApi::ShowTrainAlramStatus, GetPairingId(), alram);
+		_first = false;
 	}
+	else
+		_first = true;
 
 	if (_pairingTarget != nullptr)
 	{
-		WINGUI->UpdateTifdPairingInfo(GetPairingId(), data->distance, GetData(), _pairingTarget->GetData());
+		WINGUI->DoAsync(&WinApi::UpdateTifdPairingInfo, GetPairingId(), data->distance, *_myData, *_pairingTarget->GetData());
 	}
 }
 void TifdSession::FindNearPossibleTird()

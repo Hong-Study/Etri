@@ -24,16 +24,18 @@ public:
 	void		PushTirdList(SOCKET sock, SOCKADDR_IN sockAddr, const StTirdData* data);
 
 	void		PopList(SessionRef ref);
-	
+	void		PopPairingList(int32 pairingId, SessionRef session);
+
 	bool		PushPairingList(TifdRef tifd, TirdRef tird, int32 distance);
 	bool		ChangePairingList(TifdRef tifd, TirdRef tird);
-	void		PopPairingList(int32 pairingId, SessionRef session);
 
 	void		GetPossiblePairingList(pair<float, float> tifdLocation, vector<PossiblePairingList>& lists);
 
+	// TIFD, TIRD 연결 유지
 	void		SendKeepAliveUpdate();
 	void		SendKeepAlive();
 	StLoraInfo	GetLoraInfo() { return _loraInfo; }
+
 private:
 	// 실제 작동하는 코드
 	void		PopTifdList(TifdRef tifd);
@@ -43,7 +45,7 @@ private:
 	void		PopPairingList(int32 pairingId, TirdRef session);
 	
 private:
-	// 초기 접속용 네트워크 코드
+	// 초기 접속용 네트워크 코드 (TIFD, TIRD 판별)
 	void		Disconnect(SessionInfo* info);
 	void		Recv(SessionInfo* info);
 	int32		OnRecv(SessionInfo* info, BYTE* buffer, int32 size);
@@ -74,6 +76,9 @@ private:
 	fd_set _fds;
 
 private:
+	atomic<int32> _sessionCount = 1;
+	atomic<int32> _pairingCount = 1;
+
 	bool		_isWork = true;
 	StLoraInfo	_loraInfo;
 };

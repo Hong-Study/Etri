@@ -68,13 +68,13 @@ LRESULT CALLBACK DialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     switch (pnmhdr->idFrom)
                     {
                     case TIFD_LIST:
-                        WINGUI->ShowTifdInformation(selectedIndex);
+                        WINGUI->DoAsync(&WinApi::ShowTifdInformation, selectedIndex);
                         break;
                     case TIRD_LIST:
-                        WINGUI->ShowTirdInformation(selectedIndex);
+                        WINGUI->DoAsync(&WinApi::ShowTirdInformation, selectedIndex);
                         break;
                     case PAIRING_LIST:
-                        WINGUI->ShowPairingInformation(selectedIndex);
+                        WINGUI->DoAsync(&WinApi::ShowPairingInformation, selectedIndex);
                         break;
                     }
                 }
@@ -227,17 +227,9 @@ LRESULT InformationProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_COMMAND:
         if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
         {
-            WINGUI->ClearInfomation(infoId);
+            WINGUI->DoAsync(&WinApi::ClearInfomation, infoId);
             EndDialog(hwnd, LOWORD(wParam));
             return TRUE;
-        }
-        return TRUE;
-    case WM_NOTIFY:
-        NMHDR* pnmhdr = reinterpret_cast<NMHDR*>(lParam);
-        if (pnmhdr->code == LVM_GETGROUPINFO)
-        {
-            NMLVDISPINFO* plvdi = reinterpret_cast<NMLVDISPINFO*>(pnmhdr);
-            //WINGUI->UpdateInfo
         }
         return TRUE;
     }

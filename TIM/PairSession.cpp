@@ -7,7 +7,10 @@ PairSession::PairSession(TifdRef tifd, TirdRef tird, int32 pairingId, int32 dist
 	: _tifdSession(tifd), _tirdSession(tird), _pairingId(pairingId)
 {
 	tifd->SetPairState(ePairState::PairState_Pair);
+	tifd->SetPairingId(pairingId);
+
 	tird->SetPairState(ePairState::PairState_Pair);
+	tird->SetPairingId(pairingId);
 }
 
 PairSession::~PairSession()

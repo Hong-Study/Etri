@@ -52,7 +52,7 @@ void TirdSession::OnDisconnected()
 		_pairingTarget = nullptr;
 
 	wstring str = std::format(L"Disconnected TIRD {0}", GetDeviceIdToWString());
-	WINGUI->AddLogList(str);
+	WINGUI->DoAsync(&WinApi::AddLogList, str);
 
 	if(_myData != nullptr)
 		delete _myData;
@@ -97,7 +97,7 @@ void TirdSession::HandleUpdatePendingInfo(const StTirdData* data)
 		return;
 	SetTirdData(data);
 
-	WINGUI->UpdateTirdPendingInfo(GetListId(), GetData());
+	WINGUI->DoAsync(&WinApi::UpdateTirdPendingInfo, GetListId(), *GetData());
 }
 
 void TirdSession::HandleUpdatePairingInfo(const StTirdData* data)
@@ -106,7 +106,7 @@ void TirdSession::HandleUpdatePairingInfo(const StTirdData* data)
 		return;
 	SetTirdData(data);
 	if (_pairingTarget != nullptr)
-		WINGUI->UpdateTirdPairingInfo(GetPairingId(), GetData());
+		WINGUI->DoAsync(&WinApi::UpdateTirdPairingInfo, GetPairingId(), *GetData());
 }
 
 
