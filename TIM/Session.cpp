@@ -106,10 +106,10 @@ void Session::Disconnect()
 	}
 
 	int32 retVal = closesocket(_socket);
-	if (retVal != 0)
-		CRASH("CloseSocket");
-
 	_socket = INVALID_SOCKET;
+
+	if (retVal != 0)
+		return;
 
 	OnDisconnected();
 }

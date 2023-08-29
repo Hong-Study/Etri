@@ -25,4 +25,3 @@ private:
 	int32 readPos;
 	int32 writePos;
 };
-

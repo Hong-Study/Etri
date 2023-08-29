@@ -29,6 +29,5 @@ int main()
 	{
 		t.join();
 	}
-	
 }
 
