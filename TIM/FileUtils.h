@@ -23,7 +23,7 @@ private:
 	std::string pendingSet = "Time,DeviceId,lat,long,Speed,Sat\n";
 
 	// ½Ã°£ tifd tifd_lat tifd_long tird tird_lat tird_long distanec
-	std::string pairingSet = "Time,TIFD,TIFD_Lat,TIFD_Long,TIRD,TIRD_Lat,TIRD_Long,Distance\n";
+	std::string pairingSet = "Time, TIFD, TIFD_Lat, TIFD_Long, TIFD_Speed, TIFD_Sat, TIRD, TIRD_Lat, TIRD_Long, TIRD_Speed, TIRD_Sat, Distance\n";
 };
 
 template<typename T>

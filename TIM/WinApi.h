@@ -22,6 +22,8 @@ public:
 	void		UpdateTifdPairingInfo(int32 id, int32 distance, StTifdData tifd, StTirdData tird);
 	void		UpdateTirdPairingInfo(int32 id, StTirdData data);
 
+	void		ChangePairingToTird(int32 pairingId, int32 tirdId);
+
 	// Information Update
 	void		TifdInfoUpdate(int32 infoId, pair<float, float> location
 		,wstring tirdDeviceId, vector<PossiblePairingList>& possibleLists, TifdListPtr tifdList);

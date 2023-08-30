@@ -63,7 +63,8 @@ bool FileWriter::WritePairingString(StTifdData* tifd, StTirdData& tird)
 
     std::string time = std::format("{0}:{1}:{2}", tifd->stTime.hour, tifd->stTime.min, tifd->stTime.sec);
 
-    std::string format = std::format("{0}, {1}, {2:0.5f}, {3:0.5f}, {4}, {5:0.5f}, {6:0.5f}, {7}\n", time.c_str(), tifd->deviceId, tifd->lat, tifd->lon, tird.deviceId, tird.lat, tird.lon, tifd->distance, tifd->speed, tifd->sat);
+    std::string format = std::format("{0}, {1}, {2:0.8f}, {3:0.8f}, {4:0.5f}, {5}, {6}, {7:0.8f}, {8:0.8f}, {9:0.5}, {10}, {11}\n"
+        , time.c_str(), tifd->deviceId, tifd->lat, tifd->lon, tifd->speed, tifd->sat, tird.deviceId, tird.lat, tird.lon, tird.speed, tird.sat, tifd->distance);
 
     writer.write(format.c_str(), format.size());
 

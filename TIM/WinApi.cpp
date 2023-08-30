@@ -666,7 +666,7 @@ void WinApi::CreateLogColum()
     ListView_InsertColumn(logListView, (int)LogListViewCategory::Time, &colum);
 
     colum.pszText = (LPWSTR)L"Contents";
-    colum.cx = logWidth / 2 + 50;
+    colum.cx = logWidth / 2 + 200;
     ListView_InsertColumn(logListView, (int)LogListViewCategory::Contents, &colum);
 }
 
@@ -1223,6 +1223,21 @@ void WinApi::UpdateTirdPairingInfo(int32 id, StTirdData data)
     ptr->tird->SetInfo(data);
 
     SetTirdPairingList(ptr);
+}
+
+void WinApi::ChangePairingToTird(int32 pairingId, int32 tirdId)
+{
+    auto it = pairingHashMap.find(pairingId);
+    if (it == pairingHashMap.end())
+        return;
+    auto tirdIt = tirdHashMap.find(tirdId);
+    if (tirdIt == tirdHashMap.end())
+        return;
+
+    InsertPendingTirdList(it->second->tird);
+
+    it->second->tird = tirdIt->second;
+    DeleteTirdPendingList(tirdId);
 }
 
 void WinApi::TifdInfoUpdate(int32 infoId, pair<float, float> location

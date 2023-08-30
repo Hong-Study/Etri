@@ -174,7 +174,14 @@ bool TIMServer::ChangePairingList(TifdRef tifd, TirdRef tird)
 	if (it == _pairingSessions.end())
 		return false;
 	
+	wstring str = std::format(L"{0}, Pairing Change {1} -> {2}", tifd->GetDeviceIdToWString(),it->second->GetTirdSession()->GetDeviceIdToWString(), tird->GetDeviceIdToWString());
+	WINGUI->DoAsync(&WinApi::AddLogList, str);
+
 	it->second->ChangeTird(tird);
+
+	// 필요하다면 전의 TIRD를 리스트에 추가하는 코드
+	WINGUI->DoAsync(&WinApi::ChangePairingToTird, tifd->GetPairingId(), tird->GetListId());
+	
 	return true;
 }
 

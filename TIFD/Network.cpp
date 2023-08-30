@@ -197,7 +197,7 @@ void Network::HandleConfirm()
 
 void Network::HandleAlram()
 {	
-	/*trainStatus = TrainStatus_OpenAlarmRequest;*/
+	trainStatus = TrainStatus_OpenAlarmRequest;
 }
 
 double Network::calculateDistance(double lat1, double lon1, double lat2, double lon2)

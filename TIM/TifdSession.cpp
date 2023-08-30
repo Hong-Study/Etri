@@ -85,7 +85,6 @@ void TifdSession::SetTifdData(const StTifdData* data)
 		{
 			StTirdData tird;
 			memcpy(&tird, _pairingTarget->GetData(), sizeof(StTirdData));
-
 			if (_myData->distance - _myData->trainLength >= GTrainSeparationCheckDistance)
 				_distanceCheckCount.fetch_add(1);
 			else
@@ -150,7 +149,10 @@ void TifdSession::HandleUpdatePairingInfo(const StTifdData* data)
 		}
 		else
 		{
-			CheckingPairingPossibleList();
+			if (CheckingPairingPossibleList() == false)
+			{
+				newTird = false;
+			}
 		}
 
 		if (newTird == false)

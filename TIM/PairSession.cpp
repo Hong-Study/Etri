@@ -34,6 +34,9 @@ void PairSession::Disconnected()
 
 void PairSession::ChangeTird(TirdRef newTird)
 {
+	_tirdSession->SetPairState(ePairState::PairState_Unpair);
+	_tirdSession->SetTarget(nullptr);
+
 	_tirdSession = newTird;
 	_tirdSession->SetPairingId(_pairingId);
 	_tirdSession->SetPairState(ePairState::PairState_Pair);
