@@ -12,7 +12,7 @@ using namespace std;
 
 void WinApi::Init()
 {
-    // GDI+ ���õ� � �Լ��� ��� ���� �ش� �Լ��� ȣ���ؾ� �մϴ�.
+    // GDI+ 관련된 어떤 함수라도 사용 전에 해당 함수를 호출해야 합니다.
     Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 
     int32 emptySize = 100;
@@ -184,7 +184,7 @@ void WinApi::ShowTrainAlramStatus(int32 listId, std::wstring status)
 {
     TCHAR str[126];
     _stprintf_s(str, 126, L"Train No. %d was %ws", listId, status.c_str());
-    MessageBox(dlgHwnd, str, _T("�˶� ����"), MB_OK | MB_ICONINFORMATION);
+    MessageBox(dlgHwnd, str, _T("알람 정보"), MB_OK | MB_ICONINFORMATION);
 }
 
 void WinApi::ResetTirdPendingList()
@@ -234,7 +234,7 @@ void WinApi::CreatePendingListView()
         , dlgHwnd, reinterpret_cast<HMENU>(TIFD_LIST)
         , hInstance, nullptr);
 
-    // �÷� �߰�
+    // 컬럼 추가
     CreateTifdListColum(pendingTifdList, (width / (int)PendingTifdListViewCategory::CategorySize));
 
     pendingTirdList = CreateWindow(WC_LISTVIEW, L"PendingTirdList"
@@ -243,7 +243,7 @@ void WinApi::CreatePendingListView()
         , dlgHwnd, reinterpret_cast<HMENU>(TIRD_LIST)
         , hInstance, nullptr);
 
-    // �÷� �߰�
+    // 컬럼 추가
     CreateTirdListColum(pendingTirdList, (width / (int)PendingTirdListViewCategory::CategorySize));
 }
 
@@ -322,7 +322,7 @@ bool WinApi::CreateTifdInformation(HWND parent)
 
     CreateTifdInfoColum(tifdInfo, width / 2);
 
-    // �ĺ��ڷ� ��������� �ȴ�.
+    // 후보자로 변경해줘야 된다.
     HWND CandidateInfo = CreateWindow(WC_LISTVIEW, L"Logs", WS_CHILD | WS_VISIBLE | LVS_REPORT
         , width + 30, 20, width, height
         , parent, nullptr
@@ -792,15 +792,15 @@ void WinApi::SetInfoMapCreate(const pair<float, float> tifdLoc, const pair<float
 
 void WinApi::DrawPngMap(const HWND handle)
 {
-    // image.png ������ �̿��Ͽ� Image ��ü�� �����մϴ�.
+    // image.png 파일을 이용하여 Image 객체를 생성합니다.
     HDC hdc = GetDC(handle);
     Gdiplus::Image* image = Gdiplus::Image::FromFile(L"SaveMap/map.png");
     Gdiplus::Graphics g(hdc);
 
-    // (x, y)�� width X height ũ���� �̹����� �׸��ϴ�.
+    // (x, y)에 width X height 크기의 이미지를 그립니다.
     g.DrawImage(image, 700, 25, 400, 400);
 
-    // ������ �޸� ����
+    // 데이터 메모리 해제
     delete image;
     ReleaseDC(handle, hdc);
 }
@@ -967,7 +967,7 @@ void WinApi::SetInfoTirdItem(const HWND handle, const TirdListPtr tird, std::wst
 
 void WinApi::AddLogList(wstring contexts)
 {
-    // ���� �ð��� �ý��� Ŭ�����κ��� ���մϴ�.
+    // 현재 시간을 시스템 클록으로부터 구합니다.
     UpdateTime();
 
     LVITEM lvItem{};
@@ -1262,7 +1262,6 @@ void WinApi::PairingInfoUpdate(int32 infoId, pair<float, float> tifdLocation, pa
     SetInfoTifdItem(infoHandle->tifdInfo, tifdList, L"Paired", tirdList->device);
     SetInfoTirdItem(infoHandle->tirdInfo, tirdList, L"Paired");
 
-    // ���ľ��� �κ�
     SetInfoMapCreate(tifdLocation, tirdLocation);
     IsInfo.store(infoId);
 }
@@ -1358,7 +1357,6 @@ void WinApi::SetTifdPairingList(const PListPtr ptr)
     lvItem.iSubItem = (int)PairingListViewCategory::Table_Sat;
     ListView_SetItem(pairingList, &lvItem);
 
-    // �Ŀ� �ٲ����.
     lvItem.pszText = (LPWSTR)(ptr->distance.c_str());
     lvItem.iSubItem = (int)PairingListViewCategory::Table_Distance;
     ListView_SetItem(pairingList, &lvItem);
@@ -1472,7 +1470,7 @@ void WinApi::DeletePairingList(int32 id, Device device)
         return;
 
     PListPtr pList = ptr->second;
-    // ���� ���赵 ���� �ڵ�
+    // 조금 위험도 높은 코드
     int32 pos = pList->pos / 2;
     pairingItems.erase(pairingItems.begin() + pos);
     pairingHashMap.erase(ptr);

@@ -2,8 +2,8 @@
 #include "PythonMap.h"
 #include "WinApi.h"
 
-// ½º·¹µå SafeÇÏ°Ô ¸¸µé¾î¾ßÇÏ´Âµ¥ ¾î¶»°Ô ÇÒ °ÍÀÎ°¡?
-// ±¸Çö ÁßÁ¡
+// ìŠ¤ë ˆë“œ Safeí•˜ê²Œ ë§Œë“¤ì–´ì•¼í•˜ëŠ”ë° ì–´ë–»ê²Œ í•  ê²ƒì¸ê°€?
+// êµ¬í˜„ ì¤‘ì 
 
 void PythonMap::Init()
 {
@@ -13,13 +13,13 @@ void PythonMap::Init()
 
 	Py_Initialize();
 	_pFileName = PyUnicode_FromString("CreateMap");
-	_pModule = PyImport_Import(_pFileName); // »ı¼ºÇÑ PyObject pNameÀ» importÇÑ´Ù.
+	_pModule = PyImport_Import(_pFileName); // ìƒì„±í•œ PyObject pNameì„ importí•œë‹¤.
 	if (_pModule == NULL) {
 		CRASH("Can't open Module")
 	}
 	else
 	{
-		_pCreatePendingFunc = PyObject_GetAttrString(_pModule, "CreatePendingMap"); // ½ÇÇàÇÒ ÇÔ¼öÀÎ test_funcÀ» PyObject¿¡ Àü´ŞÇÑ´Ù. 
+		_pCreatePendingFunc = PyObject_GetAttrString(_pModule, "CreatePendingMap"); // ì‹¤í–‰í•  í•¨ìˆ˜ë¥¼ PyObjectì— ì „ë‹¬í•œë‹¤. 
 		if (_pCreatePendingFunc == nullptr)
 			CRASH("Can't Open Function");
 		_pCreatePairingFunc = PyObject_GetAttrString(_pModule, "CreatePairingMap");

@@ -15,7 +15,7 @@ public:
 	void		SaveLogData();
 
 public:
-	// ���� �Ǿ� �ִ� ������ ������Ʈ
+	// 저장 되어 있는 정보들 업데이트
 	void		UpdateTifdPendingInfo(int32 id, StTifdData data, vector<PossiblePairingList> possibleList);
 	void		UpdateTirdPendingInfo(int32 id, StTirdData data);
 
@@ -26,12 +26,12 @@ public:
 
 	// Information Update
 	void		TifdInfoUpdate(int32 infoId, pair<float, float> location
-		,wstring tirdDeviceId, vector<PossiblePairingList>& possibleLists, TifdListPtr tifdList);
+		, wstring tirdDeviceId, vector<PossiblePairingList>& possibleLists, TifdListPtr tifdList);
 	void		TirdInfoUpdate(int32 infoId, pair<float, float> location, TirdListPtr tirdList);
 	void		PairingInfoUpdate(int32 infoId, pair<float, float> tifdLocation, pair<float, float> tirdLocation
 		, TifdListPtr tifdList, TirdListPtr tirdList);
 
-	// Session ����� ����
+	// Session 종료시 삭제
 	void		DeleteTirdPendingList(int32 id);
 	void		DeleteTifdPendingList(int32 id);
 	void		DeletePairingList(int32 id, Device device);
@@ -39,25 +39,25 @@ public:
 	void		PairingDisconnectDection(uint32 id);
 	void		AddLogList(wstring contexts);
 
-	// Information ����
+	// Information 보기
 	void		ShowTifdInformation(int32 selectedIndex);
 	void		ShowTirdInformation(int32 selectedIndex);
 	void		ShowPairingInformation(int32 selectedIndex);
 	void		ShowTrainAlramStatus(int32 listId, std::wstring status);
 
-	// Information ����(ListView)
+	// Information 생성(ListView)
 	bool		CreateTifdInformation(HWND parent);
 	bool		CreateTirdInformation(HWND parent);
 	bool		CreatePairingInformation(HWND parent);
 	void		ClearInfomation(int32 id);
 
-	// ���ο� PendingList �߰�
+	// 새로운 PendingList 추가
 	void		NewTifdPendingList(int32 id, TifdRef session);
 	void		NewTirdPendingList(int32 id, TirdRef session);
 	void		NewPairingList(int32 pairingId, int32 tifdListId, int32 tirdListId, int32 distance);
 
 private:
-	// �ʱ�ȭ �κе�
+	// 초기화 부분들
 	void		SetTabSize();
 	void		SetTabText();
 	void		SetButtonPos();
@@ -70,11 +70,11 @@ private:
 	void		CreatePairingListView();
 	void		CreatePairingColum(HWND handle, int32 columSize);
 
-	// Information ���� ����
+	// Information 생성 보조
 	void		CreateCandidateColum(HWND handle, int32 columSize);
 	void		CreateTifdInfoColum(HWND handle, int32 columSize);
 	void		CreateTirdInfoColum(HWND handle, int32 columSize);
-	// ����
+	// 공통
 	void		InsertTifdInfo(HWND handle);
 	void		InsertTirdInfo(HWND handle);
 
@@ -82,17 +82,17 @@ private:
 	void		CreateLogColum();
 
 private:
-	// �ٽ�	�ʱ�ȭ�ϰ� ���
-	// ���ÿ� ���� �ϰ� �Ǹ�, ����̴� ���� �߻�
+	// 다시	초기화하고 출력
+	// 동시에 많이 하게 되면, 깜빡이는 현상 발생
 	void		ResetTirdPendingList();
 	void		ResetTifdPendingList();
 	void		ResetPairingList();
 
-	// Pending List ���� �Լ�
+	// Pending List 보조 함수
 	void		NewPendingTifdList(int32 id, StTifdData data, wstring ip, wstring port);
 	void		NewPendingTirdList(int32 id, StTirdData data, wstring ip, wstring port);
 
-	// Pendinglist�� ����ֱ�
+	// Pendinglist에 집어넣기
 	void		InsertPendingTifdList(TifdListPtr item);
 	void		InsertPendingTirdList(TirdListPtr item);
 
@@ -102,7 +102,7 @@ private:
 	void		SetPendingListInfo(TifdListPtr item);
 	void		SetPendingListInfo(TirdListPtr item);
 
-	// Pairing ���� �Լ�
+	// Pairing 보조 함수
 	void		AddPairing(const PListPtr ptr);
 	void		SetTifdPairingList(const PListPtr ptr);
 	void		SetTirdPairingList(const PListPtr ppr);
@@ -117,12 +117,12 @@ private:
 	void		SetInfoTifdItem(const HWND handle, const TifdListPtr tifd, const std::wstring pairState, const std::wstring tirdDeviceId);
 	void		SetInfoTirdItem(const HWND handle, const TirdListPtr tird, std::wstring pairState);
 
-	// �ð�	���ϴ� �Լ�
+	// 시간	구하는 함수
 	void 		UpdateTime();
 
 	friend		LRESULT InformationProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 private:
-	// �ʱ�ȭ Ÿ�̹��� �ſ� �ſ� �ſ� �ƽ���.
+	// 초기화 타이밍이 매우 매우 매우 아쉽다.
 	HWND dlgHwnd = 0;
 	HINSTANCE hInstance = 0;
 
@@ -135,10 +135,10 @@ private:
 	vector<pair<wstring, wstring>> logList;
 
 private:
-	// ����Ʈ ����
+	// 리스트 저장
 	vector<PListPtr>		pairingItems;
 
-	// ����Ʈ�� ������ ã�� ���� �ؽ���
+	// 리스트를 빠르게 찾기 위한 해쉬맵
 	map<int32, TirdListPtr> tirdHashMap;
 	map<int32, TifdListPtr> tifdHashMap;
 	map<int32, PListPtr>	pairingHashMap;
@@ -166,7 +166,7 @@ private:
 	Gdiplus::GdiplusStartupInput gdiplusStartupInput;
 
 private:
-	// Lock �κ� 
+	// Lock 부분 
 	enum
 	{
 		USE_MODE = 0x0'000F

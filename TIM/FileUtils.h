@@ -19,10 +19,10 @@ private:
 	std::string filePath;
 
 private:
-	// �ð� Device Lat Long ���ǵ� ����
+	// 시간 Device Lat Long 스피드 위성갯수
 	std::string pendingSet = "Time,DeviceId,lat,long,Speed,Sat\n";
 
-	// �ð� tifd tifd_lat tifd_long tird tird_lat tird_long distanec
+	// 시간 tifd tifd_lat tifd_long tird tird_lat tird_long distanec
 	std::string pairingSet = "Time, TIFD, TIFD_Lat, TIFD_Long, TIFD_Speed, TIFD_Sat, TIRD, TIRD_Lat, TIRD_Long, TIRD_Speed, TIRD_Sat, Distance\n";
 };
 

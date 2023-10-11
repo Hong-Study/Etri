@@ -134,15 +134,15 @@ void TifdSession::HandleUpdatePairingInfo(const StTifdData* data)
 	if (_distanceCheckCount == GTrainSeparationCheckCount)
 		_myData->trainStatus = TrainStatus_OpenAlarmRequest;
 
-	// �˶��� ������� ���ο� ���� ã�ƺ��°ǰ�?
+	// 알람이 울렸으니 새로운 페어링을 찾아보는건가?
 	if (_myData->trainStatus == TrainStatus_OpenAlarmRequest)
 	{
 		bool newTird = true;
 #ifdef TEST
-		// ���ο� ����Ʈ ��� ��������
+		// 새로운 리스트 목록 가져오기
 		FindNearPossibleTird();
 
-		// ���� ����� ����ִٸ�
+		// 만약 목록이 비어있다면
 		if (_possibleLists.empty())
 		{
 			newTird = false;
@@ -206,7 +206,7 @@ bool TifdSession::CheckingPairingPossibleList()
 		}
 		else if (distance - it->fistDistance < GDistanceAccuarcy)
 		{
-			// ���� üũ �� �������� üũ�ؾ���
+			// 길이 체크 및 오차범위 체크해야함
 			it->currentDistacne = distance;
 			it->timeCount++;
 
@@ -214,12 +214,12 @@ bool TifdSession::CheckingPairingPossibleList()
 			{
 				if (GetPairState() == ePairState::PairState_Pair)
 				{
-					if(TIM->ChangePairingList(GetTifdSession(), it->target))
+					if (TIM->ChangePairingList(GetTifdSession(), it->target))
 						return true;
 					else
 						it = _possibleLists.erase(it);
 				}
-				// �����ߴٴ� �Ҹ��� �̹� ���� �Ǿ��ִٴ� �Ҹ��ų� TIRD�� �ƴ϶�� �Ҹ�
+				// 실패했다는 소리는 이미 페어링이 되어있다는 소리거나 TIRD가 아니라는 소리
 				else if (TIM->PushPairingList(GetTifdSession(), it->target, distance))
 				{
 					return true;

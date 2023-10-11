@@ -18,6 +18,7 @@ Session::~Session()
 
 void Session::Init()
 {
+	// 네이글 알고리즘 제거
 	int nValue = 1;
 	int32 retVal = setsockopt(_socket, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char*>(&nValue), sizeof(nValue));
 	if (retVal != 0)
@@ -33,12 +34,11 @@ void Session::Init()
 
 void Session::Recv()
 {
-
+	// 멈추는 기능 넣어주기
 	int32 _recvLen = recv(_socket, reinterpret_cast<char*>(_recvBuffer.WritePos()), _recvBuffer.FreeSize(), 0);
 	if (_recvLen <= 0)
 	{
 		int32 errorCode = WSAGetLastError();
-		// Check �ʿ�
 		if (errorCode == WSAEWOULDBLOCK)
 		{
 			return;

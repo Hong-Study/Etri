@@ -28,11 +28,11 @@ LRESULT CALLBACK DialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             if (!GStart)
             {
                 GStart = true;
-                if(TIM->Start())
-                    MessageBox(hwnd, _T("������ ���������� ����Ǿ����ϴ�."), _T("�˸�"), MB_OK | MB_ICONINFORMATION | MB_APPLMODAL);
+                if (TIM->Start())
+                    MessageBox(hwnd, _T("서버가 정상적으로 실행되었습니다."), _T("알림"), MB_OK | MB_ICONINFORMATION | MB_APPLMODAL);
                 else
                 {
-                    MessageBox(hwnd, _T("���������� ������ �߻��Ͽ����ϴ�."), _T("�˸�"), MB_OK | MB_ICONINFORMATION | MB_APPLMODAL);
+                    MessageBox(hwnd, _T("비정상적인 에러가 발생하였습니다."), _T("알림"), MB_OK | MB_ICONINFORMATION | MB_APPLMODAL);
                     PostQuitMessage(0);
                 }
             }
@@ -56,7 +56,7 @@ LRESULT CALLBACK DialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         }
         else
         {
-            // ����Ŭ���� Information ����
+            // 더블클릭시 Information 출현
             pnmhdr = reinterpret_cast<NMHDR*>(lParam);
 
             if (pnmhdr->code == NM_DBLCLK)
@@ -169,13 +169,13 @@ LRESULT TestOptionProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_SYSCOMMAND:
         if (wParam == SC_MAXIMIZE)
         {
-            // Dialog �ִ�ȭ
+            // Dialog 최대화
             ShowWindow(hwnd, SW_MAXIMIZE);
             return TRUE;
         }
         else if (wParam == SC_MINIMIZE)
         {
-            // Dialog �ּ�ȭ
+            // Dialog 최소화
             ShowWindow(hwnd, SW_MINIMIZE);
             return TRUE;
         }
@@ -264,13 +264,13 @@ LRESULT LoraInformation(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         }
 
         colum.mask = LVCF_TEXT | LVCF_WIDTH;
-        colum.pszText = (LPWSTR)L"�ζ� ä��";
-        colum.cx = width/2;
+        colum.pszText = (LPWSTR)L"로라 채널";
+        colum.cx = width / 2;
         ListView_InsertColumn(loraInfo, 0, &colum);
 
         colum.mask = LVCF_TEXT | LVCF_WIDTH;
-        colum.pszText = (LPWSTR)L"��� ����";
-        colum.cx = width/2;
+        colum.pszText = (LPWSTR)L"사용 유무";
+        colum.cx = width / 2;
         ListView_InsertColumn(loraInfo, 1, &colum);
 
         item.mask = LVIF_TEXT;

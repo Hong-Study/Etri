@@ -124,7 +124,7 @@ bool TIMServer::PushPairingList(TifdRef tifd, TirdRef tird, int32 distance)
 	if (tifdData == nullptr || tirdData == nullptr)
 		return false;
 
-	// ���� ���� �� ���� �ű�
+	// 정보 저장 및 세션 옮김
 	{
 		tifd->SetTarget(tird);
 		tird->SetTarget(tifd);
@@ -179,7 +179,7 @@ bool TIMServer::ChangePairingList(TifdRef tifd, TirdRef tird)
 
 	it->second->ChangeTird(tird);
 
-	// �ʿ��ϴٸ� ���� TIRD�� ����Ʈ�� �߰��ϴ� �ڵ�
+	// 필요하다면 전의 TIRD를 리스트에 추가하는 코드
 	WINGUI->DoAsync(&WinApi::ChangePairingToTird, tifd->GetPairingId(), tird->GetListId());
 	
 	return true;
@@ -236,7 +236,6 @@ void TIMServer::PopPairingList(int32 pairingId, TirdRef session)
 		WINGUI->DoAsync(&WinApi::DeletePairingList, pairRef->GetPairingId(), session->GetDeviceType());
 
 		{
-			// TODO üũ
 			auto tifd = pairRef->GetTifdSession();
 
 			int32 loraCh = tifd->GetData()->nLoraCh;
@@ -286,7 +285,7 @@ void TIMServer::Recv(SessionInfo* info)
 		return;
 	}
 
-	// PktHead ������� Ŭ ��� OnRecv �Լ� ����
+	// PktHead 사이즈보다 클 경우 OnRecv 함수 실행
 	int32 processLen = OnRecv(info, _recvBuffer->ReadPos(), _recvLen);
 	if (processLen < 0 || _recvBuffer->OnRead(processLen) == false)
 	{
@@ -424,11 +423,11 @@ void TIMServer::GetPossiblePairingList(pair<float, float> tifdLocation, vector<P
 
 		if (possible)
 		{
-			// �ӵ� üũ �ؾ��ϴ°�?
+			// 속도 체크 해야하는가?
 			auto tirdLocation = tird->GetLocation();
 
-			// GPS ���� üũ -> GPS�� ����� �ȵ����� ���.
-			// ���� ���� ������ üũ
+			// GPS 오류 체크 -> GPS가 제대로 안들어왔을 경우.
+			// 오류 길이 정도를 체크
 			int32 distance = CalculateDistance(tifdLocation, tirdLocation);
 
 			if (distance < GMaximumDistance)

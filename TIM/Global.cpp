@@ -37,7 +37,7 @@ public:
 		if (GParser->StartParsing() == false)
 			return;
 
-		// üũ �ʿ�
+		// üũ �ʿ�
 		if (GParser->GetValue("ServerPort", GServerPort) == false)
 			return;
 		if (GParser->GetValue("MaximumDistance", GMaximumDistance) == false)

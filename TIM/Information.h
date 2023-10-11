@@ -9,7 +9,7 @@ using std::wstring;
 using std::to_wstring;
 using std::pair;
 
-// GUI »óÀÇ ÇÊ¿äÇÑ Á¤º¸µé
+// GUI ìƒì˜ í•„ìš”í•œ ì •ë³´ë“¤
 struct PendingTifdListViewItem
 {
 	PendingTifdListViewItem(int32 id, int32 pos, StTifdData& data) : idNum(id), pos(pos), id(to_wstring(id))
@@ -155,7 +155,7 @@ struct MapPairingInfo : public MapInfo
 	float tirdLong;
 };
 
-// TIFD Æä¾î¸µ ÈÄº¸µéÀÇ Á¤º¸µé¿¡ ÇÊ¿äÇÑ ³»¿ë
+// TIFD ï¿½ï¿½î¸µ ï¿½Äºï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½é¿¡ ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 struct PossiblePairingList
 {
 	PossiblePairingList(TirdRef ref, int32 distance)
