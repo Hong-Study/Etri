@@ -25,9 +25,9 @@
 
 
 ### GUI
-[WinApi.h](TIM/WinApi.h) : WINAPI를 사용하여 GUI를 나타내는 클래스이다. 정보는 [TIMServer.h]에서 넘겨받아 [JobQueue.h](TIM/JobQueue.h) 방식으로 실행됩니다.
+[WinApi.h](TIM/WinApi.h) : WINAPI를 사용하여 GUI를 나타내는 클래스이다. 정보는 [TIMServer.h](TIM/TIMServer.h) 에서 넘겨받아 [JobQueue.h](TIM/JobQueue.h) 방식으로 실행됩니다.
 [PythonMap.h](TIM/PythonMap.h) : Python 프로그램을 적제하여 실행할 수 있도록 하는 클래스입니다.
-[CreateMap.py](TIM/CreateMap.py) : Python 프로그램으로 [PythonMap.h]에 적재할 함수가 들어가 있습니다.
+[CreateMap.py](TIM/CreateMap.py) : Python 프로그램으로 [PythonMap.h](TIM/PythonMap.h)에 적재할 함수가 들어가 있습니다.
 
 ### Utils
 [JsonParser.h](TIM/JsonParser.h) : 간단하게 제작한 JsonParser 클래스로, 처음 설정 정보를 가져올 때 사용합니다.
