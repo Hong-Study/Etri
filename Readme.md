@@ -12,10 +12,10 @@
 - 본 프로그램은 사전에 공유가 허락되어 있음을 알려드립니다.
   
 ### 메인 화면
-![image](docs/Image/Main.png)
+![image](docs/Image/Main.PNG)
 
 ### 정보창 출력
-![image](docs/Image/Information.png)
+![image](docs/Image/Information.PNG)
 
 # 사용 방법
 1. 파이썬 3.8버전과 라이브러리가 전부 설치되어 있지 않은 경우에는 PythonSetup.Bat 파일을 관리자 권한으로 실행시킨다.
