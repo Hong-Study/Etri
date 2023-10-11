@@ -10,19 +10,18 @@
 # 코드 설명
 
 ## Accept Code
-[TIMServer.cpp]
 [TIMServer.h](TIM/TIMServer.h) : 네트워크 통신이 구현되어 있는 클래스로, 연결 및 종료, 패킷 동작 등을 수행합니다.
-![image](https://github.com/Hong-Study/Etri/tree/main/docs/Image/AcceptServerFlow.png)
+![image](docs/Image/AcceptServerFlow.png)
 
 
 ### TIRD Flow Chart
 [TirdSession.h](TIM/TirdSession.h) : TIRD 기기를 나타내는 클래스로, TIRD 기기가 접속하면 생성되는 객체입니다.
-![image](https://github.com/Hong-Study/Etri/tree/main/docs/Image/AcceptServerFlow.png)
+![image](docs/Image/AcceptServerFlow.png)
 
 
 ### TIFD Flow Chart
 [TifdSession.h](TIM/TifdSession.h) : TIFD 기기를 나타내는 클래스로, TIFD 기기가 접속하면 생성되는 객체입니다.
-![image](https://github.com/Hong-Study/Etri/tree/main/docs/Image/AcceptServerFlow.png)
+![image](docs/Image/AcceptServerFlow.png)
 
 
 ### GUI
