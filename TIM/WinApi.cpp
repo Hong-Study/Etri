@@ -1496,5 +1496,5 @@ void WinApi::PairingDisconnectDection(uint32 trainNum)
 {
     TCHAR str[126];
     _stprintf_s(str, 126, L"Train No. %d was Disconnet Detected", trainNum);
-    MessageBox(dlgHwnd, str, _T("���� �˸�"), MB_OK | MB_ICONINFORMATION);
+    MessageBox(dlgHwnd, str, _T("Detected"), MB_OK | MB_ICONINFORMATION);
 }
