@@ -75,6 +75,7 @@ void Network::Recv()
 			break;
 		case CommandType::CmdType_LoRa_CH:
 			HandleAlram();
+			break;
 		}
 	}
 }
