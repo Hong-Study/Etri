@@ -9,7 +9,7 @@
 
 # 코드 설명
 
-## Accept Code
+### Accept Code
 [TIMServer.h](TIM/TIMServer.h) : 네트워크 통신이 구현되어 있는 클래스로, 연결 및 종료, 패킷 동작 등을 수행합니다.
 ![image](docs/Image/AcceptServerFlow.png)
 
