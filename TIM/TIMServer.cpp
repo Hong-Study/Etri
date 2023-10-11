@@ -124,7 +124,7 @@ bool TIMServer::PushPairingList(TifdRef tifd, TirdRef tird, int32 distance)
 	if (tifdData == nullptr || tirdData == nullptr)
 		return false;
 
-	// Á¤º¸ ÀúÀå ¹× ¼¼¼Ç ¿Å±è
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Å±ï¿½
 	{
 		tifd->SetTarget(tird);
 		tird->SetTarget(tifd);
@@ -179,7 +179,7 @@ bool TIMServer::ChangePairingList(TifdRef tifd, TirdRef tird)
 
 	it->second->ChangeTird(tird);
 
-	// ÇÊ¿äÇÏ´Ù¸é ÀüÀÇ TIRD¸¦ ¸®½ºÆ®¿¡ Ãß°¡ÇÏ´Â ÄÚµå
+	// ï¿½Ê¿ï¿½ï¿½Ï´Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ TIRDï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ï´ï¿½ ï¿½Úµï¿½
 	WINGUI->DoAsync(&WinApi::ChangePairingToTird, tifd->GetPairingId(), tird->GetListId());
 	
 	return true;
@@ -286,7 +286,7 @@ void TIMServer::Recv(SessionInfo* info)
 		return;
 	}
 
-	// PktHead »çÀÌÁîº¸´Ù Å¬ °æ¿ì OnRecv ÇÔ¼ö ½ÇÇà
+	// PktHead ï¿½ï¿½ï¿½ï¿½ï¿½îº¸ï¿½ï¿½ Å¬ ï¿½ï¿½ï¿½ OnRecv ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½
 	int32 processLen = OnRecv(info, _recvBuffer->ReadPos(), _recvLen);
 	if (processLen < 0 || _recvBuffer->OnRead(processLen) == false)
 	{
@@ -424,11 +424,11 @@ void TIMServer::GetPossiblePairingList(pair<float, float> tifdLocation, vector<P
 
 		if (possible)
 		{
-			// ¼Óµµ Ã¼Å© ÇØ¾ßÇÏ´Â°¡?
+			// ï¿½Óµï¿½ Ã¼Å© ï¿½Ø¾ï¿½ï¿½Ï´Â°ï¿½?
 			auto tirdLocation = tird->GetLocation();
 
-			// GPS ¿À·ù Ã¼Å© -> GPS°¡ Á¦´ë·Î ¾Èµé¾î¿ÔÀ» °æ¿ì.
-			// ¿À·ù ±æÀÌ Á¤µµ¸¦ Ã¼Å©
+			// GPS ï¿½ï¿½ï¿½ï¿½ Ã¼Å© -> GPSï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Èµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½.
+			// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¼Å©
 			int32 distance = CalculateDistance(tifdLocation, tirdLocation);
 
 			if (distance < GMaximumDistance)

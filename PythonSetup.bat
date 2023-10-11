@@ -1,11 +1,11 @@
 @echo off
 setlocal enabledelayedexpansion
 
-REM ÆÄÀÌ½ã ´Ù¿î·Îµå URL ¹× ÆÄÀÏ ÀÌ¸§
+REM ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½Ù¿ï¿½Îµï¿½ URL ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½
 set "python_url=https://www.python.org/ftp/python/3.8.6/python-3.8.6-amd64.exe"
 set "python_installer=python-3.8.6-amd64.exe"
 
-REM ¼³Ä¡ µð·ºÅä¸® ÁöÁ¤
+REM ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ä¸® ï¿½ï¿½ï¿½ï¿½
 set "install_dir=C:\Python38"
 
 set "PythonPath=C:\Python38\"
@@ -14,38 +14,38 @@ set "NewPath=%PythonScriptPath%;%PythonPath%;"
 set "PythonV=1"
 set "Check=1"
 
-REM ÆÄÀÌ½ãÀÌ ¼³Ä¡µÇ¾î ÀÖ´Â°¡
+REM ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½Ç¾ï¿½ ï¿½Ö´Â°ï¿½
 where python > nul 2>&1
 if !errorlevel! equ 0 (
     python -c "import sys; exit(0) if sys.version.startswith('3.8') else exit(1)" > nul 2>&1
     if !errorlevel! equ 0 (
-        echo ÆÄÀÌ½ã 3.8 ¹öÀüÀÌ ÀÌ¹Ì ¼³Ä¡µÇ¾î ÀÖ½À´Ï´Ù.
+        echo ï¿½ï¿½ï¿½Ì½ï¿½ 3.8 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ ï¿½ï¿½Ä¡ï¿½Ç¾ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.
         set "PythonV=0"
     )
 )
 
-REM ÆÄÀÌ½ã ¼³Ä¡
-REM ²À ¶ç¾î¾²±â¸¦ ÇÏÀÚ
+REM ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½Ä¡
+REM ï¿½ï¿½ ï¿½ï¿½î¾²ï¿½â¸¦ ï¿½ï¿½ï¿½ï¿½
 if !PythonV! equ 1 (
-    REM ÆÄÀÌ½ã ¼³Ä¡ µð·ºÅä¸®°¡ ¾øÀ¸¸é »ý¼º
+    REM ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ä¸®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     if not exist "!install_dir!" mkdir "!install_dir!"
-    REM ÆÄÀÌ½ã ¼³Ä¡ ÆÄÀÏ ´Ù¿î·Îµå
-    echo ´Ù¿î·Îµå Áß: !python_url!
+    REM ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¿ï¿½Îµï¿½
+    echo ï¿½Ù¿ï¿½Îµï¿½ ï¿½ï¿½: !python_url!
     curl -o !install_dir!\!python_installer! !python_url!
 
-    echo ´Ù¿î·Îµå ¿Ï·á, ¼³Ä¡ ½ÃÀÛ
+    echo ï¿½Ù¿ï¿½Îµï¿½ ï¿½Ï·ï¿½, ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½
 
-    REM ÆÄÀÌ½ã ¼³Ä¡ ½ÇÇà
+    REM ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½
     start /wait !install_dir!\!python_installer! /quiet TargetDir=!install_dir!
     
     if !errorlevel! equ 0 (   
-        echo ÆÄÀÌ½ã 3.8 ¹öÀü ¼³Ä¡°¡ ¿Ï·áµÇ¾ú½À´Ï´Ù.
+        echo ï¿½ï¿½ï¿½Ì½ï¿½ 3.8 ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Ï·ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.
     ) else (
-        echo ÆÄÀÌ½ã 3.8 ¹öÀü ¼³Ä¡¿¡ ½ÇÆÐÇß½À´Ï´Ù.
+        echo ï¿½ï¿½ï¿½Ì½ï¿½ 3.8 ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.
     )
 )
 
-REM È¯°æ º¯¼ö ¼³Á¤
+REM È¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 for %%i in ("!PATH:;=" "!") do (
     set "Item=%%~i"
     if "!Item!"=="!PythonPath!" (
@@ -63,10 +63,10 @@ for %%i in ("!PATH:;=" "!") do (
 )
 echo !NewPath!
 
-REM º¯°æµÈ PATH °ªÀ» ¼³Á¤
+REM ï¿½ï¿½ï¿½ï¿½ï¿½ PATH ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 setx PATH "%Newpath%" /m
 
-echo È¯°æ º¯¼ö°¡ Á¦ÀÏ À§¿¡ Ãß°¡µÇ¾ú½À´Ï´Ù.
+echo È¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.
 
 python -m pip install --upgrade pip
 pip install pillow==7.2

@@ -40,7 +40,7 @@ public:
 
 	uint64				GetCurrnetRecvTime() { return _currentRecvTime; }
 	void				SetCurrentRecvTime(uint64 time) { _currentRecvTime = time; }
-	// CMD Ã¢¿¡¼­ Á¤º¸ Ãâ·Â
+	// CMD Ã¢ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 	// void				PrintSessionInfo();
 
 private:

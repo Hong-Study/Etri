@@ -18,7 +18,6 @@ Session::~Session()
 
 void Session::Init()
 {
-	// 네이글 알고리즘 제거
 	int nValue = 1;
 	int32 retVal = setsockopt(_socket, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char*>(&nValue), sizeof(nValue));
 	if (retVal != 0)
@@ -34,12 +33,12 @@ void Session::Init()
 
 void Session::Recv()
 {
-	// 멈추는 기능 넣어주기
+
 	int32 _recvLen = recv(_socket, reinterpret_cast<char*>(_recvBuffer.WritePos()), _recvBuffer.FreeSize(), 0);
 	if (_recvLen <= 0)
 	{
 		int32 errorCode = WSAGetLastError();
-		// Check 필요
+		// Check 占십울옙
 		if (errorCode == WSAEWOULDBLOCK)
 		{
 			return;
@@ -55,7 +54,6 @@ void Session::Recv()
 		Disconnect();
 	}
 
-	// PktHead 사이즈보다 클 경우 OnRecv 함수 실행
 	int32 processLen = OnRecv(_recvBuffer.ReadPos(), _recvLen);
 	if (processLen < 0 || _recvBuffer.OnRead(processLen) == false)
 		Disconnect();

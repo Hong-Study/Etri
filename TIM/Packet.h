@@ -4,7 +4,7 @@
 #define HEAD_SIZE           sizeof(PktHead)
 
 // Header
-// ¿ø·¡ÀÌ¸§ : struct StPacket
+// ë³¸ëž˜ ì½”ë“œ í˜•íƒœ : struct StPacket
 struct PktHead
 {
     uint16      command;

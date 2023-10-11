@@ -12,7 +12,7 @@ using namespace std;
 
 void WinApi::Init()
 {
-    // GDI+ °ü·ÃµÈ ¾î¶² ÇÔ¼ö¶óµµ »ç¿ë Àü¿¡ ÇØ´ç ÇÔ¼ö¸¦ È£ÃâÇØ¾ß ÇÕ´Ï´Ù.
+    // GDI+ ï¿½ï¿½ï¿½Ãµï¿½ ï¿½î¶² ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ø´ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ È£ï¿½ï¿½ï¿½Ø¾ï¿½ ï¿½Õ´Ï´ï¿½.
     Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 
     int32 emptySize = 100;
@@ -184,7 +184,7 @@ void WinApi::ShowTrainAlramStatus(int32 listId, std::wstring status)
 {
     TCHAR str[126];
     _stprintf_s(str, 126, L"Train No. %d was %ws", listId, status.c_str());
-    MessageBox(dlgHwnd, str, _T("¾Ë¶÷ Á¤º¸"), MB_OK | MB_ICONINFORMATION);
+    MessageBox(dlgHwnd, str, _T("ï¿½Ë¶ï¿½ ï¿½ï¿½ï¿½ï¿½"), MB_OK | MB_ICONINFORMATION);
 }
 
 void WinApi::ResetTirdPendingList()
@@ -234,7 +234,7 @@ void WinApi::CreatePendingListView()
         , dlgHwnd, reinterpret_cast<HMENU>(TIFD_LIST)
         , hInstance, nullptr);
 
-    // ÄÃ·³ Ãß°¡
+    // ï¿½Ã·ï¿½ ï¿½ß°ï¿½
     CreateTifdListColum(pendingTifdList, (width / (int)PendingTifdListViewCategory::CategorySize));
 
     pendingTirdList = CreateWindow(WC_LISTVIEW, L"PendingTirdList"
@@ -243,7 +243,7 @@ void WinApi::CreatePendingListView()
         , dlgHwnd, reinterpret_cast<HMENU>(TIRD_LIST)
         , hInstance, nullptr);
 
-    // ÄÃ·³ Ãß°¡
+    // ï¿½Ã·ï¿½ ï¿½ß°ï¿½
     CreateTirdListColum(pendingTirdList, (width / (int)PendingTirdListViewCategory::CategorySize));
 }
 
@@ -322,7 +322,7 @@ bool WinApi::CreateTifdInformation(HWND parent)
 
     CreateTifdInfoColum(tifdInfo, width / 2);
 
-    // ÈÄº¸ÀÚ·Î º¯°æÇØÁà¾ß µÈ´Ù.
+    // ï¿½Äºï¿½ï¿½Ú·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½È´ï¿½.
     HWND CandidateInfo = CreateWindow(WC_LISTVIEW, L"Logs", WS_CHILD | WS_VISIBLE | LVS_REPORT
         , width + 30, 20, width, height
         , parent, nullptr
@@ -792,15 +792,15 @@ void WinApi::SetInfoMapCreate(const pair<float, float> tifdLoc, const pair<float
 
 void WinApi::DrawPngMap(const HWND handle)
 {
-    // image.png ÆÄÀÏÀ» ÀÌ¿ëÇÏ¿© Image °´Ã¼¸¦ »ý¼ºÇÕ´Ï´Ù.
+    // image.png ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½Ï¿ï¿½ Image ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
     HDC hdc = GetDC(handle);
     Gdiplus::Image* image = Gdiplus::Image::FromFile(L"SaveMap/map.png");
     Gdiplus::Graphics g(hdc);
 
-    // (x, y)¿¡ width X height Å©±âÀÇ ÀÌ¹ÌÁö¸¦ ±×¸³´Ï´Ù.
+    // (x, y)ï¿½ï¿½ width X height Å©ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×¸ï¿½ï¿½Ï´ï¿½.
     g.DrawImage(image, 700, 25, 400, 400);
 
-    // µ¥ÀÌÅÍ ¸Þ¸ð¸® ÇØÁ¦
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¸ï¿½ ï¿½ï¿½ï¿½ï¿½
     delete image;
     ReleaseDC(handle, hdc);
 }
@@ -967,7 +967,7 @@ void WinApi::SetInfoTirdItem(const HWND handle, const TirdListPtr tird, std::wst
 
 void WinApi::AddLogList(wstring contexts)
 {
-    // ÇöÀç ½Ã°£À» ½Ã½ºÅÛ Å¬·ÏÀ¸·ÎºÎÅÍ ±¸ÇÕ´Ï´Ù.
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½Ã½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½Îºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
     UpdateTime();
 
     LVITEM lvItem{};
@@ -1262,7 +1262,7 @@ void WinApi::PairingInfoUpdate(int32 infoId, pair<float, float> tifdLocation, pa
     SetInfoTifdItem(infoHandle->tifdInfo, tifdList, L"Paired", tirdList->device);
     SetInfoTirdItem(infoHandle->tirdInfo, tirdList, L"Paired");
 
-    // °íÃÄ¾ßÇÒ ºÎºÐ
+    // ï¿½ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½ ï¿½Îºï¿½
     SetInfoMapCreate(tifdLocation, tirdLocation);
     IsInfo.store(infoId);
 }
@@ -1358,7 +1358,7 @@ void WinApi::SetTifdPairingList(const PListPtr ptr)
     lvItem.iSubItem = (int)PairingListViewCategory::Table_Sat;
     ListView_SetItem(pairingList, &lvItem);
 
-    // ÈÄ¿¡ ¹Ù²ã¾ßÇÔ.
+    // ï¿½Ä¿ï¿½ ï¿½Ù²ï¿½ï¿½ï¿½ï¿½.
     lvItem.pszText = (LPWSTR)(ptr->distance.c_str());
     lvItem.iSubItem = (int)PairingListViewCategory::Table_Distance;
     ListView_SetItem(pairingList, &lvItem);
@@ -1472,7 +1472,7 @@ void WinApi::DeletePairingList(int32 id, Device device)
         return;
 
     PListPtr pList = ptr->second;
-    // Á¶±Ý À§Çèµµ ³ôÀº ÄÚµå
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½èµµ ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½
     int32 pos = pList->pos / 2;
     pairingItems.erase(pairingItems.begin() + pos);
     pairingHashMap.erase(ptr);
@@ -1498,5 +1498,5 @@ void WinApi::PairingDisconnectDection(uint32 trainNum)
 {
     TCHAR str[126];
     _stprintf_s(str, 126, L"Train No. %d was Disconnet Detected", trainNum);
-    MessageBox(dlgHwnd, str, _T("²÷±è ¾Ë¸²"), MB_OK | MB_ICONINFORMATION);
+    MessageBox(dlgHwnd, str, _T("ï¿½ï¿½ï¿½ï¿½ ï¿½Ë¸ï¿½"), MB_OK | MB_ICONINFORMATION);
 }

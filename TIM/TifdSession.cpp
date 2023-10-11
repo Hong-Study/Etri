@@ -134,15 +134,15 @@ void TifdSession::HandleUpdatePairingInfo(const StTifdData* data)
 	if (_distanceCheckCount == GTrainSeparationCheckCount)
 		_myData->trainStatus = TrainStatus_OpenAlarmRequest;
 
-	// ¾Ë¶÷ÀÌ ¿ï·ÈÀ¸´Ï »õ·Î¿î Æä¾î¸µÀ» Ã£¾Æº¸´Â°Ç°¡?
+	// ï¿½Ë¶ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½î¸µï¿½ï¿½ Ã£ï¿½Æºï¿½ï¿½Â°Ç°ï¿½?
 	if (_myData->trainStatus == TrainStatus_OpenAlarmRequest)
 	{
 		bool newTird = true;
 #ifdef TEST
-		// »õ·Î¿î ¸®½ºÆ® ¸ñ·Ï °¡Á®¿À±â
+		// ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		FindNearPossibleTird();
 
-		// ¸¸¾à ¸ñ·ÏÀÌ ºñ¾îÀÖ´Ù¸é
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ö´Ù¸ï¿½
 		if (_possibleLists.empty())
 		{
 			newTird = false;
@@ -185,7 +185,7 @@ void TifdSession::FindNearPossibleTird()
 
 bool TifdSession::CheckingPairingPossibleList()
 {
-	// ÀÌ¸§ -> PossibleTirdList
+	// ï¿½Ì¸ï¿½ -> PossibleTirdList
 	for (auto it = _possibleLists.begin();it != _possibleLists.end();)
 	{
 		if (it->target == nullptr || it->target->GetPairState() == ePairState::PairState_Pair)
@@ -206,7 +206,7 @@ bool TifdSession::CheckingPairingPossibleList()
 		}
 		else if (distance - it->fistDistance < GDistanceAccuarcy)
 		{
-			// ±æÀÌ Ã¼Å© ¹× ¿ÀÂ÷¹üÀ§ Ã¼Å©ÇØ¾ßÇÔ
+			// ï¿½ï¿½ï¿½ï¿½ Ã¼Å© ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¼Å©ï¿½Ø¾ï¿½ï¿½ï¿½
 			it->currentDistacne = distance;
 			it->timeCount++;
 
@@ -219,7 +219,7 @@ bool TifdSession::CheckingPairingPossibleList()
 					else
 						it = _possibleLists.erase(it);
 				}
-				// ½ÇÆÐÇß´Ù´Â ¼Ò¸®´Â ÀÌ¹Ì Æä¾î¸µÀÌ µÇ¾îÀÖ´Ù´Â ¼Ò¸®°Å³ª TIRD°¡ ¾Æ´Ï¶ó´Â ¼Ò¸®
+				// ï¿½ï¿½ï¿½ï¿½ï¿½ß´Ù´ï¿½ ï¿½Ò¸ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ ï¿½ï¿½î¸µï¿½ï¿½ ï¿½Ç¾ï¿½ï¿½Ö´Ù´ï¿½ ï¿½Ò¸ï¿½ï¿½Å³ï¿½ TIRDï¿½ï¿½ ï¿½Æ´Ï¶ï¿½ï¿½ ï¿½Ò¸ï¿½
 				else if (TIM->PushPairingList(GetTifdSession(), it->target, distance))
 				{
 					return true;

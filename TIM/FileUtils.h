@@ -19,10 +19,10 @@ private:
 	std::string filePath;
 
 private:
-	// ½Ã°£ Device Lat Long ½ºÇÇµå À§¼º
+	// ï¿½Ã°ï¿½ Device Lat Long ï¿½ï¿½ï¿½Çµï¿½ ï¿½ï¿½ï¿½ï¿½
 	std::string pendingSet = "Time,DeviceId,lat,long,Speed,Sat\n";
 
-	// ½Ã°£ tifd tifd_lat tifd_long tird tird_lat tird_long distanec
+	// ï¿½Ã°ï¿½ tifd tifd_lat tifd_long tird tird_lat tird_long distanec
 	std::string pairingSet = "Time, TIFD, TIFD_Lat, TIFD_Long, TIFD_Speed, TIFD_Sat, TIRD, TIRD_Lat, TIRD_Long, TIRD_Speed, TIRD_Sat, Distance\n";
 };
 

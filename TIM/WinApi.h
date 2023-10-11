@@ -15,7 +15,7 @@ public:
 	void		SaveLogData();
 
 public:
-	// ÀúÀå µÇ¾î ÀÖ´Â Á¤º¸µé ¾÷µ¥ÀÌÆ®
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ç¾ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
 	void		UpdateTifdPendingInfo(int32 id, StTifdData data, vector<PossiblePairingList> possibleList);
 	void		UpdateTirdPendingInfo(int32 id, StTirdData data);
 
@@ -31,7 +31,7 @@ public:
 	void		PairingInfoUpdate(int32 infoId, pair<float, float> tifdLocation, pair<float, float> tirdLocation
 		, TifdListPtr tifdList, TirdListPtr tirdList);
 
-	// Session Á¾·á½Ã »èÁ¦
+	// Session ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	void		DeleteTirdPendingList(int32 id);
 	void		DeleteTifdPendingList(int32 id);
 	void		DeletePairingList(int32 id, Device device);
@@ -39,25 +39,25 @@ public:
 	void		PairingDisconnectDection(uint32 id);
 	void		AddLogList(wstring contexts);
 
-	// Information º¸±â
+	// Information ï¿½ï¿½ï¿½ï¿½
 	void		ShowTifdInformation(int32 selectedIndex);
 	void		ShowTirdInformation(int32 selectedIndex);
 	void		ShowPairingInformation(int32 selectedIndex);
 	void		ShowTrainAlramStatus(int32 listId, std::wstring status);
 
-	// Information »ý¼º(ListView)
+	// Information ï¿½ï¿½ï¿½ï¿½(ListView)
 	bool		CreateTifdInformation(HWND parent);
 	bool		CreateTirdInformation(HWND parent);
 	bool		CreatePairingInformation(HWND parent);
 	void		ClearInfomation(int32 id);
 
-	// »õ·Î¿î PendingList Ãß°¡
+	// ï¿½ï¿½ï¿½Î¿ï¿½ PendingList ï¿½ß°ï¿½
 	void		NewTifdPendingList(int32 id, TifdRef session);
 	void		NewTirdPendingList(int32 id, TirdRef session);
 	void		NewPairingList(int32 pairingId, int32 tifdListId, int32 tirdListId, int32 distance);
 
 private:
-	// ÃÊ±âÈ­ ºÎºÐµé
+	// ï¿½Ê±ï¿½È­ ï¿½ÎºÐµï¿½
 	void		SetTabSize();
 	void		SetTabText();
 	void		SetButtonPos();
@@ -70,11 +70,11 @@ private:
 	void		CreatePairingListView();
 	void		CreatePairingColum(HWND handle, int32 columSize);
 
-	// Information »ý¼º º¸Á¶
+	// Information ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	void		CreateCandidateColum(HWND handle, int32 columSize);
 	void		CreateTifdInfoColum(HWND handle, int32 columSize);
 	void		CreateTirdInfoColum(HWND handle, int32 columSize);
-	// °øÅë
+	// ï¿½ï¿½ï¿½ï¿½
 	void		InsertTifdInfo(HWND handle);
 	void		InsertTirdInfo(HWND handle);
 
@@ -82,17 +82,17 @@ private:
 	void		CreateLogColum();
 
 private:
-	// ´Ù½Ã	ÃÊ±âÈ­ÇÏ°í Ãâ·Â
-	// µ¿½Ã¿¡ ¸¹ÀÌ ÇÏ°Ô µÇ¸é, ±ôºýÀÌ´Â Çö»ó ¹ß»ý
+	// ï¿½Ù½ï¿½	ï¿½Ê±ï¿½È­ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½
+	// ï¿½ï¿½ï¿½Ã¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï°ï¿½ ï¿½Ç¸ï¿½, ï¿½ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½
 	void		ResetTirdPendingList();
 	void		ResetTifdPendingList();
 	void		ResetPairingList();
 
-	// Pending List º¸Á¶ ÇÔ¼ö
+	// Pending List ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
 	void		NewPendingTifdList(int32 id, StTifdData data, wstring ip, wstring port);
 	void		NewPendingTirdList(int32 id, StTirdData data, wstring ip, wstring port);
 
-	// Pendinglist¿¡ Áý¾î³Ö±â
+	// Pendinglistï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ö±ï¿½
 	void		InsertPendingTifdList(TifdListPtr item);
 	void		InsertPendingTirdList(TirdListPtr item);
 
@@ -102,7 +102,7 @@ private:
 	void		SetPendingListInfo(TifdListPtr item);
 	void		SetPendingListInfo(TirdListPtr item);
 
-	// Pairing º¸Á¶ ÇÔ¼ö
+	// Pairing ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
 	void		AddPairing(const PListPtr ptr);
 	void		SetTifdPairingList(const PListPtr ptr);
 	void		SetTirdPairingList(const PListPtr ppr);
@@ -117,12 +117,12 @@ private:
 	void		SetInfoTifdItem(const HWND handle, const TifdListPtr tifd, const std::wstring pairState, const std::wstring tirdDeviceId);
 	void		SetInfoTirdItem(const HWND handle, const TirdListPtr tird, std::wstring pairState);
 
-	// ½Ã°£	±¸ÇÏ´Â ÇÔ¼ö
+	// ï¿½Ã°ï¿½	ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½
 	void 		UpdateTime();
 
 	friend		LRESULT InformationProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 private:
-	// ÃÊ±âÈ­ Å¸ÀÌ¹ÖÀÌ ¸Å¿ì ¸Å¿ì ¸Å¿ì ¾Æ½±´Ù.
+	// ï¿½Ê±ï¿½È­ Å¸ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½Å¿ï¿½ ï¿½Å¿ï¿½ ï¿½Å¿ï¿½ ï¿½Æ½ï¿½ï¿½ï¿½.
 	HWND dlgHwnd = 0;
 	HINSTANCE hInstance = 0;
 
@@ -135,10 +135,10 @@ private:
 	vector<pair<wstring, wstring>> logList;
 
 private:
-	// ¸®½ºÆ® ÀúÀå
+	// ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
 	vector<PListPtr>		pairingItems;
 
-	// ¸®½ºÆ®¸¦ ºü¸£°Ô Ã£±â À§ÇÑ ÇØ½¬¸Ê
+	// ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½ï¿½ï¿½
 	map<int32, TirdListPtr> tirdHashMap;
 	map<int32, TifdListPtr> tifdHashMap;
 	map<int32, PListPtr>	pairingHashMap;
@@ -166,7 +166,7 @@ private:
 	Gdiplus::GdiplusStartupInput gdiplusStartupInput;
 
 private:
-	// Lock ºÎºÐ 
+	// Lock ï¿½Îºï¿½ 
 	enum
 	{
 		USE_MODE = 0x0'000F

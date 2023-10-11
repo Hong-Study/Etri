@@ -3,18 +3,18 @@
 
 using namespace std;
 
-// Áö±¸ÀÇ ¹ÝÁö¸§ (´ÜÀ§: km)
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½: km)
 const double EARTH_RADIUS = 6371.0;
 
-// ¼öµ¿À¸·Î ¿øÁÖÀ² °ªÀ» Á¤ÀÇ
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 const double M_PI = 3.14159265358979323846;
 
-// ¶óµð¾ÈÀ¸·Î º¯È¯
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 float toRadians(float degree) {
     return degree * M_PI / 180.0;
 }
 
-// Haversine °ø½ÄÀ» »ç¿ëÇÏ¿© µÎ ÁöÁ¡ »çÀÌÀÇ °Å¸® °è»ê (¹ÌÅÍ ´ÜÀ§·Î º¯È¯)
+// Haversine ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯)
 int32 CalculateDistance(float lat1, float lon1, float lat2, float lon2) {
     float dLat = toRadians(lat2 - lat1);
     float dLon = toRadians(lon2 - lon1);
@@ -25,7 +25,7 @@ int32 CalculateDistance(float lat1, float lon1, float lat2, float lon2) {
 
     float c = 2 * std::atan2(std::sqrt(a), std::sqrt(1 - a));
 
-    int32 distance = EARTH_RADIUS * c * 1000.0; // Å³·Î¹ÌÅÍ¸¦ ¹ÌÅÍ·Î º¯È¯
+    int32 distance = EARTH_RADIUS * c * 1000.0; // Å³ï¿½Î¹ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½Í·ï¿½ ï¿½ï¿½È¯
     return abs(distance);
 }
 
@@ -38,10 +38,10 @@ std::tm GetLocalTime()
 {
     auto now = std::chrono::system_clock::now();
 
-    // ÇöÀç ½Ã°£À» std::time_t Å¸ÀÔÀ¸·Î º¯È¯ÇÕ´Ï´Ù.
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ std::time_t Å¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Õ´Ï´ï¿½.
     std::time_t now_time = std::chrono::system_clock::to_time_t(now);
 
-    // ½º·¹µå ¾ÈÀüÇÑ ¹öÀüÀÎ std::localtime_s ÇÔ¼ö¸¦ »ç¿ëÇÏ¿© ³¯Â¥¿Í ½Ã°£ Á¤º¸¸¦ ºÐ¸®ÇÕ´Ï´Ù.
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ std::localtime_s ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½Â¥ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð¸ï¿½ï¿½Õ´Ï´ï¿½.
     std::tm local_time;
     localtime_s(&local_time, &now_time);
 

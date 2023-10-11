@@ -19,7 +19,7 @@ public:
 	bool		Start();
 	void		Update();
 
-	// JobQueue »ç¿ë -> ¸ÖÆ¼½º·¹µå ¿À·ù ¹æÁö
+	// JobQueue ï¿½ï¿½ï¿½ -> ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	void		PushTifdList(SOCKET sock, SOCKADDR_IN sockAddr, const StTifdData* data);
 	void		PushTirdList(SOCKET sock, SOCKADDR_IN sockAddr, const StTirdData* data);
 
@@ -31,13 +31,13 @@ public:
 
 	void		GetPossiblePairingList(pair<float, float> tifdLocation, vector<PossiblePairingList>& lists);
 
-	// TIFD, TIRD ¿¬°á À¯Áö
+	// TIFD, TIRD ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	void		SendKeepAliveUpdate();
 	void		SendKeepAlive();
 	StLoraInfo	GetLoraInfo() { return _loraInfo; }
 
 private:
-	// ½ÇÁ¦ ÀÛµ¿ÇÏ´Â ÄÚµå
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ûµï¿½ï¿½Ï´ï¿½ ï¿½Úµï¿½
 	void		PopTifdList(TifdRef tifd);
 	void		PopTirdList(TirdRef tird);
 
@@ -45,7 +45,7 @@ private:
 	void		PopPairingList(int32 pairingId, TirdRef session);
 	
 private:
-	// ÃÊ±â Á¢¼Ó¿ë ³×Æ®¿öÅ© ÄÚµå (TIFD, TIRD ÆÇº°)
+	// ï¿½Ê±ï¿½ ï¿½ï¿½ï¿½Ó¿ï¿½ ï¿½ï¿½Æ®ï¿½ï¿½Å© ï¿½Úµï¿½ (TIFD, TIRD ï¿½Çºï¿½)
 	void		Disconnect(SessionInfo* info);
 	void		Recv(SessionInfo* info);
 	int32		OnRecv(SessionInfo* info, BYTE* buffer, int32 size);
@@ -70,12 +70,14 @@ private:
 	map<std::string, TifdRef>				_tifdList;
 	map<std::string, TirdRef>				_tirdList;
 	
-	// ListId°¡ Key·Î ÀÛµ¿
+	// ListIdï¿½ï¿½ Keyï¿½ï¿½ ï¿½Ûµï¿½
 	std::map<int32, PairSessionRef>			_pairingSessions;
 
 	fd_set _fds;
 
 private:
+
+
 	atomic<int32> _sessionCount = 1;
 	atomic<int32> _pairingCount = 1;
 

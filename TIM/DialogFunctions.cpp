@@ -29,10 +29,10 @@ LRESULT CALLBACK DialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             {
                 GStart = true;
                 if(TIM->Start())
-                    MessageBox(hwnd, _T("¼­¹ö°¡ Á¤»óÀûÀ¸·Î ½ÇÇàµÇ¾ú½À´Ï´Ù."), _T("¾Ë¸²"), MB_OK | MB_ICONINFORMATION | MB_APPLMODAL);
+                    MessageBox(hwnd, _T("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½."), _T("ï¿½Ë¸ï¿½"), MB_OK | MB_ICONINFORMATION | MB_APPLMODAL);
                 else
                 {
-                    MessageBox(hwnd, _T("ºñÁ¤»óÀûÀÎ ¿¡·¯°¡ ¹ß»ýÇÏ¿´½À´Ï´Ù."), _T("¾Ë¸²"), MB_OK | MB_ICONINFORMATION | MB_APPLMODAL);
+                    MessageBox(hwnd, _T("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ï¿½Ï¿ï¿½ï¿½ï¿½ï¿½Ï´ï¿½."), _T("ï¿½Ë¸ï¿½"), MB_OK | MB_ICONINFORMATION | MB_APPLMODAL);
                     PostQuitMessage(0);
                 }
             }
@@ -56,7 +56,7 @@ LRESULT CALLBACK DialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         }
         else
         {
-            // ´õºíÅ¬¸¯½Ã Information ÃâÇö
+            // ï¿½ï¿½ï¿½ï¿½Å¬ï¿½ï¿½ï¿½ï¿½ Information ï¿½ï¿½ï¿½ï¿½
             pnmhdr = reinterpret_cast<NMHDR*>(lParam);
 
             if (pnmhdr->code == NM_DBLCLK)
@@ -169,13 +169,13 @@ LRESULT TestOptionProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_SYSCOMMAND:
         if (wParam == SC_MAXIMIZE)
         {
-            // Dialog ÃÖ´ëÈ­
+            // Dialog ï¿½Ö´ï¿½È­
             ShowWindow(hwnd, SW_MAXIMIZE);
             return TRUE;
         }
         else if (wParam == SC_MINIMIZE)
         {
-            // Dialog ÃÖ¼ÒÈ­
+            // Dialog ï¿½Ö¼ï¿½È­
             ShowWindow(hwnd, SW_MINIMIZE);
             return TRUE;
         }
@@ -264,12 +264,12 @@ LRESULT LoraInformation(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         }
 
         colum.mask = LVCF_TEXT | LVCF_WIDTH;
-        colum.pszText = (LPWSTR)L"·Î¶ó Ã¤³Î";
+        colum.pszText = (LPWSTR)L"ï¿½Î¶ï¿½ Ã¤ï¿½ï¿½";
         colum.cx = width/2;
         ListView_InsertColumn(loraInfo, 0, &colum);
 
         colum.mask = LVCF_TEXT | LVCF_WIDTH;
-        colum.pszText = (LPWSTR)L"»ç¿ë À¯¹«";
+        colum.pszText = (LPWSTR)L"ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½";
         colum.cx = width/2;
         ListView_InsertColumn(loraInfo, 1, &colum);
 
