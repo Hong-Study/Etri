@@ -1,8 +1,8 @@
-## OS : windows10
-## Language : C++, python
+# í™˜ê²½ì†Œê°œ
+### OS : windows10
+Language : C++, python
 
-## Python version : 3.8.6
-## Need Libs : staticmap, pillow, request
-
-### ¡Ø PythonSetup ¹èÄ¡ ÆÄÀÏ ½ÇÇà½Ã, °ü¸®ÀÚ ±ÇÇÑÀ¸·Î ½ÇÇà½ÃÄÑ¾ß ÇÔ.
-### ¡Ø ¹èÄ¡ÆÄÀÏ ½ÇÇàÇÏ°Ô µÇ¸é, C:\Python38 Æú´õ »ý¼º ¹× È¯°æ º¯¼ö ÀúÀå±îÁö ¿Ï·á
+### Python version : 3.8.6
+Need Libs : staticmap, pillow, request
+â€» PythonSetup ë°°ì¹˜ íŒŒì¼ ì‹¤í–‰ì‹œ, ê´€ë¦¬ìž ê¶Œí•œìœ¼ë¡œ ì‹¤í–‰ì‹œì¼œì•¼ í•¨.
+â€» ë°°ì¹˜íŒŒì¼ ì‹¤í–‰í•˜ê²Œ ë˜ë©´, C:\Python38 í´ë” ìƒì„± ë° í™˜ê²½ ë³€ìˆ˜ ì €ìž¥ê¹Œì§€ ì™„ë£Œ
