@@ -23,7 +23,7 @@ bool JsonParser::StartParsing()
 		return false;
 
 	std::ifstream ifs(_totalPath.c_str());
-
+	
 	string str;
 	while (std::getline(ifs, str))
 	{
