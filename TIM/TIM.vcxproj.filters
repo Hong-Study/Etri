@@ -188,6 +188,7 @@
     <None Include="..\PythonSetup.bat">
       <Filter>Python</Filter>
     </None>
+    <None Include="..\Readme.md" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TIM.rc">

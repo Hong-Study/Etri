@@ -208,6 +208,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\PythonSetup.bat" />
+    <None Include="..\Readme.md" />
     <None Include="cpp.hint" />
     <None Include="CreateMap.py" />
   </ItemGroup>
