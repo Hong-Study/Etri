@@ -34,12 +34,12 @@
 
 ### TIRD Flow Chart
 - [TirdSession.h](TIM/TirdSession.h) : TIRD 기기를 나타내는 클래스로, TIRD 기기가 접속하면 생성되는 객체입니다.
-![image](docs/Image/AcceptServerFlow.png)
+![image](docs/Image/TirdFlow.png)
 
 
 ### TIFD Flow Chart
 - [TifdSession.h](TIM/TifdSession.h) : TIFD 기기를 나타내는 클래스로, TIFD 기기가 접속하면 생성되는 객체입니다.
-![image](docs/Image/AcceptServerFlow.png)
+![image](docs/Image/TifdFlow.png)
 
 
 ### GUI
