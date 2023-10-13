@@ -5,8 +5,8 @@
 - Python version : 3.8.6
 - Need Libs : staticmap, pillow, request
 
-※ PythonSetup 배치 파일 실행시, 관리자 권한으로 실행시켜야 함.
-※ 배치파일 실행하게 되면, C:\Python38 폴더 생성 및 환경 변수 저장까지 완료
+- ※ PythonSetup 배치 파일 실행시, 관리자 권한으로 실행시켜야 함.
+- ※ 배치파일 실행하게 되면, C:\Python38 폴더 생성 및 환경 변수 저장까지 완료
 
 # 기능 설명
 - TIM 서버는 PC 원도우 환경에서 TIFD와 TIRD 간에 초기 무선접속, IP 기반 페어링과 데이터 로그 기능을 제공하기 위한 요구사항과 기능 설계. 그리고 시험 검증을 설명한다.
