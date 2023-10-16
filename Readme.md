@@ -1,6 +1,6 @@
 # 환경소개
 - OS : windows10
-- Language : C++, python, WINAPI
+- Language : C++ 20, python, WINAPI
 
 - Python version : 3.8.6
 - Need Libs : staticmap, pillow, request
